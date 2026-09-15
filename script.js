@@ -98,7 +98,7 @@ audio.volume = state.volume;
 const audioFiles = {
 
     "مرداب":
-        "music/moradab.mp3",
+        "music/mordab.mp3",
 
     "باران":
         "music/baran.mp3",
