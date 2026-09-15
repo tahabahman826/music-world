@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Music World</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- BACKGROUND -->
+    <div id="space">
+        <div id="nebula"></div>
+        <div id="stars"></div>
+    </div>
+
+    <!-- APP -->
+    <main id="app">
+
+        <!-- ========================= -->
+        <!-- SCENE 0 -->
+        <!-- ========================= -->
+
+        <section class="scene active" id="scene0">
+
+            <div class="panel intro-panel">
+
+                <div class="small-title">
+                    MUSIC WORLD
+                </div>
+
+                <h1>
+                    یه سؤال ازت دارم...
+                </h1>
+
+                <p>
+                    این فقط یه صفحه نیست.<br>
+                    قراره وارد یه دنیای کوچیک و مرموز بشی.
+                </p>
+
+                <button class="main-btn" onclick="goToScene(1)">
+                    شروع کنیم ✨
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- SCENE 1 -->
+        <!-- ========================= -->
+
+        <section class="scene" id="scene1">
+
+            <div class="panel">
+
+                <div class="step">
+                    مرحله ۱
+                </div>
+
+                <h2>
+                    به آهنگ علاقه داری؟ 🎧
+                </h2>
+
+                <p id="noText">
+                    یه جواب ساده بده... 👀
+                </p>
+
+                <div class="buttons">
+
+                    <button class="main-btn" onclick="goToScene(2)">
+                        آره 🎵
+                    </button>
+
+                    <button class="normal-btn" id="noButton" onclick="noAnswer()">
+                        نه 😐
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- SCENE 2 -->
+        <!-- ========================= -->
+
+        <section class="scene" id="scene2">
+
+            <button class="back-btn" onclick="goBack()">
+                ← برگشت
+            </button>
+
+            <div class="panel">
+
+                <div class="step">
+                    مرحله ۲
+                </div>
+
+                <h2>
+                    اول زبان دنیاتو انتخاب کن 🌍
+                </h2>
+
+                <p>
+                    موسیقی این دنیا از اینجا انتخاب میشه.
+                </p>
+
+                <div class="choice-grid">
+
+                    <button class="choice-card" onclick="chooseLanguage('persian')">
+
+                        <span class="choice-icon">
+                            🇮🇷
+                        </span>
+
+                        <span class="choice-title">
+                            موسیقی فارسی
+                        </span>
+
+                        <span class="choice-description">
+                            قدیمی یا جدید
+                        </span>
+
+                    </button>
+
+
+                    <button class="choice-card" onclick="chooseLanguage('english')">
+
+                        <span class="choice-icon">
+                            🌍
+                        </span>
+
+                        <span class="choice-title">
+                            موسیقی انگلیسی
+                        </span>
+
+                        <span class="choice-description">
+                            خواننده مرد یا زن
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- SCENE 3 -->
+        <!-- PERSIAN OLD / NEW -->
+        <!-- ========================= -->
+
+        <section class="scene" id="scene3">
+
+            <button class="back-btn" onclick="goBack()">
+                ← برگشت
+            </button>
+
+            <div class="panel">
+
+                <div class="step">
+                    موسیقی فارسی
+                </div>
+
+                <h2>
+                    چه حال‌وهوایی؟ 🎶
+                </h2>
+
+                <div class="choice-grid">
+
+                    <button class="choice-card" onclick="choosePersianAge('old')">
+
+                        <span class="choice-icon">
+                            📻
+                        </span>
+
+                        <span class="choice-title">
+                            قدیمی
+                        </span>
+
+                        <span class="choice-description">
+                            نوستالژی و خاطره
+                        </span>
+
+                    </button>
+
+
+                    <button class="choice-card" onclick="choosePersianAge('new')">
+
+                        <span class="choice-icon">
+                            🌃
+                        </span>
+
+                        <span class="choice-title">
+                            جدید
+                        </span>
+
+                        <span class="choice-description">
+                            مدرن و امروزی
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- SCENE 4 -->
+        <!-- PERSIAN OLD -->
+        <!-- ========================= -->
+
+        <section class="scene" id="scene4">
+
+            <button class="back-btn" onclick="goBack()">
+                ← برگشت
+            </button>
+
+            <div class="panel">
+
+                <div class="step">
+                    فارسی • قدیمی
+                </div>
+
+                <h2>
+                    کدوم هنرمند؟ 🎙️
+                </h2>
+
+                <div class="song-grid">
+
+                    <button class="song-card"
+                        onclick="openWorld('مرداب','گوگوش','nostalgia')">
+
+                        <span class="song-icon">
+                            🌙
+                        </span>
+
+                        <strong>
+                            گوگوش
+                        </strong>
+
+                        <small>
+                            مرداب
+                        </small>
+
+                    </button>
+
+
+                    <button class="song-card"
+                        onclick="openWorld('باران','ویگن','rain')">
+
+                        <span class="song-icon">
+                            🌧️
+                        </span>
+
+                        <strong>
+                            ویگن
+                        </strong>
+
+                        <small>
+                            باران
+                        </small>
+
+                    </button>
+
+
+                    <button class="song-card"
+                        onclick="openWorld('اگه یه روز بری سفر','فریدون آسرایی','road')">
+
+                        <span class="song-icon">
+                            🛣️
+                        </span>
+
+                        <strong>
+                            فریدون آسرایی
+                        </strong>
+
+                        <small>
+                            اگه یه روز بری سفر
+                        </small>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- SCENE 5 -->
+        <!-- PERSIAN NEW -->
+        <!-- ========================= -->
+
+        <section class="scene" id="scene5">
+
+            <button class="back-btn" onclick="goBack()">
+                ← برگشت
+            </button>
+
+            <div class="panel">
+
+                <div class="step">
+                    فارسی • جدید
+                </div>
+
+                <h2>
+                    کدوم هنرمند؟ 🎧
+                </h2>
+
+                <div class="song-grid">
+
+                    <button class="song-card"
+                        onclick="openWorld('24/7','AROWN','neon')">
+
+                        <span class="song-icon">
+                            ⚡
+                        </span>
+
+                        <strong>
+                            AROWN
+                        </strong>
+
+                        <small>
+                            24/7
+                        </small>
+
+                    </button>
+
+
+                    <button class="song-card"
+                        onclick="openWorld('چشمت سیاه','Hoomaan','smoke')">
+
+                        <span class="song-icon">
+                            🖤
+                        </span>
+
+                        <strong>
+                            Hoomaan
+                        </strong>
+
+                        <small>
+                            چشمت سیاه
+                        </small>
+
+                    </button>
+
+
+                    <button class="song-card"
+                        onclick="openWorld('خونه‌ی من','Arta','home')">
+
+                        <span class="song-icon">
+                            🏠
+                        </span>
+
+                        <strong>
+                            Arta
+                        </strong>
+
+                        <small>
+                            خونه‌ی من
+                        </small>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- SCENE 6 -->
+        <!-- ENGLISH MALE / FEMALE -->
+        <!-- ========================= -->
+
+        <section class="scene" id="scene6">
+
+            <button class="back-btn" onclick="goBack()">
+                ← برگشت
+            </button>
+
+            <div class="panel">
+
+                <div class="step">
+                    موسیقی انگلیسی
+                </div>
+
+                <h2>
+                    چه صدایی؟ 🎤
+                </h2>
+
+                <div class="choice-grid">
+
+                    <button class="choice-card"
+                        onclick="chooseEnglishGender('male')">
+
+                        <span class="choice-icon">
+                            🎙️
+                        </span>
+
+                        <span class="choice-title">
+                            خواننده مرد
+                        </span>
+
+                        <span class="choice-description">
+                            The Weeknd
+                        </span>
+
+                    </button>
+
+
+                    <button class="choice-card"
+                        onclick="chooseEnglishGender('female')">
+
+                        <span class="choice-icon">
+                            🎤
+                        </span>
+
+                        <span class="choice-title">
+                            خواننده زن
+                        </span>
+
+                        <span class="choice-description">
+                            Billie Eilish
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- SCENE 7 -->
+        <!-- THE WEEKND -->
+        <!-- ========================= -->
+
+        <section class="scene" id="scene7">
+
+            <button class="back-btn" onclick="goBack()">
+                ← برگشت
+            </button>
+
+            <div class="panel">
+
+                <div class="step">
+                    English • Male
+                </div>
+
+                <h2>
+                    The Weeknd
+                </h2>
+
+                <div class="song-grid">
+
+                    <button class="song-card"
+                        onclick="openWorld('One Of The Girls','The Weeknd','weeknd')">
+
+                        <span class="song-icon">
+                            🌃
+                        </span>
+
+                        <strong>
+                            One Of The Girls
+                        </strong>
+
+                    </button>
+
+
+                    <button class="song-card"
+                        onclick="openWorld('Timeless','The Weeknd','timeless')">
+
+                        <span class="song-icon">
+                            🚘
+                        </span>
+
+                        <strong>
+                            Timeless
+                        </strong>
+
+                    </button>
+
+
+                    <button class="song-card"
+                        onclick="openWorld('Popular','The Weeknd','popular')">
+
+                        <span class="song-icon">
+                            📸
+                        </span>
+
+                        <strong>
+                            Popular
+                        </strong>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- SCENE 8 -->
+        <!-- BILLIE -->
+        <!-- ========================= -->
+
+        <section class="scene" id="scene8">
+
+            <button class="back-btn" onclick="goBack()">
+                ← برگشت
+            </button>
+
+            <div class="panel">
+
+                <div class="step">
+                    English • Female
+                </div>
+
+                <h2>
+                    Billie Eilish
+                </h2>
+
+                <div class="song-grid">
+
+                    <button class="song-card"
+                        onclick="openWorld('lovely','Billie Eilish','billie')">
+
+                        <span class="song-icon">
+                            🌙
+                        </span>
+
+                        <strong>
+                            lovely
+                        </strong>
+
+                    </button>
+
+
+                    <button class="song-card"
+                        onclick="openWorld('BIRDS OF A FEATHER','Billie Eilish','birds')">
+
+                        <span class="song-icon">
+                            🐦
+                        </span>
+
+                        <strong>
+                            BIRDS OF A FEATHER
+                        </strong>
+
+                    </button>
+
+
+                    <button class="song-card"
+                        onclick="openWorld('ocean eyes','Billie Eilish','ocean')">
+
+                        <span class="song-icon">
+                            🌊
+                        </span>
+
+                        <strong>
+                            ocean eyes
+                        </strong>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- MUSIC WORLD -->
+        <!-- ========================= -->
+
+        <section class="scene" id="worldScene">
+
+            <div class="music-world" id="musicWorld">
+
+                <button class="world-back" onclick="backToSongs()">
+                    ← آهنگ‌ها
+                </button>
+
+                <button class="secret-button"
+                    onclick="secretClick()">
+                    ✦
+                </button>
+
+                <div class="world-content">
+
+                    <div class="moon" id="moon"></div>
+
+                    <div class="artist-name" id="artistName">
+                        ---
+                    </div>
+
+                    <h2 id="songName">
+                        ---
+                    </h2>
+
+                    <p id="worldDescription">
+                        ---
+                    </p>
+
+                    <div class="visualizer" id="visualizer"></div>
+
+                    <div class="player">
+
+                        <button
+                            class="player-btn"
+                            onclick="toggleMusic()"
+                            id="playButton">
+                            ▶
+                        </button>
+
+                        <div class="player-line">
+                            <span></span>
+                        </div>
+
+                        <button
+                            class="player-btn"
+                            onclick="changeVolume()">
+                            🔊
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div id="rainLayer"></div>
+                <div id="worldParticles"></div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- CAT -->
+    <div id="cat"
+       onclick="catClicked()">
+        🐈‍⬛
+    </div>
+
+    <div id="catHint"></div>
+
+    <div id="toast"></div>
+
+    <div id="catStatus">
+        CAT GUIDE: 0 / 5
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
