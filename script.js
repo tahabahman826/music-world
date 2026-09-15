@@ -908,6 +908,8 @@ function moveCat() {
 
 function catClicked() {
 
+
+    
     state.catClicks++;
 
     if (catStatus) {
@@ -1449,18 +1451,36 @@ function createVisualBars() {
 
 function animateSafeVisualizer() {
 
-    if (!visualizer) {
-
+      if (!visualizer) {
         requestAnimationFrame(
             animateSafeVisualizer
         );
-
         return;
     }
 
-
     const bars =
         visualizer.children;
+
+    const mobile =
+        window.matchMedia(
+            "(max-width: 700px)"
+        ).matches;
+
+    const now =
+        Date.now();
+
+    // Mobile = lighter animation
+    if (
+        mobile &&
+        now - (animateSafeVisualizer.lastTime || 0) < 50
+    ) {
+        requestAnimationFrame(
+            animateSafeVisualizer
+        );
+        return;
+    }
+
+    animateSafeVisualizer.lastTime = now;
 
 
     for (
@@ -1473,7 +1493,7 @@ function animateSafeVisualizer() {
             10 +
             Math.abs(
                 Math.sin(
-                    Date.now() / 180 +
+                    now / 180 +
                     i * .55
                 )
             ) * 55;
@@ -1798,6 +1818,17 @@ function createSafeBirds(
 /* =========================================================
    WORLD EFFECTS
    ========================================================= */
+
+   /* =========================================================
+   MOBILE FX OPTIMIZATION
+   ========================================================= */
+
+const isMobileDevice =
+    window.matchMedia("(max-width: 700px)").matches;
+
+function fxAmount(desktop, mobile) {
+    return isMobileDevice ? mobile : desktop;
+}
 
 function updateWorldFX() {
 
