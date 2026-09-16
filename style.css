@@ -1,55 +1,101 @@
 /* =========================================================
-   MUSIC WORLD
-   STYLE.CSS
+   🌌 MUSIC WORLD 2.0
+   COMPLETE STYLE.CSS
+   ========================================================= */
+
+
+/* =========================================================
+   1. RESET
    ========================================================= */
 
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html,
 body {
     width: 100%;
     height: 100%;
-    margin: 0;
 }
 
 body {
     overflow: hidden;
     background: #02030a;
-    color: white;
+    color: #ffffff;
     font-family: Tahoma, Arial, sans-serif;
     direction: rtl;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+button {
+    font: inherit;
+    color: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 
 /* =========================================================
-   BACKGROUND
+   2. MAIN SPACE BACKGROUND
    ========================================================= */
 
 #space {
     position: fixed;
     inset: 0;
+    z-index: 0;
     overflow: hidden;
 
     background:
         radial-gradient(
-            circle at 50% 40%,
-            rgba(92, 64, 170, 0.20),
+            circle at 50% 42%,
+            rgba(100, 70, 200, 0.20),
             transparent 30%
         ),
         radial-gradient(
             circle at 20% 80%,
-            rgba(20, 100, 170, 0.12),
+            rgba(20, 100, 180, 0.10),
             transparent 30%
+        ),
+        radial-gradient(
+            circle at 82% 18%,
+            rgba(120, 40, 180, 0.08),
+            transparent 25%
         ),
         linear-gradient(
             135deg,
-            #01020a,
+            #01020a 0%,
             #050513 50%,
-            #010208
+            #010208 100%
         );
 }
+
+#space::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at center,
+            transparent 20%,
+            rgba(0, 0, 0, 0.10) 65%,
+            rgba(0, 0, 0, 0.35) 100%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   3. NEBULA
+   ========================================================= */
 
 #nebula {
     position: absolute;
@@ -68,8 +114,12 @@ body {
         );
 
     filter: blur(30px);
+    pointer-events: none;
 
-    animation: nebulaMove 18s ease-in-out infinite alternate;
+    animation:
+        nebulaMove 18s ease-in-out infinite alternate;
+
+    will-change: transform;
 }
 
 @keyframes nebulaMove {
@@ -79,52 +129,15 @@ body {
     }
 
     to {
-        transform: scale(1.08) translate(2%, -1%);
+        transform:
+            scale(1.08)
+            translate(2%, -1%);
     }
-
 }
 
 
 /* =========================================================
-   STARS
-   ========================================================= */
-
-.star {
-    position: absolute;
-
-    width: 2px;
-    height: 2px;
-
-    border-radius: 50%;
-
-    background: white;
-
-    opacity: 0.6;
-
-    animation:
-        twinkle var(--duration)
-        ease-in-out infinite;
-
-}
-
-@keyframes twinkle {
-
-    0%,
-    100% {
-        opacity: 0.15;
-        transform: scale(0.7);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1.8);
-    }
-
-}
-
-
-/* =========================================================
-   APP
+   4. GLOBAL APP
    ========================================================= */
 
 #app {
@@ -138,40 +151,42 @@ body {
 
 
 /* =========================================================
-   SCENES
+   5. SCENES
    ========================================================= */
 
 .scene {
     position: absolute;
-
     inset: 0;
 
     width: 100%;
     height: 100%;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
     padding: 24px;
 
     opacity: 0;
+    visibility: hidden;
 
     pointer-events: none;
 
     transform:
-        scale(0.97)
-        translateY(18px);
+        scale(0.985)
+        translateY(14px);
 
     transition:
-        opacity 0.6s ease,
-        transform 0.6s ease;
+        opacity 0.45s ease,
+        transform 0.45s ease,
+        visibility 0.45s ease;
+
+    contain: layout style paint;
 }
 
 .scene.active {
-
     opacity: 1;
+    visibility: visible;
 
     pointer-events: auto;
 
@@ -180,12 +195,14 @@ body {
 
 
 /* =========================================================
-   PANEL
+   6. GLASS PANEL
    ========================================================= */
 
 .panel {
+    position: relative;
 
-    width: min(820px, calc(100vw - 40px));
+    width:
+        min(820px, calc(100vw - 40px));
 
     max-width: 820px;
 
@@ -200,10 +217,14 @@ body {
     border-radius: 28px;
 
     background:
-        rgba(5, 6, 20, 0.68);
+        linear-gradient(
+            145deg,
+            rgba(12, 13, 30, 0.84),
+            rgba(5, 6, 20, 0.72)
+        );
 
-    backdrop-filter:
-        blur(20px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 
     box-shadow:
         0 30px 100px
@@ -212,13 +233,30 @@ body {
     overflow: hidden;
 }
 
+.panel::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(255,255,255,0.035),
+            transparent 35%,
+            transparent 70%,
+            rgba(255,255,255,0.02)
+        );
+
+    pointer-events: none;
+}
+
 
 /* =========================================================
-   TEXT
+   7. TYPOGRAPHY
    ========================================================= */
 
 .small-title {
-
     color: #8c91ad;
 
     font-size: 13px;
@@ -229,7 +267,6 @@ body {
 }
 
 .step {
-
     color: #777d9c;
 
     font-size: 13px;
@@ -238,78 +275,70 @@ body {
 }
 
 h1 {
-
-    margin: 0 0 15px;
+    margin-bottom: 15px;
 
     font-size:
         clamp(34px, 6vw, 68px);
 
+    line-height: 1.15;
+
     text-shadow:
         0 0 30px
-        rgba(255, 255, 255, 0.20);
+        rgba(255,255,255,0.20);
 }
 
 h2 {
-
-    margin: 0 0 20px;
+    margin-bottom: 20px;
 
     font-size:
         clamp(25px, 4vw, 43px);
 
+    line-height: 1.2;
+
     text-shadow:
         0 0 20px
-        rgba(255, 255, 255, 0.10);
+        rgba(255,255,255,0.10);
 }
 
 p {
-
     color: #b8bdd2;
 
     font-size: 16px;
 
     line-height: 2;
 
-    margin: 0 auto 20px;
+    max-width: 700px;
+
+    margin:
+        0 auto 20px;
 }
 
 
 /* =========================================================
-   BUTTONS
+   8. BUTTONS
    ========================================================= */
-
-button {
-
-    font-family: inherit;
-}
 
 .main-btn,
 .normal-btn {
 
     min-width: 150px;
+    min-height: 48px;
 
-    padding: 14px 25px;
+    padding:
+        14px 25px;
 
     border-radius: 15px;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.14);
-
-    color: white;
-
-    cursor: pointer;
 
     font-size: 16px;
 
     transition:
-        transform 0.25s ease,
-        background 0.25s ease,
-        box-shadow 0.25s ease;
+        transform 0.22s ease,
+        background 0.22s ease,
+        box-shadow 0.22s ease,
+        border-color 0.22s ease;
 }
 
 .main-btn {
-
-    border: none;
 
     background:
         linear-gradient(
@@ -320,45 +349,84 @@ button {
 
     box-shadow:
         0 10px 35px
-        rgba(99, 70, 220, 0.25);
+        rgba(99,70,220,0.25);
 }
 
 .normal-btn {
 
+    border:
+        1px solid
+        rgba(255,255,255,0.14);
+
     background:
-        rgba(255, 255, 255, 0.07);
+        rgba(255,255,255,0.07);
 }
 
 .main-btn:hover,
 .normal-btn:hover {
 
     transform:
-        translateY(-4px);
+        translateY(-3px);
 
     box-shadow:
-        0 12px 35px
-        rgba(0, 0, 0, 0.35);
+        0 14px 36px
+        rgba(0,0,0,0.32);
+}
+
+.main-btn:active,
+.normal-btn:active {
+
+    transform:
+        scale(0.98);
 }
 
 .buttons {
 
     display: flex;
 
+    align-items: center;
     justify-content: center;
 
-    align-items: center;
+    flex-wrap: wrap;
 
     gap: 15px;
-
-    flex-wrap: wrap;
 
     margin-top: 25px;
 }
 
 
 /* =========================================================
-   BACK BUTTON
+   9. BACK BUTTON
    ========================================================= */
+
+.back-btn,
+.world-back {
+
+    border:
+        1px solid
+        rgba(255,255,255,0.13);
+
+    background:
+        rgba(5,6,20,0.72);
+
+    color: white;
+
+    padding:
+        11px 17px;
+
+    border-radius:
+        13px;
+
+    backdrop-filter:
+        blur(10px);
+
+    -webkit-backdrop-filter:
+        blur(10px);
+
+    transition:
+        transform 0.22s ease,
+        background 0.22s ease;
+}
 
 .back-btn {
 
@@ -368,31 +436,23 @@ button {
     right: 24px;
 
     z-index: 50;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.13);
-
-    background:
-        rgba(5, 6, 20, 0.70);
-
-    color: white;
-
-    padding: 11px 17px;
-
-    border-radius: 13px;
-
-    cursor: pointer;
-
-    backdrop-filter: blur(10px);
-
-    transition: 0.25s;
 }
 
-.back-btn:hover {
+.world-back {
+
+    position: absolute;
+
+    top: 20px;
+    right: 20px;
+
+    z-index: 20;
+}
+
+.back-btn:hover,
+.world-back:hover {
 
     background:
-        rgba(255, 255, 255, 0.12);
+        rgba(255,255,255,0.12);
 
     transform:
         translateY(-2px);
@@ -400,16 +460,16 @@ button {
 
 
 /* =========================================================
-   CHOICE GRID
+   10. CHOICE GRID
    ========================================================= */
 
 .choice-grid {
 
     width: 100%;
-
     max-width: 650px;
 
-    margin: 30px auto 0;
+    margin:
+        30px auto 0;
 
     display: grid;
 
@@ -421,7 +481,7 @@ button {
 
 
 /* =========================================================
-   CHOICE CARD
+   11. CHOICE CARD
    ========================================================= */
 
 .choice-card {
@@ -431,49 +491,55 @@ button {
 
     min-height: 190px;
 
-    padding: 28px 18px;
+    padding:
+        28px 18px;
 
     display: flex;
 
     flex-direction: column;
 
     align-items: center;
-
     justify-content: center;
 
     text-align: center;
 
     border:
         1px solid
-        rgba(255, 255, 255, 0.11);
+        rgba(255,255,255,0.11);
 
-    border-radius: 22px;
+    border-radius:
+        22px;
 
     background:
-        rgba(255, 255, 255, 0.045);
-
-    color: white;
-
-    cursor: pointer;
+        rgba(255,255,255,0.045);
 
     transition:
-        transform 0.3s ease,
-        background 0.3s ease,
-        border-color 0.3s ease;
-
-    overflow: hidden;
+        transform 0.25s ease,
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
 }
 
 .choice-card:hover {
 
     transform:
-        translateY(-8px);
+        translateY(-7px);
 
     background:
-        rgba(255, 255, 255, 0.085);
+        rgba(255,255,255,0.08);
 
     border-color:
-        rgba(255, 255, 255, 0.22);
+        rgba(255,255,255,0.22);
+
+    box-shadow:
+        0 18px 40px
+        rgba(0,0,0,0.20);
+}
+
+.choice-card:active {
+
+    transform:
+        scale(0.985);
 }
 
 .choice-icon {
@@ -482,7 +548,10 @@ button {
 
     font-size: 52px;
 
-    margin-bottom: 15px;
+    line-height: 1;
+
+    margin-bottom:
+        15px;
 }
 
 .choice-title {
@@ -493,9 +562,8 @@ button {
 
     font-weight: bold;
 
-    white-space: normal;
-
-    overflow-wrap: anywhere;
+    overflow-wrap:
+        anywhere;
 }
 
 .choice-description {
@@ -508,23 +576,24 @@ button {
 
     font-size: 13px;
 
-    white-space: normal;
+    line-height: 1.6;
 
-    overflow-wrap: anywhere;
+    overflow-wrap:
+        anywhere;
 }
 
 
 /* =========================================================
-   SONG GRID
+   12. SONG GRID
    ========================================================= */
 
 .song-grid {
 
     width: 100%;
+    max-width: 780px;
 
-    max-width: 700px;
-
-    margin: 25px auto 0;
+    margin:
+        25px auto 0;
 
     display: grid;
 
@@ -541,32 +610,33 @@ button {
 
     min-height: 170px;
 
-    padding: 22px 15px;
+    padding:
+        22px 15px;
 
     display: flex;
 
     flex-direction: column;
 
-    justify-content: center;
-
     align-items: center;
+    justify-content: center;
 
     text-align: center;
 
-    color: white;
-
-    background:
-        rgba(255, 255, 255, 0.045);
-
     border:
         1px solid
-        rgba(255, 255, 255, 0.10);
+        rgba(255,255,255,0.10);
 
-    border-radius: 20px;
+    border-radius:
+        20px;
 
-    cursor: pointer;
+    background:
+        rgba(255,255,255,0.045);
 
-    transition: 0.3s;
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
 }
 
 .song-card:hover {
@@ -575,194 +645,57 @@ button {
         translateY(-7px);
 
     background:
-        rgba(255, 255, 255, 0.09);
+        rgba(255,255,255,0.09);
 
     border-color:
-        rgba(255, 255, 255, 0.20);
+        rgba(255,255,255,0.20);
+
+    box-shadow:
+        0 18px 40px
+        rgba(0,0,0,0.18);
+}
+
+.song-card:active {
+
+    transform:
+        scale(0.985);
 }
 
 .song-icon {
 
     font-size: 38px;
 
-    margin-bottom: 15px;
+    line-height: 1;
+
+    margin-bottom:
+        15px;
 }
 
 .song-card strong {
 
     font-size: 17px;
 
-    overflow-wrap: anywhere;
+    line-height: 1.5;
+
+    overflow-wrap:
+        anywhere;
 }
 
 .song-card small {
 
-    color: #8b91a9;
-
     margin-top: 9px;
+
+    color: #8b91a9;
 
     line-height: 1.6;
 
-    overflow-wrap: anywhere;
+    overflow-wrap:
+        anywhere;
 }
 
 
 /* =========================================================
-   CAT
-   ========================================================= */
-
-#cat {
-
-    position: fixed;
-
-    z-index: 80;
-
-    width: 75px;
-    height: 75px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    font-size: 55px;
-
-    cursor: pointer;
-
-    user-select: none;
-
-    filter:
-        drop-shadow(
-            0 0 14px
-            rgba(255, 255, 255, 0.18)
-        );
-
-    transition:
-        left 0.8s ease,
-        top 0.8s ease,
-        transform 0.3s ease;
-}
-
-#cat:hover {
-
-    transform:
-        scale(1.15)
-        rotate(-5deg);
-}
-
-#catHint {
-
-    position: fixed;
-
-    z-index: 90;
-
-    bottom: 95px;
-
-    right: 25px;
-
-    max-width: 280px;
-
-    padding: 11px 16px;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.12);
-
-    border-radius: 14px;
-
-    background:
-        rgba(5, 6, 18, 0.90);
-
-    color: #dfe3f7;
-
-    opacity: 0;
-
-    transform:
-        translateY(10px);
-
-    pointer-events: none;
-
-    transition: 0.35s;
-}
-
-#catHint.show {
-
-    opacity: 1;
-
-    transform: none;
-}
-
-
-/* =========================================================
-   TOAST
-   ========================================================= */
-
-#toast {
-
-    position: fixed;
-
-    z-index: 100;
-
-    top: 25px;
-
-    left: 50%;
-
-    transform:
-        translate(-50%, -20px);
-
-    opacity: 0;
-
-    padding: 11px 17px;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.12);
-
-    border-radius: 13px;
-
-    background:
-        rgba(5, 6, 20, 0.90);
-
-    color: white;
-
-    pointer-events: none;
-
-    transition: 0.35s;
-}
-
-#toast.show {
-
-    opacity: 1;
-
-    transform:
-        translate(-50%, 0);
-}
-
-
-/* =========================================================
-   CAT STATUS
-   ========================================================= */
-
-#catStatus {
-
-    position: fixed;
-
-    z-index: 60;
-
-    left: 20px;
-
-    bottom: 18px;
-
-    color: #666d88;
-
-    font-size: 11px;
-
-    letter-spacing: 1px;
-}
-
-
-/* =========================================================
-   MUSIC WORLD
+   13. MUSIC WORLD
    ========================================================= */
 
 #worldScene {
@@ -775,97 +708,39 @@ button {
     position: relative;
 
     width:
-        min(1100px, calc(100vw - 30px));
+        min(1120px, calc(100vw - 30px));
 
     height:
         min(720px, calc(100vh - 30px));
 
-    max-width: 1100px;
+    max-width: 1120px;
 
     overflow: hidden;
 
-    border-radius: 30px;
-
     border:
         1px solid
-        rgba(255, 255, 255, 0.11);
+        rgba(255,255,255,0.11);
+
+    border-radius:
+        30px;
 
     background:
-        rgba(4, 5, 15, 0.75);
+        rgba(4,5,15,0.78);
 
     box-shadow:
         0 30px 100px
-        rgba(0, 0, 0, 0.60);
+        rgba(0,0,0,0.60);
+
+    isolation: isolate;
 
     transition:
-        background 0.8s ease;
-}
-
-.world-back {
-
-    position: absolute;
-
-    top: 20px;
-    right: 20px;
-
-    z-index: 20;
-
-    padding: 11px 17px;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.13);
-
-    border-radius: 13px;
-
-    color: white;
-
-    background:
-        rgba(0, 0, 0, 0.25);
-
-    cursor: pointer;
-}
-
-.secret-button {
-
-    position: absolute;
-
-    top: 22px;
-    left: 25px;
-
-    z-index: 30;
-
-    width: 35px;
-    height: 35px;
-
-    border: none;
-
-    border-radius: 50%;
-
-    background:
-        rgba(255, 255, 255, 0.04);
-
-    color: white;
-
-    cursor: pointer;
-
-    opacity: 0.35;
-
-    transition: 0.3s;
-}
-
-.secret-button:hover {
-
-    opacity: 1;
-
-    transform:
-        rotate(90deg)
-        scale(1.15);
+        background 0.8s ease,
+        box-shadow 0.8s ease;
 }
 
 
 /* =========================================================
-   WORLD CONTENT
+   14. WORLD CONTENT
    ========================================================= */
 
 .world-content {
@@ -881,35 +756,12 @@ button {
     flex-direction: column;
 
     align-items: center;
-
     justify-content: center;
 
     text-align: center;
 
-    padding: 35px;
-}
-
-.moon {
-
-    width: 155px;
-    height: 155px;
-
-    margin-bottom: 25px;
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle at 35% 30%,
-            #ffffff,
-            #d5d9e4 40%,
-            #697083 72%,
-            #202533
-        );
-
-    box-shadow:
-        0 0 60px
-        rgba(210, 220, 255, 0.25);
+    padding:
+        35px;
 }
 
 .artist-name {
@@ -926,26 +778,79 @@ button {
     margin-bottom: 10px;
 }
 
+#worldDescription {
+
+    max-width:
+        620px;
+}
+
 
 /* =========================================================
-   VISUALIZER
+   15. MOON / HERO
+   ========================================================= */
+
+.moon {
+
+    width: 155px;
+    height: 155px;
+
+    margin-bottom:
+        25px;
+
+    border-radius:
+        50%;
+
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            #ffffff,
+            #d5d9e4 40%,
+            #697083 72%,
+            #202533
+        );
+
+    box-shadow:
+        0 0 60px
+        rgba(210,220,255,0.25);
+
+    transition:
+        transform 0.6s ease,
+        box-shadow 0.6s ease;
+}
+
+
+/* =========================================================
+   16. VISUALIZER
    ========================================================= */
 
 .visualizer {
 
-    width: min(500px, 85vw);
+    position: relative;
 
-    height: 75px;
+    width:
+        min(500px, 85vw);
+
+    height:
+        75px;
 
     display: flex;
 
-    align-items: flex-end;
+    align-items:
+        flex-end;
 
-    justify-content: center;
+    justify-content:
+        center;
 
     gap: 5px;
 
-    margin: 25px 0;
+    margin:
+        25px 0;
+
+    pointer-events:
+        none;
+
+    z-index:
+        12;
 }
 
 .bar {
@@ -954,53 +859,52 @@ button {
 
     height: 12px;
 
-    border-radius: 10px;
+    flex: 0 0 auto;
+
+    border-radius:
+        10px;
 
     background:
-        #aaa2ff;
+        linear-gradient(
+            to top,
+            #713cff,
+            #e0caff
+        );
 
-    animation:
-        equalizer 0.65s
-        ease-in-out infinite alternate;
-}
+    box-shadow:
+        0 0 12px
+        rgba(130,80,255,0.7);
 
-.bar:nth-child(2n) {
+    will-change:
+        height;
 
-    animation-duration: 0.45s;
-}
-
-.bar:nth-child(3n) {
-
-    animation-duration: 0.9s;
-}
-
-@keyframes equalizer {
-
-    from {
-        height: 10px;
-    }
-
-    to {
-        height: 65px;
-    }
+    transform:
+        translateZ(0);
 }
 
 
 /* =========================================================
-   PLAYER
+   17. PLAYER
    ========================================================= */
 
 .player {
 
+    position: relative;
+
+    z-index: 13;
+
+    width:
+        min(500px, 90vw);
+
     display: flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    justify-content: center;
+    justify-content:
+        center;
 
     gap: 15px;
-
-    width: min(500px, 90vw);
 }
 
 .player-btn {
@@ -1008,20 +912,28 @@ button {
     width: 48px;
     height: 48px;
 
-    border-radius: 50%;
+    flex: 0 0 auto;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
 
     border:
         1px solid
-        rgba(255, 255, 255, 0.15);
+        rgba(255,255,255,0.15);
+
+    border-radius:
+        50%;
 
     background:
-        rgba(255, 255, 255, 0.08);
+        rgba(255,255,255,0.08);
 
     color: white;
 
-    cursor: pointer;
-
-    transition: 0.25s;
+    transition:
+        transform 0.22s ease,
+        background 0.22s ease;
 }
 
 .player-btn:hover {
@@ -1030,32 +942,44 @@ button {
         scale(1.08);
 
     background:
-        rgba(255, 255, 255, 0.14);
+        rgba(255,255,255,0.14);
+}
+
+.player-btn:active {
+
+    transform:
+        scale(0.96);
 }
 
 .player-line {
 
+    position: relative;
+
     flex: 1;
 
-    height: 4px;
+    min-width: 0;
 
-    border-radius: 10px;
-
-    background:
-        rgba(255, 255, 255, 0.10);
+    height: 5px;
 
     overflow: hidden;
+
+    border-radius:
+        10px;
+
+    background:
+        rgba(255,255,255,0.10);
 }
 
 .player-line span {
 
     display: block;
 
-   width: 0%;
+    width: 0%;
 
     height: 100%;
 
-    border-radius: inherit;
+    border-radius:
+        inherit;
 
     background:
         linear-gradient(
@@ -1065,12 +989,12 @@ button {
         );
 
     transition:
-        width 0.3s ease;
+        width 0.15s linear;
 }
 
 
 /* =========================================================
-   RAIN
+   18. WORLD FX LAYERS
    ========================================================= */
 
 #rainLayer {
@@ -1081,43 +1005,12 @@ button {
 
     z-index: 5;
 
+    overflow: hidden;
+
     pointer-events: none;
 
     opacity: 0;
 }
-
-.rain-drop {
-
-    position: absolute;
-
-    top: -20px;
-
-    width: 1px;
-
-    height: 45px;
-
-    background:
-        rgba(170, 210, 255, 0.40);
-
-    animation:
-        rainFall linear infinite;
-}
-
-@keyframes rainFall {
-
-    to {
-
-        transform:
-            translateY(800px);
-
-        opacity: 0;
-    }
-}
-
-
-/* =========================================================
-   WORLD PARTICLES
-   ========================================================= */
 
 #worldParticles {
 
@@ -1127,8 +1020,15 @@ button {
 
     z-index: 3;
 
+    overflow: hidden;
+
     pointer-events: none;
 }
+
+
+/* =========================================================
+   19. PARTICLES
+   ========================================================= */
 
 .world-particle {
 
@@ -1137,22 +1037,28 @@ button {
     width: 4px;
     height: 4px;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
-    background: white;
+    background:
+        white;
 
     opacity: 0.5;
 
     animation:
         floatParticle
         var(--time)
-        ease-in-out infinite alternate;
+        ease-in-out
+        infinite alternate;
+
+    will-change:
+        transform,
+        opacity;
 }
 
 @keyframes floatParticle {
 
     from {
-
         transform:
             translateY(0)
             scale(0.7);
@@ -1161,7 +1067,6 @@ button {
     }
 
     to {
-
         transform:
             translateY(-50px)
             scale(1.4);
@@ -1172,102 +1077,1033 @@ button {
 
 
 /* =========================================================
-   MOBILE
+   20. RAIN
+   ========================================================= */
+
+.rain-drop {
+
+    position: absolute;
+
+    top: -30px;
+
+    width: 1px;
+
+    height: 45px;
+
+    background:
+        rgba(170,210,255,0.40);
+
+    animation:
+        rainFall
+        linear
+        infinite;
+
+    will-change:
+        transform,
+        opacity;
+}
+
+@keyframes rainFall {
+
+    to {
+        transform:
+            translateY(110vh)
+            rotate(12deg);
+
+        opacity: 0;
+    }
+}
+
+
+/* =========================================================
+   21. STARBOY WORLD
+   ========================================================= */
+
+.music-world[data-world="starboy"] {
+
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            rgba(255,0,70,0.18),
+            transparent 27%
+        ),
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(60,40,255,0.10),
+            transparent 22%
+        ),
+        linear-gradient(
+            135deg,
+            #040008,
+            #17000e 50%,
+            #02030a
+        );
+
+    box-shadow:
+        0 30px 100px
+        rgba(0,0,0,0.70),
+        0 0 80px
+        rgba(255,0,90,0.06);
+}
+
+.music-world[data-world="starboy"]::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -20%;
+
+    z-index: 1;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            115deg,
+            transparent 30%,
+            rgba(255,0,90,0.08),
+            transparent 70%
+        );
+
+    animation:
+        starboySweep
+        6s ease-in-out
+        infinite alternate;
+
+    will-change:
+        transform;
+}
+
+.music-world[data-world="starboy"]::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 2;
+
+    pointer-events: none;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0,
+            transparent 50px,
+            rgba(255,255,255,0.025) 51px,
+            transparent 52px
+        );
+
+    animation:
+        starboyGrid
+        9s linear
+        infinite;
+
+    will-change:
+        transform;
+}
+
+@keyframes starboySweep {
+
+    from {
+        transform:
+            translateX(-5%)
+            rotate(-1deg);
+    }
+
+    to {
+        transform:
+            translateX(5%)
+            rotate(1deg);
+    }
+}
+
+@keyframes starboyGrid {
+
+    from {
+        transform:
+            translateX(0);
+    }
+
+    to {
+        transform:
+            translateX(50px);
+    }
+}
+
+
+/* =========================================================
+   22. CALL OUT MY NAME WORLD
+   ========================================================= */
+
+.music-world[data-world="callout"] {
+
+    background:
+        radial-gradient(
+            circle at 50% 42%,
+            rgba(180,0,40,0.20),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 25% 70%,
+            rgba(100,0,30,0.12),
+            transparent 25%
+        ),
+        linear-gradient(
+            145deg,
+            #020207,
+            #170308 55%,
+            #020207
+        );
+
+    box-shadow:
+        0 30px 100px
+        rgba(0,0,0,0.70),
+        0 0 80px
+        rgba(200,0,50,0.05);
+}
+
+.music-world[data-world="callout"]::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -10%;
+
+    z-index: 1;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(255,30,70,0.08),
+            transparent 20%
+        );
+
+    animation:
+        calloutPulse
+        4s ease-in-out
+        infinite;
+
+    will-change:
+        transform,
+        opacity;
+}
+
+.music-world[data-world="callout"]::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 2;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent,
+            rgba(255,0,40,0.04),
+            transparent
+        );
+
+    animation:
+        calloutBreath
+        5s ease-in-out
+        infinite;
+
+    will-change:
+        opacity;
+}
+
+@keyframes calloutPulse {
+
+    0%,
+    100% {
+        transform:
+            scale(0.93);
+
+        opacity: 0.35;
+    }
+
+    50% {
+        transform:
+            scale(1.12);
+
+        opacity: 0.85;
+    }
+}
+
+@keyframes calloutBreath {
+
+    0%,
+    100% {
+        opacity: 0.18;
+    }
+
+    50% {
+        opacity: 0.75;
+    }
+}
+
+
+/* =========================================================
+   23. SECRET WORLD
+   ========================================================= */
+
+#secretWorld {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        20px;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(100,70,180,0.12),
+            transparent 35%
+        ),
+        #020207;
+
+    color: white;
+}
+
+.secret-content {
+
+    width:
+        min(560px, calc(100vw - 30px));
+
+    padding:
+        40px 25px;
+
+    text-align:
+        center;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.10);
+
+    border-radius:
+        26px;
+
+    background:
+        rgba(5,6,20,0.80);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    box-shadow:
+        0 30px 100px
+        rgba(0,0,0,0.65);
+}
+
+.secret-cat {
+
+    font-size:
+        70px;
+
+    margin-bottom:
+        15px;
+}
+
+.secret-content h1 {
+
+    margin-bottom:
+        15px;
+}
+
+.secret-content p {
+
+    margin-bottom:
+        25px;
+}
+
+
+/* =========================================================
+   24. CAT
+   ========================================================= */
+
+#cat {
+
+    position: fixed;
+
+    z-index: 80;
+
+    width: 75px;
+    height: 75px;
+
+    display: flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    font-size: 55px;
+
+    cursor: pointer;
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    filter:
+        drop-shadow(
+            0 0 14px
+            rgba(255,255,255,0.18)
+        );
+
+    transform-origin:
+        center bottom;
+
+    transition:
+        left 0.8s ease,
+        top 0.8s ease,
+        transform 0.3s ease;
+}
+
+#cat:hover {
+
+    transform:
+        scale(1.15)
+        rotate(-5deg);
+}
+
+#cat.dancing {
+
+    animation:
+        catDance
+        0.5s
+        ease-in-out
+        infinite !important;
+
+    will-change:
+        transform;
+}
+
+@keyframes catDance {
+
+    0%,
+    100% {
+        transform:
+            translateY(0)
+            rotate(0deg)
+            scale(1);
+    }
+
+    25% {
+        transform:
+            translateY(-12px)
+            rotate(-8deg)
+            scale(1.08);
+    }
+
+    50% {
+        transform:
+            translateY(0)
+            rotate(8deg)
+            scale(1);
+    }
+
+    75% {
+        transform:
+            translateY(-12px)
+            rotate(-8deg)
+            scale(1.08);
+    }
+}
+
+
+/* =========================================================
+   25. CAT HINT
+   ========================================================= */
+
+#catHint {
+
+    position: fixed;
+
+    z-index: 90;
+
+    right: 25px;
+    bottom: 95px;
+
+    max-width: 280px;
+
+    padding:
+        11px 16px;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.12);
+
+    border-radius:
+        14px;
+
+    background:
+        rgba(5,6,18,0.90);
+
+    color:
+        #dfe3f7;
+
+    opacity: 0;
+
+    transform:
+        translateY(10px);
+
+    pointer-events:
+        none;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+
+    backdrop-filter:
+        blur(10px);
+
+    -webkit-backdrop-filter:
+        blur(10px);
+}
+
+#catHint.show {
+
+    opacity:
+        1;
+
+    transform:
+        none;
+}
+
+
+/* =========================================================
+   26. TOAST
+   ========================================================= */
+
+#toast {
+
+    position: fixed;
+
+    z-index: 100;
+
+    top: 25px;
+    left: 50%;
+
+    max-width:
+        calc(100vw - 30px);
+
+    padding:
+        11px 17px;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.12);
+
+    border-radius:
+        13px;
+
+    background:
+        rgba(5,6,20,0.90);
+
+    color:
+        white;
+
+    opacity:
+        0;
+
+    transform:
+        translate(-50%, -20px);
+
+    pointer-events:
+        none;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+
+    text-align:
+        center;
+
+    backdrop-filter:
+        blur(10px);
+
+    -webkit-backdrop-filter:
+        blur(10px);
+}
+
+#toast.show {
+
+    opacity:
+        1;
+
+    transform:
+        translate(-50%, 0);
+}
+
+
+/* =========================================================
+   27. CAT STATUS
+   ========================================================= */
+
+#catStatus {
+
+    position: fixed;
+
+    left: 20px;
+    bottom: 18px;
+
+    z-index: 60;
+
+    color: #666d88;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   28. MOBILE
    ========================================================= */
 
 @media (max-width: 700px) {
 
     .scene {
-
-        padding: 15px;
+        padding: 12px;
     }
 
     .panel {
 
         width:
-            calc(100vw - 30px);
+            calc(100vw - 24px);
+
+        max-height:
+            calc(100vh - 24px);
 
         padding:
-            32px 18px;
+            30px 17px;
+
+        border-radius:
+            22px;
+
+        backdrop-filter:
+            blur(14px);
+
+        -webkit-backdrop-filter:
+            blur(14px);
+    }
+
+    h1 {
+        font-size:
+            clamp(30px, 10vw, 48px);
+    }
+
+    h2 {
+        font-size:
+            clamp(22px, 8vw, 35px);
+    }
+
+    p {
+        font-size:
+            14px;
+
+        line-height:
+            1.8;
+    }
+
+    .main-btn,
+    .normal-btn {
+
+        min-width:
+            130px;
+
+        min-height:
+            46px;
+
+        padding:
+            12px 18px;
+
+        font-size:
+            15px;
+    }
+
+    .back-btn {
+
+        top:
+            10px;
+
+        right:
+            10px;
+
+        padding:
+            9px 13px;
     }
 
     .choice-grid {
 
         grid-template-columns:
             1fr;
+
+        gap:
+            12px;
+
+        margin-top:
+            20px;
+    }
+
+    .choice-card {
+
+        min-height:
+            128px;
+
+        padding:
+            18px 15px;
+
+        border-radius:
+            18px;
+    }
+
+    .choice-icon {
+
+        font-size:
+            42px;
+
+        margin-bottom:
+            10px;
+    }
+
+    .choice-title {
+
+        font-size:
+            17px;
     }
 
     .song-grid {
 
         grid-template-columns:
             1fr;
-        max-height: 55vh;
-        overflow-y: auto;
-        padding-right: 4px;
-    }
 
-    .choice-card {
+        gap:
+            10px;
 
-        min-height: 145px;
+        max-height:
+            56vh;
+
+        overflow-y:
+            auto;
+
+        padding-right:
+            3px;
+
+        scrollbar-width:
+            thin;
     }
 
     .song-card {
 
-        min-height: 125px;
+        min-height:
+            105px;
+
+        padding:
+            16px 14px;
+
+        border-radius:
+            16px;
     }
 
-    .moon {
+    .song-icon {
 
-        width: 120px;
-        height: 120px;
+        font-size:
+            31px;
+
+        margin-bottom:
+            9px;
+    }
+
+    .song-card strong {
+
+        font-size:
+            15px;
+    }
+
+    .music-world {
+
+        width:
+            calc(100vw - 14px);
+
+        height:
+            calc(100vh - 14px);
+
+        border-radius:
+            20px;
     }
 
     .world-content {
 
-        padding: 25px 15px;
+        padding:
+            18px 12px 24px;
+    }
+
+    .world-back {
+
+        top:
+            10px;
+
+        right:
+            10px;
+
+        padding:
+            9px 13px;
+
+        font-size:
+            14px;
+    }
+
+    .secret-button {
+
+        top:
+            11px;
+
+        left:
+            11px;
+
+        width:
+            32px;
+
+        height:
+            32px;
+    }
+
+    .moon {
+
+        width:
+            105px;
+
+        height:
+            105px;
+
+        margin-bottom:
+            18px;
+    }
+
+    .visualizer {
+
+        width:
+            min(340px, 78vw);
+
+        height:
+            56px;
+
+        gap:
+            4px;
+
+        margin:
+            18px 0;
+    }
+
+    .bar {
+
+        width:
+            4px;
+    }
+
+    .player {
+
+        width:
+            min(360px, 88vw);
+
+        gap:
+            9px;
+    }
+
+    .player-btn {
+
+        width:
+            43px;
+
+        height:
+            43px;
+    }
+
+    .player-line {
+
+        height:
+            4px;
     }
 
     #cat {
 
-        width: 60px;
-        height: 60px;
+        width:
+            60px;
 
-        font-size: 45px;
+        height:
+            60px;
+
+        font-size:
+            45px;
     }
 
+    #catHint {
+
+        right:
+            10px;
+
+        bottom:
+            78px;
+
+        max-width:
+            calc(100vw - 20px);
+    }
+
+    #catStatus {
+
+        left:
+            10px;
+
+        bottom:
+            10px;
+
+        font-size:
+            10px;
+    }
+
+    #toast {
+
+        top:
+            12px;
+    }
+
+    #nebula {
+
+        filter:
+            blur(18px);
+
+        animation-duration:
+            24s;
+    }
+
+    .music-world[data-world="starboy"]::before,
+    .music-world[data-world="starboy"]::after,
+    .music-world[data-world="callout"]::before,
+    .music-world[data-world="callout"]::after {
+
+        animation-duration:
+            8s;
+    }
 }
 
 
 /* =========================================================
-   VERY SMALL SCREENS
+   29. VERY SMALL MOBILE
    ========================================================= */
+
+@media (max-width: 380px) {
+
+    .panel {
+
+        padding:
+            24px 13px;
+    }
+
+    .choice-card {
+
+        min-height:
+            112px;
+    }
+
+    .song-card {
+
+        min-height:
+            96px;
+    }
+
+    .music-world {
+
+        border-radius:
+            16px;
+    }
+
+    .moon {
+
+        width:
+            90px;
+
+        height:
+            90px;
+    }
+
+    .visualizer {
+
+        width:
+            72vw;
+
+        gap:
+            3px;
+    }
+
+    .bar {
+
+        width:
+            3px;
+    }
+
+    .player {
+
+        gap:
+            6px;
+    }
+
+    .player-btn {
+
+        width:
+            39px;
+
+        height:
+            39px;
+    }
+}
+
+
 /* =========================================================
-   🐈‍⬛ CAT DANCE
+   30. REDUCED MOTION
    ========================================================= */
 
-#cat {
-    transform-origin: center bottom;
-}
+@media (prefers-reduced-motion: reduce) {
 
-#cat.dancing {
-    animation: catDance 0.5s ease-in-out infinite !important;
-}
+    *,
+    *::before,
+    *::after {
 
-@keyframes catDance {
+        animation-duration:
+            0.001ms !important;
 
-    0%, 100% {
-        transform: translateY(0) rotate(0deg) scale(1);
-    }
+        animation-iteration-count:
+            1 !important;
 
-    25% {
-        transform: translateY(-12px) rotate(-8deg) scale(1.08);
-    }
-
-    50% {
-        transform: translateY(0) rotate(8deg) scale(1);
-    }
-
-    75% {
-        transform: translateY(-12px) rotate(-8deg) scale(1.08);
+        transition-duration:
+            0.001ms !important;
     }
 }
