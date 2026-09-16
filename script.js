@@ -1,6 +1,7 @@
 /* =========================================================
    🌌 MUSIC WORLD 2.0
    COMPLETE SCRIPT
+   OFFICIAL BASE + SEPARATE REPEAT SYSTEM
    ========================================================= */
 
 
@@ -30,7 +31,20 @@ const state = {
 
 
 /* =========================================================
-   2. DOM REFERENCES
+   2. REPEAT STATE
+   ========================================================= */
+
+/*
+   0 = Repeat Off
+   1 = Repeat Current Song
+   2 = Repeat All
+*/
+
+let repeatMode = 0;
+
+
+/* =========================================================
+   3. DOM REFERENCES
    ========================================================= */
 
 const scenes =
@@ -62,7 +76,7 @@ const worldParticles =
 
 
 /* =========================================================
-   3. TOAST
+   4. TOAST
    ========================================================= */
 
 let toastTimer = null;
@@ -94,7 +108,7 @@ function showToast(message) {
 
 
 /* =========================================================
-   4. AUDIO ENGINE
+   5. AUDIO ENGINE
    ========================================================= */
 
 const audio =
@@ -108,7 +122,7 @@ audio.volume =
 
 
 /* =========================================================
-   5. AUDIO FILES
+   6. AUDIO FILES
    ========================================================= */
 
 const audioFiles = {
@@ -140,8 +154,6 @@ const audioFiles = {
     "Popular":
         "music/popular.mp3",
 
-    /* NEW */
-
     "Starboy":
         "music/starboy.mp3",
 
@@ -160,7 +172,7 @@ const audioFiles = {
 
 
 /* =========================================================
-   6. SONG DATABASE
+   7. SONG DATABASE
    ========================================================= */
 
 const songs = [
@@ -299,7 +311,7 @@ const songs = [
 
 
 /* =========================================================
-   7. SCENE NAVIGATION
+   8. SCENE NAVIGATION
    ========================================================= */
 
 function goToScene(number) {
@@ -343,7 +355,7 @@ function goToScene(number) {
 
 
 /* =========================================================
-   8. START
+   9. START
    ========================================================= */
 
 function startWorld() {
@@ -353,7 +365,7 @@ function startWorld() {
 
 
 /* =========================================================
-   9. BACK
+   10. BACK
    ========================================================= */
 
 function goBack() {
@@ -395,7 +407,7 @@ function goBack() {
 
 
 /* =========================================================
-   10. LANGUAGE
+   11. LANGUAGE
    ========================================================= */
 
 function chooseLanguage(language) {
@@ -418,7 +430,7 @@ function chooseLanguage(language) {
 
 
 /* =========================================================
-   11. PERSIAN AGE
+   12. PERSIAN AGE
    ========================================================= */
 
 function choosePersianAge(age) {
@@ -441,7 +453,7 @@ function choosePersianAge(age) {
 
 
 /* =========================================================
-   12. ENGLISH GENDER
+   13. ENGLISH GENDER
    ========================================================= */
 
 function chooseEnglishGender(gender) {
@@ -464,7 +476,7 @@ function chooseEnglishGender(gender) {
 
 
 /* =========================================================
-   13. NO BUTTON
+   14. NO BUTTON
    ========================================================= */
 
 function noAnswer() {
@@ -537,7 +549,7 @@ function noAnswer() {
 
 
 /* =========================================================
-   14. SONG SEARCH
+   15. SONG SEARCH
    ========================================================= */
 
 function findSong(title) {
@@ -550,7 +562,7 @@ function findSong(title) {
 
 
 /* =========================================================
-   15. OPEN WORLD
+   16. OPEN WORLD
    ========================================================= */
 
 function openWorld(
@@ -674,7 +686,7 @@ function openWorld(
 
 
 /* =========================================================
-   16. LOAD SONG
+   17. LOAD SONG
    ========================================================= */
 
 function loadSong(song) {
@@ -730,21 +742,23 @@ function loadSong(song) {
 
     updateCatDance();
 
-
-    showToast(
-        `🎵 ${song.title}`
-    );
+    updateRepeatButton();
 
 
     console.log(
         "🎵 Loading MP3:",
         audioURL
     );
+
+
+    showToast(
+        `🎵 ${song.title}`
+    );
 }
 
 
 /* =========================================================
-   17. CAT DANCE
+   18. CAT DANCE
    ========================================================= */
 
 function updateCatDance() {
@@ -771,7 +785,7 @@ function updateCatDance() {
 
 
 /* =========================================================
-   18. MUSIC TOGGLE
+   19. MUSIC TOGGLE
    ========================================================= */
 
 function toggleMusic() {
@@ -799,7 +813,6 @@ function toggleMusic() {
     if (audio.paused) {
 
         audio.play()
-
             .then(() => {
 
                 state.musicPlaying =
@@ -814,7 +827,6 @@ function toggleMusic() {
                 );
 
             })
-
             .catch(error => {
 
                 console.error(
@@ -842,7 +854,7 @@ function toggleMusic() {
 
 
 /* =========================================================
-   19. PLAY BUTTON
+   20. PLAY BUTTON
    ========================================================= */
 
 function updatePlayButton() {
@@ -864,7 +876,130 @@ function updatePlayButton() {
 
 
 /* =========================================================
-   20. VOLUME
+   21. REPEAT SYSTEM
+   ========================================================= */
+
+function toggleRepeat() {
+
+    repeatMode++;
+
+
+    if (
+        repeatMode > 2
+    ) {
+
+        repeatMode =
+            0;
+    }
+
+
+    updateRepeatButton();
+
+
+    if (
+        repeatMode === 0
+    ) {
+
+        showToast(
+            "🔁 Repeat Off"
+        );
+
+    } else if (
+        repeatMode === 1
+    ) {
+
+        showToast(
+            "🔂 Repeat Song"
+        );
+
+    } else {
+
+        showToast(
+            "🔁 Repeat All"
+        );
+    }
+}
+
+
+function updateRepeatButton() {
+
+    const button =
+        document.getElementById(
+            "repeatButton"
+        );
+
+
+    if (!button) return;
+
+
+    button.dataset.mode =
+        "off";
+
+
+    button.classList.remove(
+        "active"
+    );
+
+
+    button.setAttribute(
+        "aria-label",
+        "Repeat Off"
+    );
+
+
+    if (
+        repeatMode === 1
+    ) {
+
+        button.textContent =
+            "🔂";
+
+        button.dataset.mode =
+            "song";
+
+        button.classList.add(
+            "active"
+        );
+
+        button.setAttribute(
+            "aria-label",
+            "Repeat Song"
+        );
+
+        return;
+    }
+
+
+    if (
+        repeatMode === 2
+    ) {
+
+        button.textContent =
+            "🔁";
+
+        button.dataset.mode =
+            "all";
+
+        button.classList.add(
+            "active"
+        );
+
+        button.setAttribute(
+            "aria-label",
+            "Repeat All"
+        );
+
+        return;
+    }
+
+
+    button.textContent =
+        "🔁";
+}
+
+
+/* =========================================================
+   22. VOLUME
    ========================================================= */
 
 function changeVolume() {
@@ -903,7 +1038,7 @@ function changeVolume() {
 
 
 /* =========================================================
-   21. PLAYER PROGRESS
+   23. PLAYER PROGRESS
    ========================================================= */
 
 function resetPlayerProgress() {
@@ -957,7 +1092,7 @@ function updatePlayerProgress() {
 
 
 /* =========================================================
-   22. AUDIO EVENTS
+   24. AUDIO EVENTS
    ========================================================= */
 
 audio.addEventListener(
@@ -1021,6 +1156,50 @@ audio.addEventListener(
     "ended",
     () => {
 
+        /* =================================================
+           REPEAT SONG
+           ================================================= */
+
+        if (
+            repeatMode === 1
+        ) {
+
+            audio.currentTime =
+                0;
+
+
+            audio.play()
+                .catch(error => {
+
+                    console.error(
+                        "❌ REPEAT SONG ERROR:",
+                        error
+                    );
+                });
+
+
+            return;
+        }
+
+
+        /* =================================================
+           REPEAT ALL
+           ================================================= */
+
+        if (
+            repeatMode === 2
+        ) {
+
+            nextSong();
+
+            return;
+        }
+
+
+        /* =================================================
+           REPEAT OFF
+           ================================================= */
+
         state.musicPlaying =
             false;
 
@@ -1063,7 +1242,7 @@ audio.addEventListener(
 
 
 /* =========================================================
-   23. CAT POSITION
+   25. CAT POSITION
    ========================================================= */
 
 function moveCat() {
@@ -1113,7 +1292,7 @@ function moveCat() {
 
 
 /* =========================================================
-   24. CAT CLICK
+   26. CAT CLICK
    ========================================================= */
 
 function catClicked() {
@@ -1183,7 +1362,7 @@ function catClicked() {
 
 
 /* =========================================================
-   25. BACK TO SONGS
+   27. BACK TO SONGS
    ========================================================= */
 
 function backToSongs() {
@@ -1192,6 +1371,7 @@ function backToSongs() {
 
     audio.currentTime =
         0;
+
 
     state.musicPlaying =
         false;
@@ -1256,7 +1436,7 @@ function backToSongs() {
 
 
 /* =========================================================
-   26. NEXT SONG
+   28. NEXT SONG
    ========================================================= */
 
 function nextSong() {
@@ -1285,11 +1465,31 @@ function nextSong() {
     openWorld(
         songs[index].title
     );
+
+
+    /*
+       When Repeat All is active and a song
+       has finished, continue automatically.
+    */
+
+    if (
+        repeatMode === 2
+    ) {
+
+        audio.play()
+            .catch(error => {
+
+                console.error(
+                    "❌ NEXT SONG PLAY ERROR:",
+                    error
+                );
+            });
+    }
 }
 
 
 /* =========================================================
-   27. PREVIOUS SONG
+   29. PREVIOUS SONG
    ========================================================= */
 
 function previousSong() {
@@ -1319,11 +1519,26 @@ function previousSong() {
     openWorld(
         songs[index].title
     );
+
+
+    if (
+        repeatMode === 2
+    ) {
+
+        audio.play()
+            .catch(error => {
+
+                console.error(
+                    "❌ PREVIOUS SONG PLAY ERROR:",
+                    error
+                );
+            });
+    }
 }
 
 
 /* =========================================================
-   28. SECRET SYSTEM
+   30. SECRET SYSTEM
    ========================================================= */
 
 function secretClick() {
@@ -1396,7 +1611,9 @@ function secretEnding() {
             <button
                 class="main-btn"
                 id="closeSecret">
+
                 برگشت 🌌
+
             </button>
 
         </div>
@@ -1406,14 +1623,27 @@ function secretEnding() {
     Object.assign(
         secret.style,
         {
+
             position: "fixed",
+
             inset: "0",
+
             zIndex: "9999",
-            background: "#020207",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center"
+
+            background:
+                "#020207",
+
+            display:
+                "flex",
+
+            alignItems:
+                "center",
+
+            justifyContent:
+                "center",
+
+            textAlign:
+                "center"
         }
     );
 
@@ -1440,22 +1670,78 @@ function secretEnding() {
 
 
 /* =========================================================
-   29. FX STATE
+   31. FX STATE
    ========================================================= */
+
+let fxContainer = null;
 
 let visualizerBars = [];
 
 let visualizerPhases = [];
 
-let visualizerAnimationId =
-    null;
+let fxAnimationId = null;
 
-let lastVisualizerTime =
-    0;
+let lastVisualizerTime = 0;
 
 
 /* =========================================================
-   30. MOBILE
+   32. CREATE FX CONTAINER
+   ========================================================= */
+
+function createMusicFX() {
+
+    if (!worldScene) return;
+
+
+    fxContainer =
+        document.getElementById(
+            "musicFX"
+        );
+
+
+    if (!fxContainer) {
+
+        fxContainer =
+            document.createElement(
+                "div"
+            );
+
+
+        fxContainer.id =
+            "musicFX";
+
+
+        Object.assign(
+            fxContainer.style,
+            {
+
+                position:
+                    "absolute",
+
+                inset:
+                    "0",
+
+                pointerEvents:
+                    "none",
+
+                overflow:
+                    "hidden",
+
+                zIndex:
+                    "2"
+            }
+        );
+
+
+        worldScene.appendChild(
+            fxContainer
+        );
+    }
+}
+
+
+/* =========================================================
+   33. MOBILE FX
    ========================================================= */
 
 function isMobileLayout() {
@@ -1478,10 +1764,17 @@ function fxAmount(
 
 
 /* =========================================================
-   31. CLEAR FX
+   34. CLEAR FX
    ========================================================= */
 
 function clearDynamicFX() {
+
+    if (fxContainer) {
+
+        fxContainer.innerHTML =
+            "";
+    }
+
 
     if (rainLayer) {
 
@@ -1508,6 +1801,7 @@ function clearDynamicVisualizer() {
 
     stopVisualizer();
 
+
     visualizerBars = [];
 
     visualizerPhases = [];
@@ -1528,7 +1822,7 @@ function clearWorldFX() {
 
 
 /* =========================================================
-   32. VISUALIZER
+   35. VISUALIZER
    ========================================================= */
 
 function createVisualizer() {
@@ -1598,7 +1892,8 @@ function createVisualizer() {
 
         visualizerPhases.push(
             Math.random() *
-            Math.PI * 2
+            Math.PI *
+            2
         );
     }
 
@@ -1609,19 +1904,15 @@ function createVisualizer() {
 
 function startVisualizer() {
 
-    if (
-        visualizerAnimationId
-    ) {
-
+    if (fxAnimationId)
         return;
-    }
 
 
     lastVisualizerTime =
         0;
 
 
-    visualizerAnimationId =
+    fxAnimationId =
         requestAnimationFrame(
             animateVisualizer
         );
@@ -1630,36 +1921,38 @@ function startVisualizer() {
 
 function stopVisualizer() {
 
-    if (
-        !visualizerAnimationId
-    ) {
-
+    if (!fxAnimationId)
         return;
-    }
 
 
     cancelAnimationFrame(
-        visualizerAnimationId
+        fxAnimationId
     );
 
 
-    visualizerAnimationId =
+    fxAnimationId =
         null;
 }
 
 
 function animateVisualizer(timestamp) {
 
-    visualizerAnimationId =
-        requestAnimationFrame(
-            animateVisualizer
-        );
+    if (!state.inWorld) {
+
+        stopVisualizer();
+
+        return;
+    }
 
 
     if (
-        !state.inWorld ||
         visualizerBars.length === 0
     ) {
+
+        fxAnimationId =
+            requestAnimationFrame(
+                animateVisualizer
+            );
 
         return;
     }
@@ -1676,6 +1969,11 @@ function animateVisualizer(timestamp) {
         lastVisualizerTime <
         interval
     ) {
+
+        fxAnimationId =
+            requestAnimationFrame(
+                animateVisualizer
+            );
 
         return;
     }
@@ -1736,11 +2034,17 @@ function animateVisualizer(timestamp) {
             .style.height =
             `${height}px`;
     }
+
+
+    fxAnimationId =
+        requestAnimationFrame(
+            animateVisualizer
+        );
 }
 
 
 /* =========================================================
-   33. PARTICLES
+   36. PARTICLES
    ========================================================= */
 
 function createParticles(
@@ -1775,12 +2079,14 @@ function createParticles(
         particle.style.width =
             `${size}px`;
 
+
         particle.style.height =
             `${size}px`;
 
 
         particle.style.left =
             `${Math.random() * 100}%`;
+
 
         particle.style.top =
             `${Math.random() * 100}%`;
@@ -1812,7 +2118,7 @@ function createParticles(
 
 
 /* =========================================================
-   34. STARS
+   37. STARS
    ========================================================= */
 
 function createStars(
@@ -1847,6 +2153,7 @@ function createStars(
         star.style.width =
             `${size}px`;
 
+
         star.style.height =
             `${size}px`;
 
@@ -1857,6 +2164,7 @@ function createStars(
 
         star.style.left =
             `${Math.random() * 100}%`;
+
 
         star.style.top =
             `${Math.random() * 70}%`;
@@ -1889,7 +2197,7 @@ function createStars(
 
 
 /* =========================================================
-   35. RAIN
+   38. RAIN
    ========================================================= */
 
 function createRain(
@@ -1963,7 +2271,7 @@ function createRain(
 
 
 /* =========================================================
-   36. BUBBLES
+   39. BUBBLES
    ========================================================= */
 
 function createBubbles(
@@ -1997,6 +2305,7 @@ function createBubbles(
 
         bubble.style.width =
             `${size}px`;
+
 
         bubble.style.height =
             `${size}px`;
@@ -2037,7 +2346,7 @@ function createBubbles(
 
 
 /* =========================================================
-   37. BIRDS
+   40. BIRDS
    ========================================================= */
 
 function createBirds(
@@ -2103,7 +2412,7 @@ function createBirds(
 
 
 /* =========================================================
-   38. STARBOY EXTRA FX
+   41. STARBOY EXTRA FX
    ========================================================= */
 
 function createStarboyFX() {
@@ -2165,7 +2474,7 @@ function createStarboyFX() {
 
 
 /* =========================================================
-   39. CALL OUT EXTRA FX
+   42. CALL OUT EXTRA FX
    ========================================================= */
 
 function createCallOutFX() {
@@ -2227,7 +2536,7 @@ function createCallOutFX() {
 
 
 /* =========================================================
-   40. WORLD FX MANAGER
+   43. WORLD FX MANAGER
    ========================================================= */
 
 function updateWorldFX() {
@@ -2240,6 +2549,8 @@ function updateWorldFX() {
         return;
     }
 
+
+    createMusicFX();
 
     clearDynamicFX();
 
@@ -2293,6 +2604,7 @@ function updateWorldFX() {
             fxAmount(35, 18)
         );
 
+
         createParticles(
             fxAmount(25, 12)
         );
@@ -2332,6 +2644,7 @@ function updateWorldFX() {
         createRain(
             fxAmount(65, 28)
         );
+
 
         createParticles(
             fxAmount(25, 12)
@@ -2397,6 +2710,7 @@ function updateWorldFX() {
             fxAmount(90, 38)
         );
 
+
         createBirds(
             fxAmount(8, 4)
         );
@@ -2412,6 +2726,7 @@ function updateWorldFX() {
         createBubbles(
             fxAmount(40, 18)
         );
+
 
         createParticles(
             fxAmount(30, 14)
@@ -2429,9 +2744,11 @@ function updateWorldFX() {
             fxAmount(55, 24)
         );
 
+
         createStars(
             fxAmount(25, 12)
         );
+
 
         createStarboyFX();
     }
@@ -2447,9 +2764,11 @@ function updateWorldFX() {
             fxAmount(28, 12)
         );
 
+
         createStars(
             fxAmount(18, 8)
         );
+
 
         createCallOutFX();
     }
@@ -2460,7 +2779,7 @@ function updateWorldFX() {
 
 
 /* =========================================================
-   41. EFFECT STYLE INJECTION
+   44. FX STYLES
    ========================================================= */
 
 function addWorldFXStyles() {
@@ -2522,6 +2841,7 @@ function addWorldFXStyles() {
             from {
                 transform:
                     translateY(30vh);
+
                 opacity: 0;
             }
 
@@ -2532,6 +2852,7 @@ function addWorldFXStyles() {
             to {
                 transform:
                     translateY(-100vh);
+
                 opacity: 0;
             }
         }
@@ -2542,6 +2863,7 @@ function addWorldFXStyles() {
             0% {
                 transform:
                     translateX(-100px);
+
                 opacity: 0;
             }
 
@@ -2552,6 +2874,7 @@ function addWorldFXStyles() {
             100% {
                 transform:
                     translateX(110vw);
+
                 opacity: 0;
             }
         }
@@ -2606,7 +2929,7 @@ function addWorldFXStyles() {
 
 
 /* =========================================================
-   42. KEYBOARD
+   45. KEYBOARD
    ========================================================= */
 
 document.addEventListener(
@@ -2659,7 +2982,7 @@ document.addEventListener(
 
 
 /* =========================================================
-   43. WINDOW RESIZE
+   46. RESIZE
    ========================================================= */
 
 let resizeTimer =
@@ -2685,6 +3008,7 @@ window.addEventListener(
                     updateWorldFX();
                 }
 
+
                 moveCat();
 
             }, 180);
@@ -2693,7 +3017,7 @@ window.addEventListener(
 
 
 /* =========================================================
-   44. GLOBAL FUNCTIONS
+   47. GLOBAL FUNCTIONS
    ========================================================= */
 
 window.startWorld =
@@ -2726,6 +3050,9 @@ window.toggleMusic =
 window.changeVolume =
     changeVolume;
 
+window.toggleRepeat =
+    toggleRepeat;
+
 window.backToSongs =
     backToSongs;
 
@@ -2743,7 +3070,7 @@ window.secretClick =
 
 
 /* =========================================================
-   45. STARTUP
+   48. STARTUP
    ========================================================= */
 
 addWorldFXStyles();
@@ -2751,6 +3078,8 @@ addWorldFXStyles();
 moveCat();
 
 updatePlayButton();
+
+updateRepeatButton();
 
 updateCatDance();
 
@@ -2769,5 +3098,9 @@ console.log(
 );
 
 console.log(
-    "📱 Mobile optimization ready"
+    "🔁 Repeat system ready"
+);
+
+console.log(
+    "✨ World FX ready"
 );
