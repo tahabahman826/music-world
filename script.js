@@ -2,11 +2,11 @@
    🌌 MUSIC WORLD 3.0
    Stable Full Version
    - PC + Mobile
-   - Cinematic Song Cards
+   - Local MP3
+   - Ariana Grande / bye
    - Repeat
    - Mobile Performance
-   - Hologram Cat
-   - Ariana Grande
+   - Hologram Cat Guide
    ========================================================= */
 
 
@@ -248,7 +248,7 @@ const audioFiles = {
 
 
 /* =========================================================
-   7. SONGS
+   7. SONG DATABASE
    ========================================================= */
 
 const songs = [
@@ -377,7 +377,7 @@ const songs = [
 
 
 /* =========================================================
-   8. NAVIGATION
+   8. SCENE NAVIGATION
    ========================================================= */
 
 function goToScene(number) {
@@ -485,7 +485,9 @@ function goBack() {
    11. LANGUAGE
    ========================================================= */
 
-function chooseLanguage(language) {
+function chooseLanguage(
+    language
+) {
 
     state.language =
         language;
@@ -510,7 +512,9 @@ function chooseLanguage(language) {
    12. PERSIAN AGE
    ========================================================= */
 
-function choosePersianAge(age) {
+function choosePersianAge(
+    age
+) {
 
     state.persianAge =
         age;
@@ -535,7 +539,9 @@ function choosePersianAge(age) {
    13. ENGLISH PATH
    ========================================================= */
 
-function chooseEnglishGender(gender) {
+function chooseEnglishGender(
+    gender
+) {
 
     state.englishGender =
         gender;
@@ -557,7 +563,7 @@ function chooseEnglishGender(gender) {
 
 
 /* =========================================================
-   14. SONG SEARCH
+   14. FIND SONG
    ========================================================= */
 
 function findSong(title) {
@@ -751,11 +757,15 @@ function loadSong(song) {
         0;
 
 
-    audio.src =
+    const audioURL =
         new URL(
             file,
             document.baseURI
         ).href;
+
+
+    audio.src =
+        audioURL;
 
 
     audio.load();
@@ -784,6 +794,12 @@ function loadSong(song) {
         `🎵 ${song.title}`
     );
 
+
+    console.log(
+        "🎵 Loading MP3:",
+        audioURL
+    );
+
 }
 
 
@@ -800,6 +816,7 @@ function toggleMusic() {
         );
 
         return;
+
     }
 
 
@@ -810,6 +827,7 @@ function toggleMusic() {
         );
 
         return;
+
     }
 
 
@@ -857,6 +875,11 @@ function toggleMusic() {
                             "PLAY ERROR";
 
                     }
+
+
+                    showToast(
+                        "آهنگ پخش نشد ⚠️"
+                    );
 
                 }
             );
@@ -1167,8 +1190,7 @@ function seekFromPointer(
                 (
                     event.clientX -
                     rect.left
-                ) /
-                rect.width
+                ) / rect.width
             )
         );
 
@@ -1185,8 +1207,26 @@ function seekFromPointer(
    ========================================================= */
 
 audio.addEventListener(
+    "loadeddata",
+    () => {
+
+        console.log(
+            "✅ MP3 loaded successfully:",
+            audio.src
+        );
+
+    }
+);
+
+
+audio.addEventListener(
     "canplay",
     () => {
+
+        console.log(
+            "🎧 MP3 ready to play"
+        );
+
 
         if (playerStatus) {
 
@@ -1203,7 +1243,11 @@ audio.addEventListener(
 
 audio.addEventListener(
     "timeupdate",
-    updatePlayerProgress
+    () => {
+
+        updatePlayerProgress();
+
+    }
 );
 
 
@@ -1214,8 +1258,18 @@ audio.addEventListener(
         state.musicPlaying =
             true;
 
+
         updatePlayButton();
+
         updateCatDance();
+
+
+        if (playerStatus) {
+
+            playerStatus.textContent =
+                "PLAYING";
+
+        }
 
     }
 );
@@ -1228,8 +1282,11 @@ audio.addEventListener(
         state.musicPlaying =
             false;
 
+
         updatePlayButton();
+
         updateCatDance();
+
 
         if (
             state.inWorld &&
@@ -1245,6 +1302,10 @@ audio.addEventListener(
 );
 
 
+/* =========================================================
+   24. SONG ENDED
+   ========================================================= */
+
 audio.addEventListener(
     "ended",
     () => {
@@ -1257,6 +1318,8 @@ audio.addEventListener(
 
         updateCatDance();
 
+        updatePlayerProgress();
+
 
         if (
             repeatMode === 1
@@ -1268,10 +1331,31 @@ audio.addEventListener(
 
             audio.play()
 
+                .then(() => {
+
+                    state.musicPlaying =
+                        true;
+
+
+                    updatePlayButton();
+
+                    updateCatDance();
+
+
+                    if (playerStatus) {
+
+                        playerStatus.textContent =
+                            "PLAYING";
+
+                    }
+
+                })
+
                 .catch(
                     error => {
 
                         console.error(
+                            "❌ REPEAT ERROR:",
                             error
                         );
 
@@ -1295,9 +1379,6 @@ audio.addEventListener(
         }
 
 
-        updatePlayerProgress();
-
-
         if (playerStatus) {
 
             playerStatus.textContent =
@@ -1314,13 +1395,28 @@ audio.addEventListener(
 );
 
 
+/* =========================================================
+   25. AUDIO ERROR
+   ========================================================= */
+
 audio.addEventListener(
     "error",
     () => {
 
         console.error(
-            "❌ AUDIO ERROR:",
+            "❌ AUDIO ERROR"
+        );
+
+
+        console.error(
+            "File:",
             audio.src
+        );
+
+
+        console.error(
+            "Error:",
+            audio.error
         );
 
 
@@ -1333,7 +1429,7 @@ audio.addEventListener(
 
 
         showToast(
-            "فایل MP3 پیدا نشد ⚠️"
+            "فایل MP3 پیدا نشد یا قابل پخش نیست ⚠️"
         );
 
     }
@@ -1341,7 +1437,7 @@ audio.addEventListener(
 
 
 /* =========================================================
-   24. CAT DANCE
+   26. CAT DANCE
    ========================================================= */
 
 function updateCatDance() {
@@ -1372,7 +1468,7 @@ function updateCatDance() {
 
 
 /* =========================================================
-   25. CAT POSITION
+   27. CAT POSITION
    ========================================================= */
 
 function moveCat() {
@@ -1443,7 +1539,7 @@ function moveCat() {
 
 
 /* =========================================================
-   26. CAT PROGRESS
+   28. CAT PROGRESS
    ========================================================= */
 
 function updateCatProgress() {
@@ -1474,7 +1570,7 @@ function updateCatProgress() {
 
 
 /* =========================================================
-   27. CAT CLICK
+   29. CAT CLICK
    ========================================================= */
 
 function catClicked() {
@@ -1542,7 +1638,7 @@ function catClicked() {
 
 
 /* =========================================================
-   28. BACK TO SONGS
+   30. BACK TO SONGS
    ========================================================= */
 
 function backToSongs() {
@@ -1575,12 +1671,18 @@ function backToSongs() {
         "persian"
     ) {
 
-        goToScene(
+        if (
             state.persianAge ===
-                "old"
-                ? 4
-                : 5
-        );
+            "old"
+        ) {
+
+            goToScene(4);
+
+        } else {
+
+            goToScene(5);
+
+        }
 
 
         return;
@@ -1593,12 +1695,18 @@ function backToSongs() {
         "english"
     ) {
 
-        goToScene(
+        if (
             state.englishGender ===
-                "male"
-                ? 7
-                : 8
-        );
+            "male"
+        ) {
+
+            goToScene(7);
+
+        } else {
+
+            goToScene(8);
+
+        }
 
 
         return;
@@ -1612,7 +1720,7 @@ function backToSongs() {
 
 
 /* =========================================================
-   29. NEXT SONG
+   31. NEXT SONG
    ========================================================= */
 
 function nextSong(
@@ -1656,10 +1764,32 @@ function nextSong(
         () => {
 
             audio.play()
+
+                .then(() => {
+
+                    state.musicPlaying =
+                        true;
+
+
+                    updatePlayButton();
+
+                    updateCatDance();
+
+
+                    if (playerStatus) {
+
+                        playerStatus.textContent =
+                            "PLAYING";
+
+                    }
+
+                })
+
                 .catch(
                     error => {
 
                         console.error(
+                            "❌ AUTO PLAY ERROR:",
                             error
                         );
 
@@ -1691,7 +1821,7 @@ function nextSong(
 
 
 /* =========================================================
-   30. PREVIOUS SONG
+   32. PREVIOUS SONG
    ========================================================= */
 
 function previousSong() {
@@ -1728,8 +1858,27 @@ function previousSong() {
 
 
 /* =========================================================
-   31. SECRET
+   33. SECRET
    ========================================================= */
+
+function secretClick() {
+
+    state.catClicks++;
+
+
+    updateCatProgress();
+
+
+    if (
+        state.catClicks >= 5
+    ) {
+
+        secretEnding();
+
+    }
+
+}
+
 
 function secretEnding() {
 
@@ -1768,7 +1917,13 @@ function secretEnding() {
             justify-content:center;
             text-align:center;
             padding:24px;
-            background:#020207;
+            background:
+                radial-gradient(
+                    circle at 50% 35%,
+                    rgba(145,90,255,.2),
+                    transparent 28%
+                ),
+                #020207;
         ">
 
             <div style="
@@ -1776,8 +1931,12 @@ function secretEnding() {
                 padding:36px 24px;
                 border:1px solid rgba(255,255,255,.08);
                 border-radius:28px;
-                background:rgba(10,10,18,.82);
-                box-shadow:0 30px 90px rgba(0,0,0,.5);
+                background:rgba(10,10,18,.72);
+                backdrop-filter:blur(18px);
+                -webkit-backdrop-filter:blur(18px);
+                box-shadow:
+                    0 30px 90px
+                    rgba(0,0,0,.5);
             ">
 
                 <div style="
@@ -1799,7 +1958,9 @@ function secretEnding() {
                 </div>
 
 
-                <h2>
+                <h2 style="
+                    margin:0 0 12px;
+                ">
                     پس بالاخره پیدام کردی... 👀
                 </h2>
 
@@ -1853,7 +2014,7 @@ function secretEnding() {
 
 
 /* =========================================================
-   32. FX STATE
+   34. FX STATE
    ========================================================= */
 
 let fxAnimationId =
@@ -1873,7 +2034,7 @@ let lastVisualizerTime =
 
 
 /* =========================================================
-   33. HELPERS
+   35. MOBILE HELPERS
    ========================================================= */
 
 function isMobileLayout() {
@@ -1898,18 +2059,24 @@ function fxAmount(
 
 
 /* =========================================================
-   34. CLEAR FX
+   36. CLEAR FX
    ========================================================= */
 
 function clearDynamicFX() {
 
     if (rainLayer) {
-        rainLayer.innerHTML = "";
+
+        rainLayer.innerHTML =
+            "";
+
     }
 
 
     if (worldParticles) {
-        worldParticles.innerHTML = "";
+
+        worldParticles.innerHTML =
+            "";
+
     }
 
 
@@ -1932,7 +2099,10 @@ function clearDynamicVisualizer() {
 
 
     if (visualizer) {
-        visualizer.innerHTML = "";
+
+        visualizer.innerHTML =
+            "";
+
     }
 
 }
@@ -1946,7 +2116,7 @@ function clearWorldFX() {
 
 
 /* =========================================================
-   35. VISUALIZER
+   37. VISUALIZER
    ========================================================= */
 
 function createVisualizer() {
@@ -2012,6 +2182,10 @@ function createVisualizer() {
 }
 
 
+/* =========================================================
+   38. START VISUALIZER
+   ========================================================= */
+
 function startVisualizer() {
 
     if (fxAnimationId) {
@@ -2031,6 +2205,10 @@ function startVisualizer() {
 }
 
 
+/* =========================================================
+   39. STOP VISUALIZER
+   ========================================================= */
+
 function stopVisualizer() {
 
     if (!fxAnimationId) {
@@ -2048,6 +2226,10 @@ function stopVisualizer() {
 
 }
 
+
+/* =========================================================
+   40. VISUALIZER ANIMATION
+   ========================================================= */
 
 function animateVisualizer(
     timestamp
@@ -2122,8 +2304,7 @@ function animateVisualizer(
                 Math.sin(
                     timestamp /
                     410 +
-                    phase *
-                    1.7
+                    phase * 1.7
                 )
             );
 
@@ -2159,7 +2340,7 @@ function animateVisualizer(
 
 
 /* =========================================================
-   36. PARTICLES
+   41. PARTICLES
    ========================================================= */
 
 function createParticles(
@@ -2233,7 +2414,7 @@ function createParticles(
 
 
 /* =========================================================
-   37. STARS
+   42. STARS
    ========================================================= */
 
 function createStars(
@@ -2307,7 +2488,7 @@ function createStars(
 
 
 /* =========================================================
-   38. RAIN
+   43. RAIN
    ========================================================= */
 
 function createRain(
@@ -2382,7 +2563,7 @@ function createRain(
 
 
 /* =========================================================
-   39. BUBBLES
+   44. BUBBLES
    ========================================================= */
 
 function createBubbles(
@@ -2459,7 +2640,7 @@ function createBubbles(
 
 
 /* =========================================================
-   40. BIRDS
+   45. BIRDS
    ========================================================= */
 
 function createBirds(
@@ -2534,7 +2715,7 @@ function createBirds(
 
 
 /* =========================================================
-   41. WORLD FX
+   46. WORLD FX
    ========================================================= */
 
 function updateWorldFX() {
@@ -2560,10 +2741,14 @@ function updateWorldFX() {
         world;
 
 
+    /* DEFAULT */
+
     createParticles(
         fxAmount(35,8)
     );
 
+
+    /* SWAMP */
 
     if (
         world === "swamp"
@@ -2576,6 +2761,8 @@ function updateWorldFX() {
     }
 
 
+    /* RAIN */
+
     if (
         world === "rain"
     ) {
@@ -2586,6 +2773,8 @@ function updateWorldFX() {
 
     }
 
+
+    /* ROAD */
 
     if (
         world === "road"
@@ -2603,6 +2792,8 @@ function updateWorldFX() {
     }
 
 
+    /* NEON */
+
     if (
         world === "neon"
     ) {
@@ -2614,6 +2805,8 @@ function updateWorldFX() {
     }
 
 
+    /* DARK */
+
     if (
         world === "dark"
     ) {
@@ -2624,6 +2817,8 @@ function updateWorldFX() {
 
     }
 
+
+    /* ROOM */
 
     if (
         world === "room"
@@ -2641,6 +2836,8 @@ function updateWorldFX() {
     }
 
 
+    /* RED */
+
     if (
         world === "red"
     ) {
@@ -2651,6 +2848,8 @@ function updateWorldFX() {
 
     }
 
+
+    /* VHS */
 
     if (
         world === "vhs"
@@ -2663,6 +2862,8 @@ function updateWorldFX() {
     }
 
 
+    /* LUXURY */
+
     if (
         world === "luxury"
     ) {
@@ -2674,6 +2875,8 @@ function updateWorldFX() {
     }
 
 
+    /* LOVELY */
+
     if (
         world === "lovely"
     ) {
@@ -2684,6 +2887,8 @@ function updateWorldFX() {
 
     }
 
+
+    /* BIRDS */
 
     if (
         world === "birds"
@@ -2701,6 +2906,8 @@ function updateWorldFX() {
     }
 
 
+    /* OCEAN */
+
     if (
         world === "ocean"
     ) {
@@ -2716,6 +2923,8 @@ function updateWorldFX() {
 
     }
 
+
+    /* STARBOY */
 
     if (
         world === "starboy"
@@ -2733,6 +2942,8 @@ function updateWorldFX() {
     }
 
 
+    /* CALL OUT */
+
     if (
         world === "callout"
     ) {
@@ -2748,6 +2959,8 @@ function updateWorldFX() {
 
     }
 
+
+    /* ARIANA */
 
     if (
         world === "ariana"
@@ -2771,7 +2984,7 @@ function updateWorldFX() {
 
 
 /* =========================================================
-   42. KEYBOARD
+   47. KEYBOARD
    ========================================================= */
 
 document.addEventListener(
@@ -2843,7 +3056,7 @@ document.addEventListener(
 
 
 /* =========================================================
-   43. SEEK
+   48. SEEK EVENT
    ========================================================= */
 
 if (playerLine) {
@@ -2857,7 +3070,7 @@ if (playerLine) {
 
 
 /* =========================================================
-   44. RESIZE
+   49. RESIZE
    ========================================================= */
 
 let resizeTimer =
@@ -2897,7 +3110,7 @@ window.addEventListener(
 
 
 /* =========================================================
-   45. GLOBALS
+   50. GLOBAL FUNCTIONS
    ========================================================= */
 
 window.startWorld =
@@ -2942,9 +3155,12 @@ window.previousSong =
 window.catClicked =
     catClicked;
 
+window.secretClick =
+    secretClick;
+
 
 /* =========================================================
-   46. STARTUP
+   51. STARTUP
    ========================================================= */
 
 moveCat();
@@ -2963,20 +3179,24 @@ console.log(
 );
 
 console.log(
-    "🎵 Songs:",
+    "🎵 Total songs:",
     songs.length
 );
 
 console.log(
-    "🖼️ Cinematic song cards ready"
+    "🎧 Audio system ready"
 );
 
 console.log(
-    "📱 Mobile performance mode ready"
+    "📱 Mobile compact mode ready"
 );
 
 console.log(
-    "🐈‍⬛ Hologram cat ready"
+    "🐈‍⬛ Hologram cat guide ready"
+);
+
+console.log(
+    "🍑 Ariana Grande / bye added"
 );
 
 console.log(
