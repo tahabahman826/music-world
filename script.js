@@ -1,7 +1,6 @@
 /* =========================================================
-   🌌 MUSIC WORLD 2.0
-   COMPLETE SCRIPT
-   OFFICIAL BASE + SEPARATE REPEAT SYSTEM
+   🌌 MUSIC WORLD
+   FINAL JAVASCRIPT
    ========================================================= */
 
 
@@ -14,16 +13,21 @@ const state = {
     currentScene: 0,
 
     language: null,
+
     persianAge: null,
+
     englishGender: null,
 
     currentSong: null,
+
     currentSongIndex: -1,
 
     musicPlaying: false,
+
     volume: 0.7,
 
     noClicks: 0,
+
     catClicks: 0,
 
     inWorld: false
@@ -31,70 +35,116 @@ const state = {
 
 
 /* =========================================================
-   2. REPEAT STATE
+   REPEAT
+   IMPORTANT:
+   NOT inside state
+   0 = OFF
+   1 = REPEAT SONG
+   2 = REPEAT ALL
    ========================================================= */
-
-/*
-   0 = Repeat Off
-   1 = Repeat Current Song
-   2 = Repeat All
-*/
 
 let repeatMode = 0;
 
 
 /* =========================================================
-   3. DOM REFERENCES
+   2. DOM
    ========================================================= */
 
 const scenes =
     document.querySelectorAll(".scene");
 
 const worldScene =
-    document.getElementById("worldScene");
+    document.getElementById(
+        "worldScene"
+    );
 
 const cat =
-    document.getElementById("cat");
+    document.getElementById(
+        "cat"
+    );
 
 const catHint =
-    document.getElementById("catHint");
+    document.getElementById(
+        "catHint"
+    );
 
 const catStatus =
-    document.getElementById("catStatus");
+    document.getElementById(
+        "catStatus"
+    );
 
 const toast =
-    document.getElementById("toast");
+    document.getElementById(
+        "toast"
+    );
 
 const visualizer =
-    document.getElementById("visualizer");
+    document.getElementById(
+        "visualizer"
+    );
 
 const rainLayer =
-    document.getElementById("rainLayer");
+    document.getElementById(
+        "rainLayer"
+    );
 
 const worldParticles =
-    document.getElementById("worldParticles");
+    document.getElementById(
+        "worldParticles"
+    );
+
+const playerLine =
+    document.getElementById(
+        "playerLine"
+    );
+
+const progressFill =
+    document.getElementById(
+        "progressFill"
+    );
+
+const byeCar =
+    document.getElementById(
+        "byeCar"
+    );
+
+const repeatLabel =
+    document.getElementById(
+        "repeatLabel"
+    );
+
+const playerStatus =
+    document.getElementById(
+        "playerStatus"
+    );
 
 
 /* =========================================================
-   4. TOAST
+   3. TOAST
    ========================================================= */
 
 let toastTimer = null;
 
+
 function showToast(message) {
 
-    if (!toast) return;
+    if (!toast)
+        return;
+
 
     toast.textContent =
         message;
+
 
     toast.classList.add(
         "show"
     );
 
+
     clearTimeout(
         toastTimer
     );
+
 
     toastTimer =
         setTimeout(() => {
@@ -108,21 +158,23 @@ function showToast(message) {
 
 
 /* =========================================================
-   5. AUDIO ENGINE
+   4. AUDIO
    ========================================================= */
 
 const audio =
     new Audio();
 
+
 audio.preload =
     "auto";
+
 
 audio.volume =
     state.volume;
 
 
 /* =========================================================
-   6. AUDIO FILES
+   5. AUDIO FILES
    ========================================================= */
 
 const audioFiles = {
@@ -167,19 +219,22 @@ const audioFiles = {
         "music/Billie Eilish Birds of a Feather.mp3",
 
     "ocean eyes":
-        "music/bili.mp3"
+        "music/bili.mp3",
+
+    /* ARIANA GRANDE */
+
+    "bye":
+        "music/bye.mp3"
 };
 
 
 /* =========================================================
-   7. SONG DATABASE
+   6. SONG DATABASE
    ========================================================= */
 
 const songs = [
 
-    /* -----------------------------------------------------
-       PERSIAN OLD
-       ----------------------------------------------------- */
+    /* PERSIAN OLD */
 
     {
         title: "مرداب",
@@ -189,6 +244,7 @@ const songs = [
             "شب آرام، ماه و مه کم‌رنگ؛ یک دنیای نوستالژیک و مرموز."
     },
 
+
     {
         title: "باران",
         artist: "Vigen",
@@ -196,6 +252,7 @@ const songs = [
         description:
             "خیابان خیس، چراغ‌های دور و بارانی که آرام شروع می‌شود."
     },
+
 
     {
         title: "اگه یه روز بری سفر",
@@ -206,9 +263,7 @@ const songs = [
     },
 
 
-    /* -----------------------------------------------------
-       PERSIAN NEW
-       ----------------------------------------------------- */
+    /* PERSIAN NEW */
 
     {
         title: "24/7",
@@ -218,6 +273,7 @@ const songs = [
             "چراغ‌های نئون، شهر شبانه و موج‌های دیجیتالی."
     },
 
+
     {
         title: "چشمت سیاه",
         artist: "Hoomaan",
@@ -225,6 +281,7 @@ const songs = [
         description:
             "همه‌چیز آرام و تاریک شده؛ فقط ذرات نور در مه حرکت می‌کنند."
     },
+
 
     {
         title: "خونه‌ی من",
@@ -235,9 +292,7 @@ const songs = [
     },
 
 
-    /* -----------------------------------------------------
-       THE WEEKND
-       ----------------------------------------------------- */
+    /* THE WEEKND */
 
     {
         title: "One Of The Girls",
@@ -247,6 +302,7 @@ const songs = [
             "نور قرمز و بنفش، مه شبانه و یک شهر تاریک."
     },
 
+
     {
         title: "Timeless",
         artist: "The Weeknd",
@@ -254,6 +310,7 @@ const songs = [
         description:
             "خیابان شبانه، ماشین‌ها و حس یک صحنه قدیمی VHS."
     },
+
 
     {
         title: "Popular",
@@ -263,6 +320,7 @@ const songs = [
             "شب لوکس شهر، ساختمان‌های بلند و نور فلاش دوربین‌ها."
     },
 
+
     {
         title: "Starboy",
         artist: "The Weeknd",
@@ -270,6 +328,7 @@ const songs = [
         description:
             "شهر شبانه، نورهای نئونی و فضایی مدرن و سینمایی."
     },
+
 
     {
         title: "Call Out My Name",
@@ -280,9 +339,7 @@ const songs = [
     },
 
 
-    /* -----------------------------------------------------
-       BILLIE EILISH
-       ----------------------------------------------------- */
+    /* BILLIE */
 
     {
         title: "lovely",
@@ -292,6 +349,7 @@ const songs = [
             "اتاق تاریک، نور ماه و فضایی سرد و آرام."
     },
 
+
     {
         title: "BIRDS OF A FEATHER",
         artist: "Billie Eilish",
@@ -300,18 +358,30 @@ const songs = [
             "آسمان شب، ماه بزرگ و سایه‌هایی که در دوردست حرکت می‌کنند."
     },
 
+
     {
         title: "ocean eyes",
         artist: "Billie Eilish",
         world: "ocean",
         description:
             "دنیایی زیر آب؛ نور ماه از میان آب عبور می‌کند."
+    },
+
+
+    /* ARIANA GRANDE */
+
+    {
+        title: "bye",
+        artist: "Ariana Grande",
+        world: "ariana",
+        description:
+            "شب سینمایی، نورهای صورتی و بنفش و یک ماشین که روی نوار آهنگ حرکت می‌کند."
     }
 ];
 
 
 /* =========================================================
-   8. SCENE NAVIGATION
+   7. SCENE NAVIGATION
    ========================================================= */
 
 function goToScene(number) {
@@ -344,6 +414,7 @@ function goToScene(number) {
     state.currentScene =
         number;
 
+
     state.inWorld =
         false;
 
@@ -355,17 +426,17 @@ function goToScene(number) {
 
 
 /* =========================================================
-   9. START
+   8. START
    ========================================================= */
 
 function startWorld() {
 
-    goToScene(1);
+    goToScene(2);
 }
 
 
 /* =========================================================
-   10. BACK
+   9. BACK
    ========================================================= */
 
 function goBack() {
@@ -380,13 +451,20 @@ function goBack() {
 
     const parents = {
 
-        1: 0,
-        2: 1,
-        3: 2,
+        1: 2,
+
+        2: 0,
+
+        3: 1,
+
         4: 3,
+
         5: 3,
-        6: 2,
+
+        6: 1,
+
         7: 6,
+
         8: 6
     };
 
@@ -397,7 +475,9 @@ function goBack() {
         ];
 
 
-    if (parent !== undefined) {
+    if (
+        parent !== undefined
+    ) {
 
         goToScene(
             parent
@@ -407,10 +487,12 @@ function goBack() {
 
 
 /* =========================================================
-   11. LANGUAGE
+   10. LANGUAGE
    ========================================================= */
 
-function chooseLanguage(language) {
+function chooseLanguage(
+    language
+) {
 
     state.language =
         language;
@@ -430,10 +512,12 @@ function chooseLanguage(language) {
 
 
 /* =========================================================
-   12. PERSIAN AGE
+   11. PERSIAN AGE
    ========================================================= */
 
-function choosePersianAge(age) {
+function choosePersianAge(
+    age
+) {
 
     state.persianAge =
         age;
@@ -453,10 +537,12 @@ function choosePersianAge(age) {
 
 
 /* =========================================================
-   13. ENGLISH GENDER
+   12. ENGLISH PATH
    ========================================================= */
 
-function chooseEnglishGender(gender) {
+function chooseEnglishGender(
+    gender
+) {
 
     state.englishGender =
         gender;
@@ -476,7 +562,7 @@ function chooseEnglishGender(gender) {
 
 
 /* =========================================================
-   14. NO BUTTON
+   13. NO BUTTON
    ========================================================= */
 
 function noAnswer() {
@@ -524,21 +610,23 @@ function noAnswer() {
     if (button) {
 
         const x =
-            Math.random() *
-            160 - 80;
+            Math.random() * 160 - 80;
 
         const y =
-            Math.random() *
-            100 - 50;
+            Math.random() * 100 - 50;
 
         const rotation =
-            Math.random() *
-            16 - 8;
+            Math.random() * 16 - 8;
 
 
         button.style.transform =
-            `translate(${x}px, ${y}px)
-             rotate(${rotation}deg)`;
+            `translate(
+                ${x}px,
+                ${y}px
+            )
+            rotate(
+                ${rotation}deg
+            )`;
     }
 
 
@@ -549,7 +637,7 @@ function noAnswer() {
 
 
 /* =========================================================
-   15. SONG SEARCH
+   14. FIND SONG
    ========================================================= */
 
 function findSong(title) {
@@ -562,7 +650,7 @@ function findSong(title) {
 
 
 /* =========================================================
-   16. OPEN WORLD
+   15. OPEN WORLD
    ========================================================= */
 
 function openWorld(
@@ -576,11 +664,6 @@ function openWorld(
 
 
     if (!song) {
-
-        console.error(
-            "Song not found:",
-            title
-        );
 
         showToast(
             "این آهنگ پیدا نشد ⚠️"
@@ -652,6 +735,11 @@ function openWorld(
             "worldDescription"
         );
 
+    const playerSongName =
+        document.getElementById(
+            "playerSongName"
+        );
+
 
     if (songName) {
 
@@ -674,6 +762,13 @@ function openWorld(
     }
 
 
+    if (playerSongName) {
+
+        playerSongName.textContent =
+            state.currentSong.title;
+    }
+
+
     loadSong(
         state.currentSong
     );
@@ -682,11 +777,15 @@ function openWorld(
     updateWorldFX();
 
     moveCat();
+
+    updateByeCar(
+        0
+    );
 }
 
 
 /* =========================================================
-   17. LOAD SONG
+   16. LOAD SONG
    ========================================================= */
 
 function loadSong(song) {
@@ -699,11 +798,6 @@ function loadSong(song) {
 
     if (!file) {
 
-        console.error(
-            "Audio path not found:",
-            song.title
-        );
-
         showToast(
             "فایل این آهنگ پیدا نشد ⚠️"
         );
@@ -714,19 +808,16 @@ function loadSong(song) {
 
     audio.pause();
 
+
     audio.currentTime =
         0;
 
 
-    const audioURL =
+    audio.src =
         new URL(
             file,
             document.baseURI
         ).href;
-
-
-    audio.src =
-        audioURL;
 
 
     audio.load();
@@ -742,13 +833,12 @@ function loadSong(song) {
 
     updateCatDance();
 
-    updateRepeatButton();
 
+    if (playerStatus) {
 
-    console.log(
-        "🎵 Loading MP3:",
-        audioURL
-    );
+        playerStatus.textContent =
+            "READY";
+    }
 
 
     showToast(
@@ -758,34 +848,7 @@ function loadSong(song) {
 
 
 /* =========================================================
-   18. CAT DANCE
-   ========================================================= */
-
-function updateCatDance() {
-
-    if (!cat) return;
-
-
-    if (
-        !audio.paused &&
-        !audio.ended
-    ) {
-
-        cat.classList.add(
-            "dancing"
-        );
-
-    } else {
-
-        cat.classList.remove(
-            "dancing"
-        );
-    }
-}
-
-
-/* =========================================================
-   19. MUSIC TOGGLE
+   17. PLAY / PAUSE
    ========================================================= */
 
 function toggleMusic() {
@@ -822,6 +885,12 @@ function toggleMusic() {
 
                 updateCatDance();
 
+                if (playerStatus) {
+
+                    playerStatus.textContent =
+                        "PLAYING";
+                }
+
                 showToast(
                     "🎵 Music Playing"
                 );
@@ -830,7 +899,7 @@ function toggleMusic() {
             .catch(error => {
 
                 console.error(
-                    "❌ PLAY ERROR:",
+                    "PLAY ERROR:",
                     error
                 );
 
@@ -842,19 +911,12 @@ function toggleMusic() {
     } else {
 
         audio.pause();
-
-        state.musicPlaying =
-            false;
-
-        updatePlayButton();
-
-        updateCatDance();
     }
 }
 
 
 /* =========================================================
-   20. PLAY BUTTON
+   18. PLAY BUTTON
    ========================================================= */
 
 function updatePlayButton() {
@@ -865,7 +927,8 @@ function updatePlayButton() {
         );
 
 
-    if (!button) return;
+    if (!button)
+        return;
 
 
     button.textContent =
@@ -876,130 +939,7 @@ function updatePlayButton() {
 
 
 /* =========================================================
-   21. REPEAT SYSTEM
-   ========================================================= */
-
-function toggleRepeat() {
-
-    repeatMode++;
-
-
-    if (
-        repeatMode > 2
-    ) {
-
-        repeatMode =
-            0;
-    }
-
-
-    updateRepeatButton();
-
-
-    if (
-        repeatMode === 0
-    ) {
-
-        showToast(
-            "🔁 Repeat Off"
-        );
-
-    } else if (
-        repeatMode === 1
-    ) {
-
-        showToast(
-            "🔂 Repeat Song"
-        );
-
-    } else {
-
-        showToast(
-            "🔁 Repeat All"
-        );
-    }
-}
-
-
-function updateRepeatButton() {
-
-    const button =
-        document.getElementById(
-            "repeatButton"
-        );
-
-
-    if (!button) return;
-
-
-    button.dataset.mode =
-        "off";
-
-
-    button.classList.remove(
-        "active"
-    );
-
-
-    button.setAttribute(
-        "aria-label",
-        "Repeat Off"
-    );
-
-
-    if (
-        repeatMode === 1
-    ) {
-
-        button.textContent =
-            "🔂";
-
-        button.dataset.mode =
-            "song";
-
-        button.classList.add(
-            "active"
-        );
-
-        button.setAttribute(
-            "aria-label",
-            "Repeat Song"
-        );
-
-        return;
-    }
-
-
-    if (
-        repeatMode === 2
-    ) {
-
-        button.textContent =
-            "🔁";
-
-        button.dataset.mode =
-            "all";
-
-        button.classList.add(
-            "active"
-        );
-
-        button.setAttribute(
-            "aria-label",
-            "Repeat All"
-        );
-
-        return;
-    }
-
-
-    button.textContent =
-        "🔁";
-}
-
-
-/* =========================================================
-   22. VOLUME
+   19. VOLUME
    ========================================================= */
 
 function changeVolume() {
@@ -1038,34 +978,27 @@ function changeVolume() {
 
 
 /* =========================================================
-   23. PLAYER PROGRESS
+   20. PROGRESS
    ========================================================= */
 
 function resetPlayerProgress() {
 
-    const progress =
-        document.querySelector(
-            ".player-line span"
-        );
+    if (progressFill) {
 
+        progressFill.style.width =
+            "0%";
+    }
 
-    if (!progress) return;
-
-
-    progress.style.width =
-        "0%";
+    updateByeCar(
+        0
+    );
 }
 
 
 function updatePlayerProgress() {
 
-    const progress =
-        document.querySelector(
-            ".player-line span"
-        );
-
-
-    if (!progress) return;
+    if (!progressFill)
+        return;
 
 
     if (
@@ -1086,8 +1019,169 @@ function updatePlayerProgress() {
         ) * 100;
 
 
-    progress.style.width =
+    progressFill.style.width =
         `${percent}%`;
+
+
+    updateByeCar(
+        percent
+    );
+}
+
+
+/* =========================================================
+   21. BYE CAR
+   ========================================================= */
+
+function updateByeCar(
+    percent
+) {
+
+    if (!byeCar)
+        return;
+
+
+    if (
+        !state.currentSong ||
+        state.currentSong.title !==
+        "bye"
+    ) {
+
+        byeCar.style.display =
+            "none";
+
+        return;
+    }
+
+
+    byeCar.style.display =
+        "block";
+
+
+    const safe =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                percent
+            )
+        );
+
+
+    byeCar.style.left =
+        `${safe}%`;
+}
+
+
+/* =========================================================
+   22. SEEK
+   ========================================================= */
+
+function seekFromPointer(
+    event
+) {
+
+    if (
+        !audio.duration ||
+        Number.isNaN(
+            audio.duration
+        )
+    ) {
+
+        return;
+    }
+
+
+    if (!playerLine)
+        return;
+
+
+    const rect =
+        playerLine.getBoundingClientRect();
+
+
+    const ratio =
+        Math.max(
+            0,
+            Math.min(
+                1,
+                (
+                    event.clientX -
+                    rect.left
+                ) /
+                rect.width
+            )
+        );
+
+
+    audio.currentTime =
+        ratio *
+        audio.duration;
+
+
+    updatePlayerProgress();
+}
+
+
+/* =========================================================
+   23. REPEAT
+   ========================================================= */
+
+function cycleRepeatMode() {
+
+    repeatMode++;
+
+
+    if (
+        repeatMode > 2
+    ) {
+
+        repeatMode =
+            0;
+    }
+
+
+    updateRepeatUI();
+
+
+    const messages = [
+
+        "Repeat: OFF",
+
+        "Repeat: SONG 🔂",
+
+        "Repeat: ALL 🔁"
+    ];
+
+
+    showToast(
+        messages[
+            repeatMode
+        ]
+    );
+}
+
+
+function updateRepeatUI() {
+
+    if (!repeatLabel)
+        return;
+
+
+    const labels = [
+
+        "OFF",
+
+        "SONG",
+
+        "ALL"
+    ];
+
+
+    repeatLabel.textContent =
+        labels[
+            repeatMode
+        ];
 }
 
 
@@ -1100,7 +1194,7 @@ audio.addEventListener(
     () => {
 
         console.log(
-            "✅ MP3 loaded successfully:",
+            "✅ MP3 loaded:",
             audio.src
         );
     }
@@ -1111,9 +1205,11 @@ audio.addEventListener(
     "canplay",
     () => {
 
-        console.log(
-            "🎧 MP3 ready to play"
-        );
+        if (playerStatus) {
+
+            playerStatus.textContent =
+                "READY";
+        }
     }
 );
 
@@ -1134,6 +1230,12 @@ audio.addEventListener(
         updatePlayButton();
 
         updateCatDance();
+
+        if (playerStatus) {
+
+            playerStatus.textContent =
+                "PLAYING";
+        }
     }
 );
 
@@ -1148,6 +1250,15 @@ audio.addEventListener(
         updatePlayButton();
 
         updateCatDance();
+
+        if (
+            state.inWorld &&
+            playerStatus
+        ) {
+
+            playerStatus.textContent =
+                "PAUSED";
+        }
     }
 );
 
@@ -1156,9 +1267,13 @@ audio.addEventListener(
     "ended",
     () => {
 
-        /* =================================================
-           REPEAT SONG
-           ================================================= */
+        state.musicPlaying =
+            false;
+
+        updatePlayButton();
+
+        updateCatDance();
+
 
         if (
             repeatMode === 1
@@ -1167,24 +1282,12 @@ audio.addEventListener(
             audio.currentTime =
                 0;
 
-
             audio.play()
-                .catch(error => {
-
-                    console.error(
-                        "❌ REPEAT SONG ERROR:",
-                        error
-                    );
-                });
-
+                .catch(() => {});
 
             return;
         }
 
-
-        /* =================================================
-           REPEAT ALL
-           ================================================= */
 
         if (
             repeatMode === 2
@@ -1196,18 +1299,15 @@ audio.addEventListener(
         }
 
 
-        /* =================================================
-           REPEAT OFF
-           ================================================= */
-
-        state.musicPlaying =
-            false;
-
-        updatePlayButton();
-
-        updateCatDance();
-
         updatePlayerProgress();
+
+
+        if (playerStatus) {
+
+            playerStatus.textContent =
+                "ENDED";
+        }
+
 
         showToast(
             "آهنگ تموم شد 🎵"
@@ -1221,18 +1321,15 @@ audio.addEventListener(
     () => {
 
         console.error(
-            "❌ AUDIO ERROR"
-        );
-
-        console.error(
-            "File:",
-            audio.src
-        );
-
-        console.error(
-            "Error:",
+            "❌ AUDIO ERROR:",
             audio.error
         );
+
+        if (playerStatus) {
+
+            playerStatus.textContent =
+                "FILE ERROR";
+        }
 
         showToast(
             "فایل MP3 پیدا نشد یا قابل پخش نیست ⚠️"
@@ -1242,21 +1339,63 @@ audio.addEventListener(
 
 
 /* =========================================================
-   25. CAT POSITION
+   25. CAT DANCE
+   ========================================================= */
+
+function updateCatDance() {
+
+    if (!cat)
+        return;
+
+
+    if (
+        !audio.paused &&
+        !audio.ended
+    ) {
+
+        cat.classList.add(
+            "dancing"
+        );
+
+    } else {
+
+        cat.classList.remove(
+            "dancing"
+        );
+    }
+}
+
+
+/* =========================================================
+   26. CAT POSITION
    ========================================================= */
 
 function moveCat() {
 
-    if (!cat) return;
+    const guide =
+        document.getElementById(
+            "catGuide"
+        );
+
+
+    if (!guide)
+        return;
+
+
+    guide.style.right =
+        "auto";
 
 
     if (state.inWorld) {
 
-        cat.style.left =
-            "88%";
+        guide.style.left =
+            "auto";
 
-        cat.style.top =
-            "78%";
+        guide.style.right =
+            "4%";
+
+        guide.style.top =
+            "58%";
 
         return;
     }
@@ -1264,15 +1403,23 @@ function moveCat() {
 
     const positions = [
 
-        ["8%", "15%"],
-        ["82%", "70%"],
-        ["10%", "70%"],
-        ["80%", "15%"],
-        ["12%", "75%"],
-        ["84%", "75%"],
-        ["8%", "25%"],
-        ["82%", "20%"],
-        ["10%", "50%"]
+        ["8%","15%"],
+
+        ["82%","70%"],
+
+        ["10%","70%"],
+
+        ["80%","15%"],
+
+        ["12%","75%"],
+
+        ["84%","75%"],
+
+        ["8%","25%"],
+
+        ["82%","20%"],
+
+        ["10%","50%"]
     ];
 
 
@@ -1283,16 +1430,17 @@ function moveCat() {
         positions[0];
 
 
-    cat.style.left =
+    guide.style.left =
         position[0];
 
-    cat.style.top =
+
+    guide.style.top =
         position[1];
 }
 
 
 /* =========================================================
-   26. CAT CLICK
+   27. CAT CLICK
    ========================================================= */
 
 function catClicked() {
@@ -1362,7 +1510,124 @@ function catClicked() {
 
 
 /* =========================================================
-   27. BACK TO SONGS
+   28. SECRET WORLD
+   ========================================================= */
+
+function secretEnding() {
+
+    if (
+        document.getElementById(
+            "secretWorld"
+        )
+    ) {
+
+        return;
+    }
+
+
+    audio.pause();
+
+
+    const secret =
+        document.createElement(
+            "div"
+        );
+
+
+    secret.id =
+        "secretWorld";
+
+
+    Object.assign(
+        secret.style,
+        {
+
+            position: "fixed",
+
+            inset: "0",
+
+            zIndex: "9999",
+
+            display: "flex",
+
+            alignItems: "center",
+
+            justifyContent: "center",
+
+            textAlign: "center",
+
+            background:
+                "#020207"
+
+        }
+    );
+
+
+    secret.innerHTML = `
+
+        <div style="
+            width:min(520px,90%);
+            padding:35px 24px;
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:28px;
+            background:rgba(10,10,18,.78);
+            backdrop-filter:blur(18px);
+            box-shadow:0 30px 90px rgba(0,0,0,.55);
+        ">
+
+            <div style="
+                font-size:64px;
+                margin-bottom:12px;
+            ">
+                🐈‍⬛
+            </div>
+
+            <h2>
+                SECRET WORLD
+            </h2>
+
+            <p style="
+                color:rgba(255,255,255,.55);
+            ">
+                پس بالاخره پیدام کردی... 👀
+            </p>
+
+            <button
+                class="main-btn"
+                id="closeSecret"
+                type="button"
+            >
+                برگشت 🌌
+            </button>
+
+        </div>
+    `;
+
+
+    document.body.appendChild(
+        secret
+    );
+
+
+    const close =
+        document.getElementById(
+            "closeSecret"
+        );
+
+
+    if (close) {
+
+        close.onclick =
+            () => {
+
+                secret.remove();
+            };
+    }
+}
+
+
+/* =========================================================
+   29. BACK TO SONGS
    ========================================================= */
 
 function backToSongs() {
@@ -1406,6 +1671,7 @@ function backToSongs() {
             goToScene(5);
         }
 
+
         return;
     }
 
@@ -1427,6 +1693,7 @@ function backToSongs() {
             goToScene(8);
         }
 
+
         return;
     }
 
@@ -1436,7 +1703,7 @@ function backToSongs() {
 
 
 /* =========================================================
-   28. NEXT SONG
+   30. NEXT SONG
    ========================================================= */
 
 function nextSong() {
@@ -1465,31 +1732,11 @@ function nextSong() {
     openWorld(
         songs[index].title
     );
-
-
-    /*
-       When Repeat All is active and a song
-       has finished, continue automatically.
-    */
-
-    if (
-        repeatMode === 2
-    ) {
-
-        audio.play()
-            .catch(error => {
-
-                console.error(
-                    "❌ NEXT SONG PLAY ERROR:",
-                    error
-                );
-            });
-    }
 }
 
 
 /* =========================================================
-   29. PREVIOUS SONG
+   31. PREVIOUS SONG
    ========================================================= */
 
 function previousSong() {
@@ -1519,235 +1766,34 @@ function previousSong() {
     openWorld(
         songs[index].title
     );
-
-
-    if (
-        repeatMode === 2
-    ) {
-
-        audio.play()
-            .catch(error => {
-
-                console.error(
-                    "❌ PREVIOUS SONG PLAY ERROR:",
-                    error
-                );
-            });
-    }
 }
 
 
 /* =========================================================
-   30. SECRET SYSTEM
+   32. DYNAMIC FX
    ========================================================= */
 
-function secretClick() {
+let fxAnimationId =
+    null;
 
-    state.catClicks++;
+let visualizerBars =
+    [];
 
+let visualizerPhases =
+    [];
 
-    if (catStatus) {
-
-        catStatus.textContent =
-            `CAT GUIDE: ${
-                Math.min(
-                    state.catClicks,
-                    5
-                )
-            } / 5`;
-    }
-
-
-    if (
-        state.catClicks >= 5
-    ) {
-
-        secretEnding();
-    }
-}
-
-
-function secretEnding() {
-
-    if (
-        document.getElementById(
-            "secretWorld"
-        )
-    ) {
-
-        return;
-    }
-
-
-    audio.pause();
-
-
-    const secret =
-        document.createElement(
-            "div"
-        );
-
-
-    secret.id =
-        "secretWorld";
-
-
-    secret.innerHTML = `
-
-        <div class="secret-content">
-
-            <div class="secret-cat">
-                🐈‍⬛
-            </div>
-
-            <h1>
-                SECRET WORLD
-            </h1>
-
-            <p>
-                پس بالاخره پیدام کردی... 👀
-            </p>
-
-            <button
-                class="main-btn"
-                id="closeSecret">
-
-                برگشت 🌌
-
-            </button>
-
-        </div>
-    `;
-
-
-    Object.assign(
-        secret.style,
-        {
-
-            position: "fixed",
-
-            inset: "0",
-
-            zIndex: "9999",
-
-            background:
-                "#020207",
-
-            display:
-                "flex",
-
-            alignItems:
-                "center",
-
-            justifyContent:
-                "center",
-
-            textAlign:
-                "center"
-        }
-    );
-
-
-    document.body.appendChild(
-        secret
-    );
-
-
-    const close =
-        document.getElementById(
-            "closeSecret"
-        );
-
-
-    if (close) {
-
-        close.onclick = () => {
-
-            secret.remove();
-        };
-    }
-}
+let lastVisualizerTime =
+    0;
 
 
 /* =========================================================
-   31. FX STATE
-   ========================================================= */
-
-let fxContainer = null;
-
-let visualizerBars = [];
-
-let visualizerPhases = [];
-
-let fxAnimationId = null;
-
-let lastVisualizerTime = 0;
-
-
-/* =========================================================
-   32. CREATE FX CONTAINER
-   ========================================================= */
-
-function createMusicFX() {
-
-    if (!worldScene) return;
-
-
-    fxContainer =
-        document.getElementById(
-            "musicFX"
-        );
-
-
-    if (!fxContainer) {
-
-        fxContainer =
-            document.createElement(
-                "div"
-            );
-
-
-        fxContainer.id =
-            "musicFX";
-
-
-        Object.assign(
-            fxContainer.style,
-            {
-
-                position:
-                    "absolute",
-
-                inset:
-                    "0",
-
-                pointerEvents:
-                    "none",
-
-                overflow:
-                    "hidden",
-
-                zIndex:
-                    "2"
-            }
-        );
-
-
-        worldScene.appendChild(
-            fxContainer
-        );
-    }
-}
-
-
-/* =========================================================
-   33. MOBILE FX
+   33. MOBILE
    ========================================================= */
 
 function isMobileLayout() {
 
     return window.matchMedia(
-        "(max-width: 700px)"
+        "(max-width:700px)"
     ).matches;
 }
 
@@ -1768,13 +1814,6 @@ function fxAmount(
    ========================================================= */
 
 function clearDynamicFX() {
-
-    if (fxContainer) {
-
-        fxContainer.innerHTML =
-            "";
-    }
-
 
     if (rainLayer) {
 
@@ -1802,9 +1841,11 @@ function clearDynamicVisualizer() {
     stopVisualizer();
 
 
-    visualizerBars = [];
+    visualizerBars =
+        [];
 
-    visualizerPhases = [];
+    visualizerPhases =
+        [];
 
 
     if (visualizer) {
@@ -1856,28 +1897,11 @@ function createVisualizer() {
             "bar";
 
 
-        bar.style.width =
-            isMobileLayout()
-                ? "4px"
-                : "5px";
-
-
         bar.style.height =
-            `${10 + Math.random() * 18}px`;
-
-
-        bar.style.borderRadius =
-            "10px";
-
-
-        bar.style.background =
-            "linear-gradient(to top,#713cff,#e0caff)";
-
-
-        bar.style.boxShadow =
-            isMobileLayout()
-                ? "0 0 7px rgba(130,80,255,.45)"
-                : "0 0 12px rgba(130,80,255,.7)";
+            `${
+                10 +
+                Math.random() * 18
+            }px`;
 
 
         visualizer.appendChild(
@@ -1901,6 +1925,10 @@ function createVisualizer() {
     startVisualizer();
 }
 
+
+/* =========================================================
+   36. VISUALIZER LOOP
+   ========================================================= */
 
 function startVisualizer() {
 
@@ -1935,24 +1963,20 @@ function stopVisualizer() {
 }
 
 
-function animateVisualizer(timestamp) {
+function animateVisualizer(
+    timestamp
+) {
 
-    if (!state.inWorld) {
-
-        stopVisualizer();
-
-        return;
-    }
+    fxAnimationId =
+        requestAnimationFrame(
+            animateVisualizer
+        );
 
 
     if (
+        !state.inWorld ||
         visualizerBars.length === 0
     ) {
-
-        fxAnimationId =
-            requestAnimationFrame(
-                animateVisualizer
-            );
 
         return;
     }
@@ -1969,11 +1993,6 @@ function animateVisualizer(timestamp) {
         lastVisualizerTime <
         interval
     ) {
-
-        fxAnimationId =
-            requestAnimationFrame(
-                animateVisualizer
-            );
 
         return;
     }
@@ -2007,7 +2026,7 @@ function animateVisualizer(timestamp) {
             );
 
 
-        const secondWave =
+        const wave2 =
             Math.abs(
                 Math.sin(
                     timestamp / 410 +
@@ -2019,7 +2038,7 @@ function animateVisualizer(timestamp) {
         let height =
             10 +
             wave * 38 +
-            secondWave * 15;
+            wave2 * 15;
 
 
         if (!playing) {
@@ -2034,17 +2053,11 @@ function animateVisualizer(timestamp) {
             .style.height =
             `${height}px`;
     }
-
-
-    fxAnimationId =
-        requestAnimationFrame(
-            animateVisualizer
-        );
 }
 
 
 /* =========================================================
-   36. PARTICLES
+   37. PARTICLES
    ========================================================= */
 
 function createParticles(
@@ -2092,14 +2105,6 @@ function createParticles(
             `${Math.random() * 100}%`;
 
 
-        particle.style.background =
-            "rgba(220,200,255,.8)";
-
-
-        particle.style.boxShadow =
-            "0 0 12px rgba(160,100,255,.8)";
-
-
         particle.style.setProperty(
             "--time",
             `${4 + Math.random() * 7}s`
@@ -2118,7 +2123,7 @@ function createParticles(
 
 
 /* =========================================================
-   37. STARS
+   38. STARS
    ========================================================= */
 
 function createStars(
@@ -2146,8 +2151,8 @@ function createStars(
             Math.random() * 3;
 
 
-        star.style.position =
-            "absolute";
+        star.className =
+            "star";
 
 
         star.style.width =
@@ -2158,10 +2163,6 @@ function createStars(
             `${size}px`;
 
 
-        star.style.borderRadius =
-            "50%";
-
-
         star.style.left =
             `${Math.random() * 100}%`;
 
@@ -2170,19 +2171,10 @@ function createStars(
             `${Math.random() * 70}%`;
 
 
-        star.style.background =
-            "white";
-
-
-        star.style.boxShadow =
-            "0 0 10px white";
-
-
-        star.style.animation =
-            `mwTwinkle ${
-                1.5 +
-                Math.random() * 3
-            }s ease-in-out infinite`;
+        star.style.setProperty(
+            "--time",
+            `${1.5 + Math.random() * 3}s`
+        );
 
 
         star.style.animationDelay =
@@ -2197,7 +2189,7 @@ function createStars(
 
 
 /* =========================================================
-   38. RAIN
+   39. RAIN
    ========================================================= */
 
 function createRain(
@@ -2244,19 +2236,10 @@ function createRain(
             `${15 + Math.random() * 20}px`;
 
 
-        drop.style.background =
-            "rgba(180,210,255,.45)";
-
-
-        drop.style.transform =
-            "rotate(12deg)";
-
-
-        drop.style.animation =
-            `mwRain ${
-                .5 +
-                Math.random() * .6
-            }s linear infinite`;
+        drop.style.setProperty(
+            "--time",
+            `${.5 + Math.random() * .6}s`
+        );
 
 
         drop.style.animationDelay =
@@ -2271,7 +2254,7 @@ function createRain(
 
 
 /* =========================================================
-   39. BUBBLES
+   40. BUBBLES
    ========================================================= */
 
 function createBubbles(
@@ -2299,8 +2282,8 @@ function createBubbles(
             Math.random() * 14;
 
 
-        bubble.style.position =
-            "absolute";
+        bubble.className =
+            "bubble";
 
 
         bubble.style.width =
@@ -2311,14 +2294,6 @@ function createBubbles(
             `${size}px`;
 
 
-        bubble.style.border =
-            "1px solid rgba(180,220,255,.6)";
-
-
-        bubble.style.borderRadius =
-            "50%";
-
-
         bubble.style.left =
             `${Math.random() * 100}%`;
 
@@ -2327,11 +2302,10 @@ function createBubbles(
             `${50 + Math.random() * 50}%`;
 
 
-        bubble.style.animation =
-            `mwBubble ${
-                5 +
-                Math.random() * 6
-            }s linear infinite`;
+        bubble.style.setProperty(
+            "--time",
+            `${5 + Math.random() * 6}s`
+        );
 
 
         bubble.style.animationDelay =
@@ -2346,7 +2320,7 @@ function createBubbles(
 
 
 /* =========================================================
-   40. BIRDS
+   41. BIRDS
    ========================================================= */
 
 function createBirds(
@@ -2393,10 +2367,15 @@ function createBirds(
             "rgba(255,255,255,.55)";
 
 
+        bird.style.setProperty(
+            "--time",
+            `${7 + Math.random() * 6}s`
+        );
+
+
         bird.style.animation =
             `mwBird ${
-                7 +
-                Math.random() * 6
+                7 + Math.random() * 6
             }s linear infinite`;
 
 
@@ -2412,10 +2391,12 @@ function createBirds(
 
 
 /* =========================================================
-   41. STARBOY EXTRA FX
+   42. SPECIAL GLOWS
    ========================================================= */
 
-function createStarboyFX() {
+function createSpecialGlow(
+    type
+) {
 
     if (!worldParticles)
         return;
@@ -2432,11 +2413,13 @@ function createStarboyFX() {
 
 
     glow.style.width =
-        "260px";
+        type === "starboy"
+            ? "260px"
+            : "220px";
 
 
     glow.style.height =
-        "260px";
+        glow.style.width;
 
 
     glow.style.left =
@@ -2448,85 +2431,35 @@ function createStarboyFX() {
 
 
     glow.style.transform =
-        "translate(-50%, -50%)";
+        "translate(-50%,-50%)";
 
 
     glow.style.borderRadius =
         "50%";
 
 
-    glow.style.background =
-        "radial-gradient(circle, rgba(255,0,80,.10), transparent 70%)";
-
-
-    glow.style.animation =
-        "mwStarboyGlow 4s ease-in-out infinite";
-
-
     glow.style.pointerEvents =
         "none";
 
 
-    worldParticles.appendChild(
-        glow
-    );
-}
+    if (
+        type === "starboy"
+    ) {
 
+        glow.style.background =
+            "radial-gradient(circle,rgba(255,0,80,.10),transparent 70%)";
 
-/* =========================================================
-   42. CALL OUT EXTRA FX
-   ========================================================= */
+        glow.style.animation =
+            "mwStarboyGlow 4s ease-in-out infinite";
 
-function createCallOutFX() {
+    } else {
 
-    if (!worldParticles)
-        return;
+        glow.style.background =
+            "radial-gradient(circle,rgba(255,30,70,.07),transparent 70%)";
 
-
-    const glow =
-        document.createElement(
-            "div"
-        );
-
-
-    glow.style.position =
-        "absolute";
-
-
-    glow.style.width =
-        "220px";
-
-
-    glow.style.height =
-        "220px";
-
-
-    glow.style.left =
-        "50%";
-
-
-    glow.style.top =
-        "50%";
-
-
-    glow.style.transform =
-        "translate(-50%, -50%)";
-
-
-    glow.style.borderRadius =
-        "50%";
-
-
-    glow.style.background =
-        "radial-gradient(circle, rgba(255,30,70,.07), transparent 70%)";
-
-
-    glow.style.animation =
-        "mwCallOutGlow 5s ease-in-out infinite";
-
-
-    glow.style.pointerEvents =
-        "none";
+        glow.style.animation =
+            "mwCallOutGlow 5s ease-in-out infinite";
+    }
 
 
     worldParticles.appendChild(
@@ -2550,8 +2483,6 @@ function updateWorldFX() {
     }
 
 
-    createMusicFX();
-
     clearDynamicFX();
 
 
@@ -2566,7 +2497,7 @@ function updateWorldFX() {
     /* DEFAULT */
 
     createParticles(
-        fxAmount(35, 16)
+        fxAmount(35,16)
     );
 
 
@@ -2577,7 +2508,7 @@ function updateWorldFX() {
     ) {
 
         createStars(
-            fxAmount(60, 28)
+            fxAmount(60,28)
         );
     }
 
@@ -2589,7 +2520,7 @@ function updateWorldFX() {
     ) {
 
         createRain(
-            fxAmount(120, 45)
+            fxAmount(120,45)
         );
     }
 
@@ -2601,12 +2532,11 @@ function updateWorldFX() {
     ) {
 
         createStars(
-            fxAmount(35, 18)
+            fxAmount(35,18)
         );
 
-
         createParticles(
-            fxAmount(25, 12)
+            fxAmount(25,12)
         );
     }
 
@@ -2618,7 +2548,7 @@ function updateWorldFX() {
     ) {
 
         createParticles(
-            fxAmount(70, 30)
+            fxAmount(70,30)
         );
     }
 
@@ -2630,7 +2560,7 @@ function updateWorldFX() {
     ) {
 
         createParticles(
-            fxAmount(25, 12)
+            fxAmount(25,12)
         );
     }
 
@@ -2642,12 +2572,11 @@ function updateWorldFX() {
     ) {
 
         createRain(
-            fxAmount(65, 28)
+            fxAmount(65,28)
         );
 
-
         createParticles(
-            fxAmount(25, 12)
+            fxAmount(25,12)
         );
     }
 
@@ -2659,7 +2588,7 @@ function updateWorldFX() {
     ) {
 
         createParticles(
-            fxAmount(65, 28)
+            fxAmount(65,28)
         );
     }
 
@@ -2671,7 +2600,7 @@ function updateWorldFX() {
     ) {
 
         createParticles(
-            fxAmount(30, 14)
+            fxAmount(30,14)
         );
     }
 
@@ -2683,7 +2612,7 @@ function updateWorldFX() {
     ) {
 
         createStars(
-            fxAmount(35, 18)
+            fxAmount(35,18)
         );
     }
 
@@ -2695,7 +2624,7 @@ function updateWorldFX() {
     ) {
 
         createStars(
-            fxAmount(65, 30)
+            fxAmount(65,30)
         );
     }
 
@@ -2707,12 +2636,11 @@ function updateWorldFX() {
     ) {
 
         createStars(
-            fxAmount(90, 38)
+            fxAmount(90,38)
         );
 
-
         createBirds(
-            fxAmount(8, 4)
+            fxAmount(8,4)
         );
     }
 
@@ -2724,12 +2652,11 @@ function updateWorldFX() {
     ) {
 
         createBubbles(
-            fxAmount(40, 18)
+            fxAmount(40,18)
         );
 
-
         createParticles(
-            fxAmount(30, 14)
+            fxAmount(30,14)
         );
     }
 
@@ -2741,36 +2668,52 @@ function updateWorldFX() {
     ) {
 
         createParticles(
-            fxAmount(55, 24)
+            fxAmount(55,24)
         );
-
 
         createStars(
-            fxAmount(25, 12)
+            fxAmount(25,12)
         );
 
-
-        createStarboyFX();
+        createSpecialGlow(
+            "starboy"
+        );
     }
 
 
-    /* CALL OUT MY NAME */
+    /* CALL OUT */
 
     if (
         world === "callout"
     ) {
 
         createParticles(
-            fxAmount(28, 12)
+            fxAmount(28,12)
         );
-
 
         createStars(
-            fxAmount(18, 8)
+            fxAmount(18,8)
         );
 
+        createSpecialGlow(
+            "callout"
+        );
+    }
 
-        createCallOutFX();
+
+    /* ARIANA / BYE */
+
+    if (
+        world === "ariana"
+    ) {
+
+        createParticles(
+            fxAmount(44,20)
+        );
+
+        createStars(
+            fxAmount(32,14)
+        );
     }
 
 
@@ -2779,7 +2722,7 @@ function updateWorldFX() {
 
 
 /* =========================================================
-   44. FX STYLES
+   44. DYNAMIC FX CSS
    ========================================================= */
 
 function addWorldFXStyles() {
@@ -2806,64 +2749,11 @@ function addWorldFXStyles() {
 
     style.textContent = `
 
-        @keyframes mwTwinkle {
-
-            0%, 100% {
-                opacity: .15;
-                transform: scale(.7);
-            }
-
-            50% {
-                opacity: 1;
-                transform: scale(1.5);
-            }
-        }
-
-
-        @keyframes mwRain {
-
-            from {
-                transform:
-                    translateY(-120px)
-                    rotate(12deg);
-            }
-
-            to {
-                transform:
-                    translateY(110vh)
-                    rotate(12deg);
-            }
-        }
-
-
-        @keyframes mwBubble {
-
-            from {
-                transform:
-                    translateY(30vh);
-
-                opacity: 0;
-            }
-
-            20% {
-                opacity: .7;
-            }
-
-            to {
-                transform:
-                    translateY(-100vh);
-
-                opacity: 0;
-            }
-        }
-
-
         @keyframes mwBird {
 
             0% {
                 transform:
                     translateX(-100px);
-
                 opacity: 0;
             }
 
@@ -2874,7 +2764,6 @@ function addWorldFXStyles() {
             100% {
                 transform:
                     translateX(110vw);
-
                 opacity: 0;
             }
         }
@@ -2882,17 +2771,19 @@ function addWorldFXStyles() {
 
         @keyframes mwStarboyGlow {
 
-            0%, 100% {
+            0%,100% {
+
                 transform:
-                    translate(-50%, -50%)
+                    translate(-50%,-50%)
                     scale(.85);
 
                 opacity: .25;
             }
 
             50% {
+
                 transform:
-                    translate(-50%, -50%)
+                    translate(-50%,-50%)
                     scale(1.15);
 
                 opacity: .85;
@@ -2902,17 +2793,19 @@ function addWorldFXStyles() {
 
         @keyframes mwCallOutGlow {
 
-            0%, 100% {
+            0%,100% {
+
                 transform:
-                    translate(-50%, -50%)
+                    translate(-50%,-50%)
                     scale(.9);
 
                 opacity: .25;
             }
 
             50% {
+
                 transform:
-                    translate(-50%, -50%)
+                    translate(-50%,-50%)
                     scale(1.18);
 
                 opacity: .75;
@@ -2935,6 +2828,20 @@ function addWorldFXStyles() {
 document.addEventListener(
     "keydown",
     event => {
+
+        const tag =
+            event.target?.tagName;
+
+
+        if (
+            tag === "INPUT" ||
+            tag === "TEXTAREA" ||
+            tag === "SELECT"
+        ) {
+
+            return;
+        }
+
 
         if (
             event.code ===
@@ -2982,7 +2889,20 @@ document.addEventListener(
 
 
 /* =========================================================
-   46. RESIZE
+   46. SEEK
+   ========================================================= */
+
+if (playerLine) {
+
+    playerLine.addEventListener(
+        "click",
+        seekFromPointer
+    );
+}
+
+
+/* =========================================================
+   47. RESIZE
    ========================================================= */
 
 let resizeTimer =
@@ -3011,13 +2931,14 @@ window.addEventListener(
 
                 moveCat();
 
+
             }, 180);
     }
 );
 
 
 /* =========================================================
-   47. GLOBAL FUNCTIONS
+   48. GLOBAL FUNCTIONS
    ========================================================= */
 
 window.startWorld =
@@ -3050,9 +2971,6 @@ window.toggleMusic =
 window.changeVolume =
     changeVolume;
 
-window.toggleRepeat =
-    toggleRepeat;
-
 window.backToSongs =
     backToSongs;
 
@@ -3065,12 +2983,15 @@ window.previousSong =
 window.catClicked =
     catClicked;
 
-window.secretClick =
-    secretClick;
+window.secretEnding =
+    secretEnding;
+
+window.cycleRepeatMode =
+    cycleRepeatMode;
 
 
 /* =========================================================
-   48. STARTUP
+   49. STARTUP
    ========================================================= */
 
 addWorldFXStyles();
@@ -3079,28 +3000,28 @@ moveCat();
 
 updatePlayButton();
 
-updateRepeatButton();
+updateRepeatUI();
 
 updateCatDance();
 
 
 console.log(
-    "🌌 MUSIC WORLD 2.0 STARTED"
+    "🌌 MUSIC WORLD STARTED"
 );
 
 console.log(
-    "🎵 Total songs:",
+    "🎵 Songs:",
     songs.length
 );
 
 console.log(
-    "🎧 Audio system ready"
+    "🔂 Repeat system ready"
 );
 
 console.log(
-    "🔁 Repeat system ready"
+    "🚗 BYE car progress system ready"
 );
 
 console.log(
-    "✨ World FX ready"
+    "🌙 Moon + 🌧️ Rain + 😼 Cat ready"
 );
