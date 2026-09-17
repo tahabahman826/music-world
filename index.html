@@ -1,1329 +1,1034 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    >
-
-    <meta
-        name="theme-color"
-        content="#05050c"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#05050c">
     <title>Music World</title>
-
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-
+    <link rel="stylesheet" href="style.css">
 </head>
-
 
 <body>
 
-<main id="app">
+    <main id="app">
 
+        <!-- =====================================================
+             SCENE 0 — WELCOME
+             ===================================================== -->
 
-    <!-- =====================================================
-         SCENE 0 — HOME
-         ===================================================== -->
+        <section class="scene active" id="scene0">
 
-    <section
-        class="scene active"
-        id="scene0"
-    >
+            <div class="scene-bg scene-bg-home"></div>
 
-        <div
-            class="scene-bg scene-bg-home"
-        ></div>
+            <div class="hero-panel glass">
 
-
-        <div
-            class="hero-panel glass"
-        >
-
-            <div class="brand-orb">
-                ♫
-            </div>
-
-
-            <p class="eyebrow">
-                MUSIC WORLD
-            </p>
-
-
-            <h1>
-                ENTER THE
-                <br>
-                <span>MUSIC WORLD</span>
-            </h1>
-
-
-            <p class="hero-copy">
-                Enter a cinematic music universe where every song
-                has its own world.
-            </p>
-
-
-            <button
-                class="main-btn"
-                type="button"
-                onclick="startWorld()"
-            >
-
-                ENTER WORLD
-
-                <span>→</span>
-
-            </button>
-
-
-            <div class="mini-note">
-                PC + MOBILE • LOCAL MP3 • RESPONSIVE
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 1 — LANGUAGE
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene1"
-    >
-
-        <div
-            class="scene-bg scene-bg-language"
-        ></div>
-
-
-        <div
-            class="center-panel glass"
-        >
-
-            <p class="eyebrow">
-                STEP 01
-            </p>
-
-
-            <h2>
-                Choose your music language
-            </h2>
-
-
-            <div class="option-grid two">
-
-
-                <button
-                    class="choice-card"
-                    type="button"
-                    onclick="chooseLanguage('persian')"
-                >
-
-                    <span class="choice-icon">
-                        IR
-                    </span>
-
-                    <strong>
-                        Persian
-                    </strong>
-
-                    <small>
-                        Old + New
-                    </small>
-
-                </button>
-
-
-
-                <button
-                    class="choice-card"
-                    type="button"
-                    onclick="chooseLanguage('english')"
-                >
-
-                    <span class="choice-icon">
-                        EN
-                    </span>
-
-                    <strong>
-                        English
-                    </strong>
-
-                    <small>
-                        Artists + Songs
-                    </small>
-
-                </button>
-
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 2 — YES / NO
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene2"
-    >
-
-        <div
-            class="scene-bg scene-bg-ready"
-        ></div>
-
-
-        <div
-            class="center-panel glass"
-        >
-
-            <p class="eyebrow">
-                MUSIC WORLD
-            </p>
-
-
-            <h2>
-                Are you ready?
-            </h2>
-
-
-            <p
-                class="muted"
-                id="noText"
-            >
-                Choose wisely...
-            </p>
-
-
-            <div class="option-grid two">
-
-
-                <button
-                    class="choice-card yes-card"
-                    type="button"
-                    onclick="goToScene(1)"
-                >
-
-                    <span class="choice-icon">
-                        ✓
-                    </span>
-
-                    <strong>
-                        YES
-                    </strong>
-
-                    <small>
-                        Enter the Music World
-                    </small>
-
-                </button>
-
-
-
-                <button
-                    class="choice-card no-card"
-                    id="noButton"
-                    type="button"
-                    onclick="noAnswer()"
-                >
-
-                    <span class="choice-icon">
-                        ×
-                    </span>
-
-                    <strong>
-                        NO
-                    </strong>
-
-                    <small>
-                        Maybe not...
-                    </small>
-
-                </button>
-
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 3 — PERSIAN AGE
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene3"
-    >
-
-        <div
-            class="scene-bg scene-bg-persian"
-        ></div>
-
-
-        <div
-            class="center-panel glass"
-        >
-
-            <p class="eyebrow">
-                PERSIAN
-            </p>
-
-
-            <h2>
-                Choose a generation
-            </h2>
-
-
-            <div class="option-grid two">
-
-
-                <button
-                    class="choice-card"
-                    type="button"
-                    onclick="choosePersianAge('old')"
-                >
-
-                    <span class="choice-icon">
-                        ✦
-                    </span>
-
-                    <strong>
-                        Old Persian
-                    </strong>
-
-                    <small>
-                        Classic memories
-                    </small>
-
-                </button>
-
-
-
-                <button
-                    class="choice-card"
-                    type="button"
-                    onclick="choosePersianAge('new')"
-                >
-
-                    <span class="choice-icon">
-                        ◈
-                    </span>
-
-                    <strong>
-                        New Persian
-                    </strong>
-
-                    <small>
-                        Modern nights
-                    </small>
-
-                </button>
-
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 4 — PERSIAN OLD
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene4"
-    >
-
-        <div
-            class="scene-bg scene-bg-old"
-        ></div>
-
-
-        <div class="library-panel">
-
-
-            <div class="library-head">
-
-                <div>
-
-                    <p class="eyebrow">
-                        PERSIAN / OLD
-                    </p>
-
-                    <h2>
-                        Classic Collection
-                    </h2>
-
+                <div class="brand-orb">
+                    ♫
                 </div>
-
-
-                <button
-                    class="back-mini"
-                    type="button"
-                    onclick="goBack()"
-                >
-                    ← Back
-                </button>
-
-            </div>
-
-
-
-            <div class="song-grid">
-
-
-                <button
-                    class="song-card world-card-swamp"
-                    onclick="openWorld('مرداب')"
-                >
-
-                    <span class="card-world">
-                        SWAMP
-                    </span>
-
-                    <strong>
-                        مرداب
-                    </strong>
-
-                    <small>
-                        Googoosh
-                    </small>
-
-                </button>
-
-
-
-                <button
-                    class="song-card world-card-rain"
-                    onclick="openWorld('باران')"
-                >
-
-                    <span class="card-world">
-                        RAIN
-                    </span>
-
-                    <strong>
-                        باران
-                    </strong>
-
-                    <small>
-                        Vigen
-                    </small>
-
-                </button>
-
-
-
-                <button
-                    class="song-card world-card-road"
-                    onclick="openWorld('اگه یه روز بری سفر')"
-                >
-
-                    <span class="card-world">
-                        ROAD
-                    </span>
-
-                    <strong>
-                        اگه یه روز بری سفر
-                    </strong>
-
-                    <small>
-                        Faramarz Aslani
-                    </small>
-
-                </button>
-
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 5 — PERSIAN NEW
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene5"
-    >
-
-        <div
-            class="scene-bg scene-bg-new"
-        ></div>
-
-
-        <div class="library-panel">
-
-
-            <div class="library-head">
-
-                <div>
-
-                    <p class="eyebrow">
-                        PERSIAN / NEW
-                    </p>
-
-                    <h2>
-                        Modern Collection
-                    </h2>
-
-                </div>
-
-
-                <button
-                    class="back-mini"
-                    type="button"
-                    onclick="goBack()"
-                >
-                    ← Back
-                </button>
-
-            </div>
-
-
-
-            <div class="song-grid">
-
-
-                <button
-                    class="song-card world-card-neon"
-                    onclick="openWorld('24/7')"
-                >
-
-                    <span class="card-world">
-                        NEON
-                    </span>
-
-                    <strong>
-                        24/7
-                    </strong>
-
-                    <small>
-                        AROWN
-                    </small>
-
-                </button>
-
-
-
-                <button
-                    class="song-card world-card-dark"
-                    onclick="openWorld('چشمت سیاه')"
-                >
-
-                    <span class="card-world">
-                        DARK
-                    </span>
-
-                    <strong>
-                        چشمت سیاه
-                    </strong>
-
-                    <small>
-                        Hoomaan
-                    </small>
-
-                </button>
-
-
-
-                <button
-                    class="song-card world-card-room"
-                    onclick="openWorld('خونه‌ی من')"
-                >
-
-                    <span class="card-world">
-                        ROOM
-                    </span>
-
-                    <strong>
-                        خونه‌ی من
-                    </strong>
-
-                    <small>
-                        Arta
-                    </small>
-
-                </button>
-
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 6 — ENGLISH PATH
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene6"
-    >
-
-        <div
-            class="scene-bg scene-bg-english"
-        ></div>
-
-
-        <div
-            class="center-panel glass"
-        >
-
-            <p class="eyebrow">
-                STEP 02
-            </p>
-
-
-            <h2>
-                Choose an artist path
-            </h2>
-
-
-            <div class="option-grid two">
-
-
-                <button
-                    class="choice-card"
-                    type="button"
-                    onclick="chooseEnglishGender('male')"
-                >
-
-                    <span class="choice-icon">
-                        ♂
-                    </span>
-
-                    <strong>
-                        Male Artists
-                    </strong>
-
-                    <small>
-                        The Weeknd
-                    </small>
-
-                </button>
-
-
-
-                <button
-                    class="choice-card"
-                    type="button"
-                    onclick="chooseEnglishGender('female')"
-                >
-
-                    <span class="choice-icon">
-                        ♀
-                    </span>
-
-                    <strong>
-                        Female Artists
-                    </strong>
-
-                    <small>
-                        Billie Eilish · Ariana Grande
-                    </small>
-
-                </button>
-
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 7 — THE WEEKND
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene7"
-    >
-
-        <div
-            class="scene-bg scene-bg-weeknd"
-        ></div>
-
-
-        <div class="library-panel">
-
-
-            <div class="library-head">
-
-                <div>
-
-                    <p class="eyebrow">
-                        ENGLISH / MALE
-                    </p>
-
-                    <h2>
-                        The Weeknd
-                    </h2>
-
-                </div>
-
-
-                <button
-                    class="back-mini"
-                    type="button"
-                    onclick="goBack()"
-                >
-                    ← Back
-                </button>
-
-            </div>
-
-
-
-            <div class="artist-block">
-
-                <span>
-                    THE WEEKND
-                </span>
-
-                <p>
-                    Night drive • neon • cinematic worlds
-                </p>
-
-            </div>
-
-
-
-            <div class="song-grid">
-
-
-                <button
-                    class="song-card world-card-red"
-                    onclick="openWorld('One Of The Girls')"
-                >
-
-                    <span class="card-world">
-                        RED
-                    </span>
-
-                    <strong>
-                        One Of The Girls
-                    </strong>
-
-                    <small>
-                        The Weeknd
-                    </small>
-
-                </button>
-
-
-
-                <button
-                    class="song-card world-card-vhs"
-                    onclick="openWorld('Timeless')"
-                >
-
-                    <span class="card-world">
-                        VHS
-                    </span>
-
-                    <strong>
-                        Timeless
-                    </strong>
-
-                    <small>
-                        The Weeknd
-                    </small>
-
-                </button>
-
-
-
-                <button
-                    class="song-card world-card-luxury"
-                    onclick="openWorld('Popular')"
-                >
-
-                    <span class="card-world">
-                        LUXURY
-                    </span>
-
-                    <strong>
-                        Popular
-                    </strong>
-
-                    <small>
-                        The Weeknd
-                    </small>
-
-                </button>
-
-
-
-                <button
-                    class="song-card world-card-starboy"
-                    onclick="openWorld('Starboy')"
-                >
-
-                    <span class="card-world">
-                        STARBOY
-                    </span>
-
-                    <strong>
-                        Starboy
-                    </strong>
-
-                    <small>
-                        The Weeknd
-                    </small>
-
-                </button>
-
-
-
-                <button
-                    class="song-card world-card-callout"
-                    onclick="openWorld('Call Out My Name')"
-                >
-
-                    <span class="card-world">
-                        CALL OUT
-                    </span>
-
-                    <strong>
-                        Call Out My Name
-                    </strong>
-
-                    <small>
-                        The Weeknd
-                    </small>
-
-                </button>
-
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 8 — FEMALE ARTISTS
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene8"
-    >
-
-        <div
-            class="scene-bg scene-bg-female"
-        ></div>
-
-
-        <div class="library-panel">
-
-
-            <div class="library-head">
-
-                <div>
-
-                    <p class="eyebrow">
-                        ENGLISH / FEMALE
-                    </p>
-
-                    <h2>
-                        Female Artists
-                    </h2>
-
-                </div>
-
-
-                <button
-                    class="back-mini"
-                    type="button"
-                    onclick="goBack()"
-                >
-                    ← Back
-                </button>
-
-            </div>
-
-
-
-            <!-- BILLIE -->
-
-            <div class="artist-block">
-
-                <span>
-                    BILLIE EILISH
-                </span>
-
-                <p>
-                    Cold rooms • oceans • moonlight
-                </p>
-
-            </div>
-
-
-
-            <div class="song-grid">
-
-
-                <button
-                    class="song-card world-card-lovely"
-                    onclick="openWorld('lovely')"
-                >
-
-                    <span class="card-world">
-                        LOVELY
-                    </span>
-
-                    <strong>
-                        lovely
-                    </strong>
-
-                    <small>
-                        Billie Eilish
-                    </small>
-
-                </button>
-
-
-
-                <button
-                    class="song-card world-card-birds"
-                    onclick="openWorld('BIRDS OF A FEATHER')"
-                >
-
-                    <span class="card-world">
-                        BIRDS
-                    </span>
-
-                    <strong>
-                        BIRDS OF A FEATHER
-                    </strong>
-
-                    <small>
-                        Billie Eilish
-                    </small>
-
-                </button>
-
-
-
-                <button
-                    class="song-card world-card-ocean"
-                    onclick="openWorld('ocean eyes')"
-                >
-
-                    <span class="card-world">
-                        OCEAN
-                    </span>
-
-                    <strong>
-                        ocean eyes
-                    </strong>
-
-                    <small>
-                        Billie Eilish
-                    </small>
-
-                </button>
-
-
-            </div>
-
-
-
-            <!-- ARIANA -->
-
-            <div class="artist-block ariana-block">
-
-                <span>
-                    ARIANA GRANDE
-                </span>
-
-                <p>
-                    One song • one custom world
-                </p>
-
-            </div>
-
-
-
-            <div class="song-grid single-song-grid">
-
-
-                <button
-                    class="song-card world-card-ariana"
-                    onclick="openWorld('bye')"
-                >
-
-                    <span class="card-world">
-                        ARIANA
-                    </span>
-
-                    <strong>
-                        bye
-                    </strong>
-
-                    <small>
-                        Ariana Grande
-                    </small>
-
-                </button>
-
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         WORLD
-         ===================================================== -->
-
-    <section
-        class="scene world-scene"
-        id="worldScene"
-        data-world="dark"
-    >
-
-
-        <div
-            class="world-backdrop"
-        ></div>
-
-
-        <!-- MOON -->
-
-        <div
-            class="moon"
-            aria-hidden="true"
-        >
-
-            <span class="moon-crater crater-1"></span>
-            <span class="moon-crater crater-2"></span>
-            <span class="moon-crater crater-3"></span>
-            <span class="moon-crater crater-4"></span>
-
-        </div>
-
-
-        <div
-            class="world-vignette"
-        ></div>
-
-
-        <div
-            id="worldParticles"
-        ></div>
-
-
-        <div
-            id="rainLayer"
-        ></div>
-
-
-        <!-- =================================================
-             TOP BAR
-             ================================================= -->
-
-        <div class="world-topbar">
-
-            <button
-                class="icon-btn"
-                type="button"
-                onclick="backToSongs()"
-            >
-                ←
-            </button>
-
-
-            <div class="world-brand">
-                MUSIC WORLD
-            </div>
-
-
-            <button
-                class="icon-btn"
-                type="button"
-                onclick="changeVolume()"
-            >
-                ◉
-            </button>
-
-        </div>
-
-
-
-        <!-- =================================================
-             WORLD CONTENT
-             ================================================= -->
-
-        <div class="world-content">
-
-
-            <div
-                class="world-copy glass-dark"
-            >
 
                 <p class="eyebrow">
-                    NOW ENTERING
+                    MUSIC WORLD 3.0
                 </p>
 
+                <h1>
+                    ENTER THE
+                    <br>
+                    <span>MUSIC WORLD</span>
+                </h1>
 
-                <h2 id="songName">
-                    ---
-                </h2>
+                <p class="hero-copy">
+                    Choose your path, discover songs, and enter a different world for every track.
+                </p>
 
-
-                <p
-                    class="artist-name"
-                    id="artistName"
+                <button
+                    class="main-btn"
+                    onclick="startWorld()"
                 >
-                    ---
-                </p>
+                    ENTER WORLD
+                    <span>→</span>
+                </button>
 
-
-                <p
-                    class="world-description"
-                    id="worldDescription"
-                >
-                </p>
+                <div class="mini-note">
+                    PC + MOBILE • LOCAL MP3 • VANILLA JS
+                </div>
 
             </div>
 
-
-
-            <div
-                class="visualizer-wrap glass-dark"
-            >
-
-                <div
-                    id="visualizer"
-                ></div>
-
-            </div>
-
-
-        </div>
+        </section>
 
 
 
-        <!-- =================================================
-             PLAYER
-             ================================================= -->
+        <!-- =====================================================
+             SCENE 1 — LANGUAGE
+             ===================================================== -->
 
-        <div
-            class="player glass-dark"
+        <section
+            class="scene"
+            id="scene1"
         >
 
+            <div class="scene-bg scene-bg-language"></div>
 
-            <div class="player-meta">
+            <div class="center-panel glass">
 
-                <div>
+                <p class="eyebrow">
+                    STEP 01
+                </p>
 
-                    <span class="player-label">
-                        TRACK
-                    </span>
+                <h2>
+                    Choose your music language
+                </h2>
 
-                    <strong
-                        id="playerSongName"
+                <div class="option-grid two">
+
+                    <button
+                        class="choice-card"
+                        onclick="chooseLanguage('persian')"
                     >
-                        ---
-                    </strong>
+                        <span class="choice-icon">
+                            IR
+                        </span>
+
+                        <strong>
+                            Persian
+                        </strong>
+
+                        <small>
+                            Old + New
+                        </small>
+                    </button>
+
+
+                    <button
+                        class="choice-card"
+                        onclick="chooseLanguage('english')"
+                    >
+                        <span class="choice-icon">
+                            EN
+                        </span>
+
+                        <strong>
+                            English
+                        </strong>
+
+                        <small>
+                            Artists + Songs
+                        </small>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SCENE 2 — READY
+             ===================================================== -->
+
+        <section
+            class="scene"
+            id="scene2"
+        >
+
+            <div class="scene-bg scene-bg-ready"></div>
+
+            <div class="center-panel glass">
+
+                <p class="eyebrow">
+                    MUSIC WORLD
+                </p>
+
+                <h2>
+                    Ready?
+                </h2>
+
+                <p class="muted">
+                    Pick a branch and enter your first world.
+                </p>
+
+                <button
+                    class="main-btn"
+                    onclick="goToScene(1)"
+                >
+                    OPEN PATH
+                    <span>→</span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SCENE 3 — PERSIAN AGE
+             ===================================================== -->
+
+        <section
+            class="scene"
+            id="scene3"
+        >
+
+            <div class="scene-bg scene-bg-persian"></div>
+
+            <div class="center-panel glass">
+
+                <p class="eyebrow">
+                    PERSIAN
+                </p>
+
+                <h2>
+                    Choose a generation
+                </h2>
+
+                <div class="option-grid two">
+
+                    <button
+                        class="choice-card"
+                        onclick="choosePersianAge('old')"
+                    >
+
+                        <span class="choice-icon">
+                            ✦
+                        </span>
+
+                        <strong>
+                            Old Persian
+                        </strong>
+
+                        <small>
+                            Classic memories
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="choice-card"
+                        onclick="choosePersianAge('new')"
+                    >
+
+                        <span class="choice-icon">
+                            ◈
+                        </span>
+
+                        <strong>
+                            New Persian
+                        </strong>
+
+                        <small>
+                            Modern nights
+                        </small>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SCENE 4 — PERSIAN OLD
+             ===================================================== -->
+
+        <section
+            class="scene"
+            id="scene4"
+        >
+
+            <div class="scene-bg scene-bg-old"></div>
+
+            <div class="library-panel">
+
+                <div class="library-head">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            PERSIAN / OLD
+                        </p>
+
+                        <h2>
+                            Classic Collection
+                        </h2>
+
+                    </div>
+
+                    <button
+                        class="back-mini"
+                        onclick="goBack()"
+                    >
+                        ← Back
+                    </button>
 
                 </div>
 
 
-                <span
-                    id="playerStatus"
-                >
-                    READY
-                </span>
+                <div class="song-grid">
 
-            </div>
-
-
-
-            <!-- PROGRESS + CAR -->
-
-            <div
-                class="player-line"
-                id="playerLine"
-            >
-
-                <span
-                    id="progressFill"
-                ></span>
-
-
-                <span
-                    id="byeCar"
-                    class="bye-car"
-                    aria-hidden="true"
-                >
-                    🚗
-                </span>
-
-            </div>
-
-
-
-            <div class="player-controls">
-
-
-                <button
-                    class="player-btn"
-                    type="button"
-                    onclick="previousSong()"
-                >
-                    ⏮
-                </button>
-
-
-
-                <button
-                    class="player-btn player-btn-main"
-                    id="playButton"
-                    type="button"
-                    onclick="toggleMusic()"
-                >
-                    ▶
-                </button>
-
-
-
-                <button
-                    class="player-btn"
-                    type="button"
-                    onclick="nextSong()"
-                >
-                    ⏭
-                </button>
-
-
-
-                <button
-                    class="player-btn repeat-btn"
-                    id="repeatButton"
-                    type="button"
-                    onclick="cycleRepeatMode()"
-                    title="Repeat"
-                >
-
-                    ↻
-
-                    <small
-                        id="repeatLabel"
+                    <button
+                        class="song-card world-card-swamp"
+                        onclick="openWorld('مرداب')"
                     >
-                        OFF
-                    </small>
 
+                        <span class="card-world">
+                            SWAMP
+                        </span>
+
+                        <strong>
+                            مرداب
+                        </strong>
+
+                        <small>
+                            Googoosh
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="song-card world-card-rain"
+                        onclick="openWorld('باران')"
+                    >
+
+                        <span class="card-world">
+                            RAIN
+                        </span>
+
+                        <strong>
+                            باران
+                        </strong>
+
+                        <small>
+                            Vigen
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="song-card world-card-road"
+                        onclick="openWorld('اگه یه روز بری سفر')"
+                    >
+
+                        <span class="card-world">
+                            ROAD
+                        </span>
+
+                        <strong>
+                            اگه یه روز بری سفر
+                        </strong>
+
+                        <small>
+                            Faramarz Aslani
+                        </small>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SCENE 5 — PERSIAN NEW
+             ===================================================== -->
+
+        <section
+            class="scene"
+            id="scene5"
+        >
+
+            <div class="scene-bg scene-bg-new"></div>
+
+            <div class="library-panel">
+
+                <div class="library-head">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            PERSIAN / NEW
+                        </p>
+
+                        <h2>
+                            Modern Collection
+                        </h2>
+
+                    </div>
+
+                    <button
+                        class="back-mini"
+                        onclick="goBack()"
+                    >
+                        ← Back
+                    </button>
+
+                </div>
+
+
+                <div class="song-grid">
+
+                    <button
+                        class="song-card world-card-neon"
+                        onclick="openWorld('24/7')"
+                    >
+
+                        <span class="card-world">
+                            NEON
+                        </span>
+
+                        <strong>
+                            24/7
+                        </strong>
+
+                        <small>
+                            AROWN
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="song-card world-card-dark"
+                        onclick="openWorld('چشمت سیاه')"
+                    >
+
+                        <span class="card-world">
+                            DARK
+                        </span>
+
+                        <strong>
+                            چشمت سیاه
+                        </strong>
+
+                        <small>
+                            Hoomaan
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="song-card world-card-room"
+                        onclick="openWorld('خونه‌ی من')"
+                    >
+
+                        <span class="card-world">
+                            ROOM
+                        </span>
+
+                        <strong>
+                            خونه‌ی من
+                        </strong>
+
+                        <small>
+                            Arta
+                        </small>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SCENE 6 — ENGLISH ARTISTS
+             ===================================================== -->
+
+        <section
+            class="scene"
+            id="scene6"
+        >
+
+            <div class="scene-bg scene-bg-english"></div>
+
+            <div class="center-panel glass">
+
+                <p class="eyebrow">
+                    STEP 02
+                </p>
+
+                <h2>
+                    Choose an artist path
+                </h2>
+
+                <p class="muted">
+                    The library can grow without changing the core player.
+                </p>
+
+
+                <div class="option-grid two">
+
+                    <button
+                        class="choice-card"
+                        onclick="chooseEnglishGender('male')"
+                    >
+
+                        <span class="choice-icon">
+                            ♂
+                        </span>
+
+                        <strong>
+                            Male Artists
+                        </strong>
+
+                        <small>
+                            The Weeknd
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="choice-card"
+                        onclick="chooseEnglishGender('female')"
+                    >
+
+                        <span class="choice-icon">
+                            ♀
+                        </span>
+
+                        <strong>
+                            Female Artists
+                        </strong>
+
+                        <small>
+                            Billie Eilish · Ariana Grande
+                        </small>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SCENE 7 — MALE / THE WEEKND
+             ===================================================== -->
+
+        <section
+            class="scene"
+            id="scene7"
+        >
+
+            <div class="scene-bg scene-bg-weeknd"></div>
+
+            <div class="library-panel">
+
+                <div class="library-head">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            ENGLISH / MALE
+                        </p>
+
+                        <h2>
+                            The Weeknd
+                        </h2>
+
+                    </div>
+
+                    <button
+                        class="back-mini"
+                        onclick="goBack()"
+                    >
+                        ← Back
+                    </button>
+
+                </div>
+
+
+                <div class="artist-block">
+
+                    <span>
+                        THE WEEKND
+                    </span>
+
+                    <p>
+                        Night drive • neon • cinematic worlds
+                    </p>
+
+                </div>
+
+
+                <div class="song-grid">
+
+                    <button
+                        class="song-card world-card-red"
+                        onclick="openWorld('One Of The Girls')"
+                    >
+
+                        <span class="card-world">
+                            RED
+                        </span>
+
+                        <strong>
+                            One Of The Girls
+                        </strong>
+
+                        <small>
+                            The Weeknd
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="song-card world-card-vhs"
+                        onclick="openWorld('Timeless')"
+                    >
+
+                        <span class="card-world">
+                            VHS
+                        </span>
+
+                        <strong>
+                            Timeless
+                        </strong>
+
+                        <small>
+                            The Weeknd
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="song-card world-card-luxury"
+                        onclick="openWorld('Popular')"
+                    >
+
+                        <span class="card-world">
+                            LUXURY
+                        </span>
+
+                        <strong>
+                            Popular
+                        </strong>
+
+                        <small>
+                            The Weeknd
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="song-card world-card-starboy"
+                        onclick="openWorld('Starboy')"
+                    >
+
+                        <span class="card-world">
+                            STARBOY
+                        </span>
+
+                        <strong>
+                            Starboy
+                        </strong>
+
+                        <small>
+                            The Weeknd
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="song-card world-card-callout"
+                        onclick="openWorld('Call Out My Name')"
+                    >
+
+                        <span class="card-world">
+                            CALL OUT
+                        </span>
+
+                        <strong>
+                            Call Out My Name
+                        </strong>
+
+                        <small>
+                            The Weeknd
+                        </small>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SCENE 8 — FEMALE / BILLIE + ARIANA
+             ===================================================== -->
+
+        <section
+            class="scene"
+            id="scene8"
+        >
+
+            <div class="scene-bg scene-bg-female"></div>
+
+            <div class="library-panel">
+
+                <div class="library-head">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            ENGLISH / FEMALE
+                        </p>
+
+                        <h2>
+                            Female Artists
+                        </h2>
+
+                    </div>
+
+                    <button
+                        class="back-mini"
+                        onclick="goBack()"
+                    >
+                        ← Back
+                    </button>
+
+                </div>
+
+
+                <div class="artist-block">
+
+                    <span>
+                        BILLIE EILISH
+                    </span>
+
+                    <p>
+                        Cold rooms • oceans • moonlight
+                    </p>
+
+                </div>
+
+
+                <div class="song-grid">
+
+                    <button
+                        class="song-card world-card-lovely"
+                        onclick="openWorld('lovely')"
+                    >
+
+                        <span class="card-world">
+                            LOVELY
+                        </span>
+
+                        <strong>
+                            lovely
+                        </strong>
+
+                        <small>
+                            Billie Eilish
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="song-card world-card-birds"
+                        onclick="openWorld('BIRDS OF A FEATHER')"
+                    >
+
+                        <span class="card-world">
+                            BIRDS
+                        </span>
+
+                        <strong>
+                            BIRDS OF A FEATHER
+                        </strong>
+
+                        <small>
+                            Billie Eilish
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="song-card world-card-ocean"
+                        onclick="openWorld('ocean eyes')"
+                    >
+
+                        <span class="card-world">
+                            OCEAN
+                        </span>
+
+                        <strong>
+                            ocean eyes
+                        </strong>
+
+                        <small>
+                            Billie Eilish
+                        </small>
+
+                    </button>
+
+                </div>
+
+
+                <div class="artist-block ariana-block">
+
+                    <span>
+                        ARIANA GRANDE
+                    </span>
+
+                    <p>
+                        One song • one world
+                    </p>
+
+                </div>
+
+
+                <div class="song-grid single-song-grid">
+
+                    <button
+                        class="song-card world-card-ariana"
+                        onclick="openWorld('bye')"
+                    >
+
+                        <span class="card-world">
+                            ARIANA
+                        </span>
+
+                        <strong>
+                            bye
+                        </strong>
+
+                        <small>
+                            Ariana Grande
+                        </small>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             WORLD SCENE
+             ===================================================== -->
+
+        <section
+            class="scene world-scene"
+            id="worldScene"
+            data-world="dark"
+        >
+
+            <div class="world-backdrop"></div>
+
+            <div class="world-vignette"></div>
+
+            <div id="worldParticles"></div>
+
+            <div id="rainLayer"></div>
+
+
+            <div class="world-topbar">
+
+                <button
+                    class="icon-btn"
+                    onclick="backToSongs()"
+                    aria-label="Back"
+                >
+                    ←
                 </button>
 
+                <div class="world-brand">
+                    MUSIC WORLD
+                </div>
 
+                <button
+                    class="icon-btn"
+                    onclick="changeVolume()"
+                    aria-label="Volume"
+                >
+                    ◉
+                </button>
+
+            </div>
+
+
+            <div class="world-content">
+
+                <div class="world-copy glass-dark">
+
+                    <p class="eyebrow">
+                        NOW ENTERING
+                    </p>
+
+                    <h2 id="songName">
+                        ---
+                    </h2>
+
+                    <p
+                        id="artistName"
+                        class="artist-name"
+                    >
+                        ---
+                    </p>
+
+                    <p
+                        id="worldDescription"
+                        class="world-description"
+                    >
+                    </p>
+
+                </div>
+
+
+                <div class="visualizer-wrap glass-dark">
+
+                    <div id="visualizer"></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="player glass-dark">
+
+                <div class="player-meta">
+
+                    <div>
+
+                        <span class="player-label">
+                            TRACK
+                        </span>
+
+                        <strong id="playerSongName">
+                            ---
+                        </strong>
+
+                    </div>
+
+                    <span id="playerStatus">
+                        READY
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="player-line"
+                    id="playerLine"
+                >
+                    <span></span>
+                </div>
+
+
+                <div class="player-controls">
+
+                    <button
+                        class="player-btn"
+                        onclick="previousSong()"
+                        aria-label="Previous"
+                    >
+                        ⏮
+                    </button>
+
+
+                    <button
+                        class="player-btn player-btn-main"
+                        id="playButton"
+                        onclick="toggleMusic()"
+                        aria-label="Play"
+                    >
+                        ▶
+                    </button>
+
+
+                    <button
+                        class="player-btn"
+                        onclick="nextSong()"
+                        aria-label="Next"
+                    >
+                        ⏭
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             CAT GUIDE
+             ===================================================== -->
+
+        <div
+            id="catGuide"
+            aria-live="polite"
+        >
+
+            <button
+                id="cat"
+                onclick="catClicked()"
+                aria-label="Cat guide"
+            >
+                🐈‍⬛
+            </button>
+
+            <div id="catHint"></div>
+
+            <div id="catStatus">
+                CAT GUIDE: 0 / 5
             </div>
 
         </div>
 
-    </section>
 
 
+        <!-- =====================================================
+             GENERAL UI
+             ===================================================== -->
 
-    <!-- =====================================================
-         CAT
-         ===================================================== -->
-
-    <div id="catGuide">
+        <div id="toast"></div>
 
         <button
-            id="cat"
-            type="button"
-            onclick="catClicked()"
-            aria-label="Cat guide"
+            class="global-back"
+            onclick="goBack()"
+            aria-label="Go back"
         >
-            🐈‍⬛
+            ←
         </button>
 
-
-        <div
-            id="catHint"
-        ></div>
+    </main>
 
 
-        <div
-            id="catStatus"
-        >
-            CAT GUIDE: 0 / 5
-        </div>
-
-    </div>
-
-
-
-    <!-- =====================================================
-         TOAST
-         ===================================================== -->
-
-    <div
-        id="toast"
-        aria-live="polite"
-    ></div>
-
-
-
-    <!-- GLOBAL BACK -->
-
-    <button
-        class="global-back"
-        type="button"
-        onclick="goBack()"
-    >
-        ←
-    </button>
-
-
-</main>
-
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 
 </body>
 </html>
