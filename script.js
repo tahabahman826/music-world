@@ -3,6 +3,7 @@
    Stable Full Version
    - PC + Mobile
    - Local MP3
+   - Sogand / Persian New
    - Ariana Grande / bye
    - Repeat
    - Mobile Performance
@@ -217,6 +218,16 @@ const audioFiles = {
     "خونه‌ی من":
         "music/arta.mp3",
 
+    /* =====================================================
+       SOGAND
+       ===================================================== */
+
+    "مریض هم":
+        "music/mariz ham.mp3",
+
+    "دشت پروانه‌ها":
+        "music/dasht parvaneh.mp3",
+
     "One Of The Girls":
         "music/one of the girl.mp3",
 
@@ -299,6 +310,26 @@ const songs = [
         world: "room",
         description:
             "اتاقی آرام با نور گرم پنجره و صدای باران در دوردست."
+    },
+
+    /* =====================================================
+       SOGAND
+       ===================================================== */
+
+    {
+        title: "مریض هم",
+        artist: "Sogand",
+        world: "dark",
+        description:
+            "دنیایی تاریک و سینمایی با ذرات نور و حس شبانه."
+    },
+
+    {
+        title: "دشت پروانه‌ها",
+        artist: "Sogand",
+        world: "birds",
+        description:
+            "دشتی رویایی از نورهای نرم و پروانه‌های درخشان در شب."
     },
 
     {
@@ -3201,4 +3232,8 @@ console.log(
 
 console.log(
     "🔁 Repeat system ready"
+);
+
+console.log(
+    "🎤 Sogand / Persian New added"
 );
