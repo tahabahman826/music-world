@@ -9,71 +9,116 @@ const { Server } = require("socket.io");
 
 /* =========================================================
    MUSIC WORLD BACKEND
+   Production-ready Render configuration
    ========================================================= */
 
 const app = express();
 const server = http.createServer(app);
 
-const PORT = 3000;
+/* =========================================================
+   CONFIG
+   ========================================================= */
+
+const PORT = Number(process.env.PORT) || 3000;
+
+const FRONTEND_ORIGIN =
+    process.env.FRONTEND_ORIGIN ||
+    "https://tahabahman826.github.io";
+
+const SESSION_SECRET =
+    process.env.SESSION_SECRET ||
+    "music-world-development-secret-change-this";
 
 /* =========================================================
    DATABASE
    ========================================================= */
 
 const databaseFolder = path.join(__dirname, "database");
-const databaseFile = path.join(databaseFolder, "data.json");
+const databaseFile = path.join(
+    databaseFolder,
+    "data.json"
+);
+
+const EMPTY_DATABASE = {
+    users: [],
+    favorites: [],
+    friendRequests: [],
+    friendships: [],
+    messages: [],
+    groups: [],
+    groupMessages: [],
+    listenRooms: []
+};
 
 if (!fs.existsSync(databaseFolder)) {
-    fs.mkdirSync(databaseFolder, { recursive: true });
+    fs.mkdirSync(databaseFolder, {
+        recursive: true
+    });
 }
 
 if (!fs.existsSync(databaseFile)) {
     fs.writeFileSync(
         databaseFile,
         JSON.stringify(
-            {
-                users: [],
-                favorites: [],
-                friendRequests: [],
-                friendships: [],
-                messages: [],
-                groups: [],
-                groupMessages: [],
-                listenRooms: []
-            },
+            EMPTY_DATABASE,
             null,
             2
-        )
+        ),
+        "utf8"
     );
 }
 
 function loadDatabase() {
     try {
-        return JSON.parse(
-            fs.readFileSync(databaseFile, "utf8")
-        );
-    } catch {
+        const raw =
+            fs.readFileSync(
+                databaseFile,
+                "utf8"
+            );
+
+        const parsed =
+            JSON.parse(raw);
+
         return {
-            users: [],
-            favorites: [],
-            friendRequests: [],
-            friendships: [],
-            messages: [],
-            groups: [],
-            groupMessages: [],
-            listenRooms: []
+            ...EMPTY_DATABASE,
+            ...parsed
+        };
+    } catch (error) {
+        console.error(
+            "DATABASE LOAD ERROR:",
+            error
+        );
+
+        return {
+            ...EMPTY_DATABASE
         };
     }
 }
 
-function saveDatabase() {
-    fs.writeFileSync(
-        databaseFile,
-        JSON.stringify(database, null, 2)
-    );
-}
-
 let database = loadDatabase();
+
+function saveDatabase() {
+    try {
+        fs.writeFileSync(
+            databaseFile,
+            JSON.stringify(
+                database,
+                null,
+                2
+            ),
+            "utf8"
+        );
+
+        return true;
+    } catch (error) {
+        console.error(
+            "DATABASE SAVE ERROR:",
+            error
+        );
+
+        return false;
+    }
+}
 
 /* =========================================================
    HELPERS
@@ -95,20 +140,6 @@ function now() {
     return new Date().toISOString();
 }
 
-function publicUser(user) {
-    if (!user) return null;
-
-    return {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        online: Boolean(user.online),
-        lastActive: user.lastActive || null,
-        nowPlaying: user.nowPlaying || null,
-        createdAt: user.createdAt
-    };
-}
-
 function findUserById(id) {
     return database.users.find(
         user => user.id === id
@@ -118,28 +149,78 @@ function findUserById(id) {
 function findUserByEmail(email) {
     return database.users.find(
         user =>
-            user.email.toLowerCase() ===
-            email.toLowerCase()
+            String(user.email)
+                .toLowerCase() ===
+            String(email)
+                .toLowerCase()
+    );
+}
+
+function publicUser(user) {
+    if (!user) {
+        return null;
+    }
+
+    return {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        online: Boolean(user.online),
+        lastActive:
+            user.lastActive || null,
+        nowPlaying:
+            user.nowPlaying || null,
+        createdAt:
+            user.createdAt
+    };
+}
+
+function isFriend(userA, userB) {
+    return database.friendships.some(
+        friendship =>
+            (
+                friendship.userA === userA &&
+                friendship.userB === userB
+            ) ||
+            (
+                friendship.userA === userB &&
+                friendship.userB === userA
+            )
+    );
+}
+
+function isGroupMember(group, userId) {
+    return Boolean(
+        group &&
+        Array.isArray(group.members) &&
+        group.members.includes(userId)
     );
 }
 
 function requireAuth(req, res, next) {
     if (!req.session.userId) {
         return res.status(401).json({
-            message: "You must be logged in."
+            message:
+                "You must be logged in."
         });
     }
 
     const user =
-        findUserById(req.session.userId);
+        findUserById(
+            req.session.userId
+        );
 
     if (!user) {
-        req.session.destroy(() => {});
-
-        return res.status(401).json({
-            message: "Session is invalid."
+        return req.session.destroy(() => {
+            res.status(401).json({
+                message:
+                    "Session is invalid."
+            });
         });
     }
+
+    user.online = true;
+    user.lastActive = now();
 
     req.user = user;
 
@@ -150,29 +231,74 @@ function requireAuth(req, res, next) {
    MIDDLEWARE
    ========================================================= */
 
+app.disable("x-powered-by");
+
+app.set(
+    "trust proxy",
+    1
+);
+
 app.use(
     cors({
-        origin: true,
-        credentials: true
+        origin: FRONTEND_ORIGIN,
+        credentials: true,
+        methods: [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE",
+            "OPTIONS"
+        ],
+        allowedHeaders: [
+            "Content-Type",
+            "Authorization"
+        ]
     })
 );
 
-app.use(express.json());
+app.use(
+    express.json({
+        limit: "1mb"
+    })
+);
+
+app.use(
+    express.urlencoded({
+        extended: true,
+        limit: "1mb"
+    })
+);
+
+/* =========================================================
+   SESSION
+   ========================================================= */
 
 app.use(
     session({
-        secret:
-            process.env.SESSION_SECRET ||
-            "music-world-development-secret-change-me",
+        name: "musicworld.sid",
+
+        secret: SESSION_SECRET,
 
         resave: false,
 
         saveUninitialized: false,
 
+        rolling: true,
+
         cookie: {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax",
+
+            secure:
+                process.env.NODE_ENV ===
+                "production",
+
+            sameSite:
+                process.env.NODE_ENV ===
+                "production"
+                    ? "none"
+                    : "lax",
+
             maxAge:
                 1000 *
                 60 *
@@ -187,14 +313,25 @@ app.use(
    SOCKET.IO
    ========================================================= */
 
-const io = new Server(server, {
-    cors: {
-        origin: true,
-        credentials: true
-    }
-});
+const io = new Server(
+    server,
+    {
+        cors: {
+            origin:
+                FRONTEND_ORIGIN,
 
-const connectedSockets = new Map();
+            credentials: true,
+
+            methods: [
+                "GET",
+                "POST"
+            ]
+        }
+    }
+);
+
+const connectedSockets =
+    new Map();
 
 /* =========================================================
    HEALTH
@@ -205,7 +342,11 @@ app.get(
     (req, res) => {
         res.json({
             ok: true,
-            service: "Music World Backend",
+            service:
+                "Music World Backend",
+            environment:
+                process.env.NODE_ENV ||
+                "development",
             time: now()
         });
     }
@@ -254,10 +395,24 @@ app.post(
                 });
             }
 
+            if (username.length > 30) {
+                return res.status(400).json({
+                    message:
+                        "Username is too long."
+                });
+            }
+
             if (password.length < 8) {
                 return res.status(400).json({
                     message:
                         "Password must contain at least 8 characters."
+                });
+            }
+
+            if (email.length > 150) {
+                return res.status(400).json({
+                    message:
+                        "Email is too long."
                 });
             }
 
@@ -271,7 +426,8 @@ app.post(
             const usernameExists =
                 database.users.some(
                     user =>
-                        user.username.toLowerCase() ===
+                        user.username
+                            .toLowerCase() ===
                         username.toLowerCase()
                 );
 
@@ -288,8 +444,12 @@ app.post(
                     12
                 );
 
+            const timestamp =
+                now();
+
             const user = {
-                id: generateId("user"),
+                id:
+                    generateId("user"),
 
                 username,
 
@@ -299,45 +459,53 @@ app.post(
 
                 online: true,
 
-                lastActive: now(),
+                lastActive:
+                    timestamp,
 
-                nowPlaying: null,
+                nowPlaying:
+                    null,
 
-                createdAt: now()
+                createdAt:
+                    timestamp
             };
 
-            database.users.push(user);
+            database.users.push(
+                user
+            );
 
-            saveDatabase();
-
-            /*
-             * IMPORTANT:
-             * Save the session before sending the response.
-             */
-
-            req.session.userId = user.id;
-
-            req.session.save(error => {
-                if (error) {
-                    console.error(
-                        "SESSION SAVE ERROR:",
-                        error
-                    );
-
-                    return res.status(500).json({
-                        message:
-                            "Session could not be saved."
-                    });
-                }
-
-                res.json({
-                    success: true,
-                    user: publicUser(user)
+            if (!saveDatabase()) {
+                return res.status(500).json({
+                    message:
+                        "Database could not be saved."
                 });
+            }
 
-                broadcastOnlineCount();
-            });
+            req.session.userId =
+                user.id;
 
+            req.session.save(
+                error => {
+                    if (error) {
+                        console.error(
+                            "SESSION SAVE ERROR:",
+                            error
+                        );
+
+                        return res.status(500).json({
+                            message:
+                                "Session could not be saved."
+                        });
+                    }
+
+                    res.json({
+                        success: true,
+                        user:
+                            publicUser(user)
+                    });
+
+                    broadcastOnlineCount();
+                }
+            );
         } catch (error) {
             console.error(
                 "REGISTER ERROR:",
@@ -372,6 +540,13 @@ app.post(
                     req.body.password || ""
                 );
 
+            if (!email || !password) {
+                return res.status(400).json({
+                    message:
+                        "Email and password are required."
+                });
+            }
+
             const user =
                 findUserByEmail(email);
 
@@ -400,34 +575,32 @@ app.post(
 
             saveDatabase();
 
-            /*
-             * IMPORTANT:
-             * Save the session before sending the response.
-             */
+            req.session.userId =
+                user.id;
 
-            req.session.userId = user.id;
+            req.session.save(
+                error => {
+                    if (error) {
+                        console.error(
+                            "SESSION SAVE ERROR:",
+                            error
+                        );
 
-            req.session.save(error => {
-                if (error) {
-                    console.error(
-                        "SESSION SAVE ERROR:",
-                        error
-                    );
+                        return res.status(500).json({
+                            message:
+                                "Session could not be saved."
+                        });
+                    }
 
-                    return res.status(500).json({
-                        message:
-                            "Session could not be saved."
+                    res.json({
+                        success: true,
+                        user:
+                            publicUser(user)
                     });
+
+                    broadcastOnlineCount();
                 }
-
-                res.json({
-                    success: true,
-                    user: publicUser(user)
-                });
-
-                broadcastOnlineCount();
-            });
-
+            );
         } catch (error) {
             console.error(
                 "LOGIN ERROR:",
@@ -448,33 +621,15 @@ app.post(
 
 app.get(
     "/api/auth/me",
+    requireAuth,
     (req, res) => {
-        if (!req.session.userId) {
-            return res.status(401).json({
-                message:
-                    "Not authenticated."
-            });
-        }
-
-        const user =
-            findUserById(
-                req.session.userId
-            );
-
-        if (!user) {
-            return res.status(401).json({
-                message:
-                    "User not found."
-            });
-        }
-
-        user.online = true;
-        user.lastActive = now();
-
         saveDatabase();
 
         res.json({
-            user: publicUser(user)
+            user:
+                publicUser(
+                    req.user
+                )
         });
     }
 );
@@ -487,45 +642,52 @@ app.post(
     "/api/auth/logout",
     requireAuth,
     (req, res) => {
-        req.user.online = false;
-        req.user.lastActive = now();
+        const user =
+            req.user;
+
+        const userId =
+            user.id;
+
+        user.online = false;
+        user.lastActive = now();
+        user.nowPlaying = null;
+
+        const lastActive =
+            user.lastActive;
 
         saveDatabase();
 
-        const userId =
-            req.user.id;
+        req.session.destroy(
+            error => {
+                if (error) {
+                    console.error(
+                        "LOGOUT SESSION ERROR:",
+                        error
+                    );
 
-        const lastActive =
-            req.user.lastActive;
+                    return res.status(500).json({
+                        message:
+                            "Logout failed."
+                    });
+                }
 
-        req.session.destroy(error => {
-            if (error) {
-                console.error(
-                    "LOGOUT SESSION ERROR:",
-                    error
+                io.emit(
+                    "user_status",
+                    {
+                        userId,
+                        status:
+                            "offline",
+                        lastActive
+                    }
                 );
 
-                return res.status(500).json({
-                    message:
-                        "Logout failed."
+                broadcastOnlineCount();
+
+                res.json({
+                    success: true
                 });
             }
-
-            io.emit(
-                "user_status",
-                {
-                    userId,
-                    status: "offline",
-                    lastActive
-                }
-            );
-
-            broadcastOnlineCount();
-
-            res.json({
-                success: true
-            });
-        });
+        );
     }
 );
 
@@ -581,7 +743,8 @@ app.get(
     (req, res) => {
         const count =
             database.users.filter(
-                user => user.online
+                user =>
+                    user.online === true
             ).length;
 
         res.json({
@@ -599,20 +762,21 @@ app.post(
     requireAuth,
     (req, res) => {
         const songId =
-            req.body.songId || null;
+            req.body.songId
+                ? String(
+                      req.body.songId
+                  )
+                : null;
 
         const playing =
             Boolean(
                 req.body.playing
             );
 
-        if (songId && playing) {
-            req.user.nowPlaying =
-                songId;
-        } else {
-            req.user.nowPlaying =
-                null;
-        }
+        req.user.nowPlaying =
+            songId && playing
+                ? songId
+                : null;
 
         req.user.lastActive =
             now();
@@ -637,7 +801,7 @@ app.post(
 );
 
 /* =========================================================
-   FAVORITES
+   FAVORITES - GET
    ========================================================= */
 
 app.get(
@@ -657,6 +821,10 @@ app.get(
     }
 );
 
+/* =========================================================
+   FAVORITES - ADD
+   ========================================================= */
+
 app.post(
     "/api/favorites",
     requireAuth,
@@ -664,7 +832,7 @@ app.post(
         const songId =
             String(
                 req.body.songId || ""
-            );
+            ).trim();
 
         if (!songId) {
             return res.status(400).json({
@@ -685,7 +853,9 @@ app.post(
         if (!exists) {
             database.favorites.push({
                 id:
-                    generateId("favorite"),
+                    generateId(
+                        "favorite"
+                    ),
 
                 userId:
                     req.user.id,
@@ -704,6 +874,10 @@ app.post(
         });
     }
 );
+
+/* =========================================================
+   FAVORITES - REMOVE
+   ========================================================= */
 
 app.delete(
     "/api/favorites/:songId",
@@ -729,7 +903,7 @@ app.delete(
 );
 
 /* =========================================================
-   FRIEND REQUESTS
+   FRIEND REQUESTS - GET
    ========================================================= */
 
 app.get(
@@ -754,7 +928,12 @@ app.get(
 
                         username:
                             sender?.username ||
-                            "User"
+                            "User",
+
+                        user:
+                            publicUser(
+                                sender
+                            )
                     };
                 });
 
@@ -763,6 +942,10 @@ app.get(
         });
     }
 );
+
+/* =========================================================
+   FRIEND REQUEST - SEND
+   ========================================================= */
 
 app.post(
     "/api/friends/requests/:userId",
@@ -790,24 +973,12 @@ app.post(
             });
         }
 
-        const alreadyFriends =
-            database.friendships.some(
-                friendship =>
-                    (
-                        friendship.userA ===
-                            req.user.id &&
-                        friendship.userB ===
-                            target.id
-                    ) ||
-                    (
-                        friendship.userA ===
-                            target.id &&
-                        friendship.userB ===
-                            req.user.id
-                    )
-            );
-
-        if (alreadyFriends) {
+        if (
+            isFriend(
+                req.user.id,
+                target.id
+            )
+        ) {
             return res.status(409).json({
                 message:
                     "You are already friends."
@@ -840,7 +1011,9 @@ app.post(
 
         const request = {
             id:
-                generateId("request"),
+                generateId(
+                    "request"
+                ),
 
             fromUserId:
                 req.user.id,
@@ -858,6 +1031,13 @@ app.post(
 
         saveDatabase();
 
+        io.emit(
+            "friend_request",
+            {
+                request
+            }
+        );
+
         res.json({
             success: true,
             request
@@ -866,7 +1046,7 @@ app.post(
 );
 
 /* =========================================================
-   ACCEPT FRIEND REQUEST
+   FRIEND REQUEST - ACCEPT
    ========================================================= */
 
 app.post(
@@ -896,19 +1076,28 @@ app.post(
                     request.id
             );
 
-        database.friendships.push({
-            id:
-                generateId("friendship"),
-
-            userA:
+        if (
+            !isFriend(
                 request.fromUserId,
+                request.toUserId
+            )
+        ) {
+            database.friendships.push({
+                id:
+                    generateId(
+                        "friendship"
+                    ),
 
-            userB:
-                request.toUserId,
+                userA:
+                    request.fromUserId,
 
-            createdAt:
-                now()
-        });
+                userB:
+                    request.toUserId,
+
+                createdAt:
+                    now()
+            });
+        }
 
         saveDatabase();
 
@@ -962,7 +1151,7 @@ app.get(
 );
 
 /* =========================================================
-   GLOBAL CHAT
+   GLOBAL CHAT - GET
    ========================================================= */
 
 app.get(
@@ -970,14 +1159,19 @@ app.get(
     requireAuth,
     (req, res) => {
         const messages =
-            database.messages
-                .slice(-100);
+            database.messages.slice(
+                -100
+            );
 
         res.json({
             messages
         });
     }
 );
+
+/* =========================================================
+   GLOBAL CHAT - SEND
+   ========================================================= */
 
 app.post(
     "/api/chat/global/messages",
@@ -1004,7 +1198,9 @@ app.post(
 
         const message = {
             id:
-                generateId("message"),
+                generateId(
+                    "message"
+                ),
 
             userId:
                 req.user.id,
@@ -1070,17 +1266,26 @@ app.get(
                     })
                 );
 
+        const friendship =
+            isFriend(
+                req.user.id,
+                user.id
+            );
+
         res.json({
             user: {
                 ...publicUser(user),
-                favorites
+
+                favorites,
+
+                friendship
             }
         });
     }
 );
 
 /* =========================================================
-   GROUPS
+   GROUPS - LIST
    ========================================================= */
 
 app.get(
@@ -1088,19 +1293,23 @@ app.get(
     requireAuth,
     (req, res) => {
         const groups =
-            database.groups
-                .filter(
-                    group =>
-                        group.members.includes(
-                            req.user.id
-                        )
-                );
+            database.groups.filter(
+                group =>
+                    isGroupMember(
+                        group,
+                        req.user.id
+                    )
+            );
 
         res.json({
             groups
         });
     }
 );
+
+/* =========================================================
+   GROUPS - CREATE
+   ========================================================= */
 
 app.post(
     "/api/groups",
@@ -1123,9 +1332,25 @@ app.post(
             });
         }
 
+        if (name.length > 80) {
+            return res.status(400).json({
+                message:
+                    "Group name is too long."
+            });
+        }
+
+        if (description.length > 500) {
+            return res.status(400).json({
+                message:
+                    "Group description is too long."
+            });
+        }
+
         const group = {
             id:
-                generateId("group"),
+                generateId(
+                    "group"
+                ),
 
             name,
 
@@ -1147,6 +1372,10 @@ app.post(
         );
 
         saveDatabase();
+
+        io.emit(
+            "groups:updated"
+        );
 
         res.json({
             success: true,
@@ -1178,7 +1407,8 @@ app.get(
         }
 
         if (
-            !group.members.includes(
+            !isGroupMember(
+                group,
                 req.user.id
             )
         ) {
@@ -1223,13 +1453,14 @@ app.post(
         }
 
         if (
-            !group.members.includes(
+            !isGroupMember(
+                group,
                 req.user.id
             )
         ) {
             return res.status(403).json({
                 message:
-                    "You are not a group member."
+                    "You are not a member of this group."
             });
         }
 
@@ -1246,16 +1477,41 @@ app.post(
         }
 
         if (
-            !group.members.includes(
+            group.members.includes(
                 user.id
             )
         ) {
-            group.members.push(
-                user.id
-            );
-
-            saveDatabase();
+            return res.status(409).json({
+                message:
+                    "User is already a member."
+            });
         }
+
+        if (
+            !isFriend(
+                req.user.id,
+                user.id
+            )
+        ) {
+            return res.status(403).json({
+                message:
+                    "You can only invite friends."
+            });
+        }
+
+        group.members.push(
+            user.id
+        );
+
+        saveDatabase();
+
+        io.emit(
+            "group:updated",
+            {
+                groupId:
+                    group.id
+            }
+        );
 
         res.json({
             success: true
@@ -1264,7 +1520,7 @@ app.post(
 );
 
 /* =========================================================
-   GROUP CHAT
+   GROUP CHAT - GET
    ========================================================= */
 
 app.get(
@@ -1286,13 +1542,14 @@ app.get(
         }
 
         if (
-            !group.members.includes(
+            !isGroupMember(
+                group,
                 req.user.id
             )
         ) {
             return res.status(403).json({
                 message:
-                    "You are not a group member."
+                    "You are not a member of this group."
             });
         }
 
@@ -1310,6 +1567,10 @@ app.get(
         });
     }
 );
+
+/* =========================================================
+   GROUP CHAT - SEND
+   ========================================================= */
 
 app.post(
     "/api/groups/:groupId/messages",
@@ -1330,13 +1591,14 @@ app.post(
         }
 
         if (
-            !group.members.includes(
+            !isGroupMember(
+                group,
                 req.user.id
             )
         ) {
             return res.status(403).json({
                 message:
-                    "You are not a group member."
+                    "You are not a member of this group."
             });
         }
 
@@ -1352,9 +1614,18 @@ app.post(
             });
         }
 
+        if (text.length > 1000) {
+            return res.status(400).json({
+                message:
+                    "Message is too long."
+            });
+        }
+
         const message = {
             id:
-                generateId("groupmsg"),
+                generateId(
+                    "groupmsg"
+                ),
 
             groupId:
                 group.id,
@@ -1390,7 +1661,7 @@ app.post(
 );
 
 /* =========================================================
-   LISTEN TOGETHER
+   LISTEN TOGETHER - CREATE / GET ROOM
    ========================================================= */
 
 app.post(
@@ -1412,13 +1683,14 @@ app.post(
         }
 
         if (
-            !group.members.includes(
+            !isGroupMember(
+                group,
                 req.user.id
             )
         ) {
             return res.status(403).json({
                 message:
-                    "You are not a group member."
+                    "You are not a member of this group."
             });
         }
 
@@ -1432,7 +1704,9 @@ app.post(
         if (!room) {
             room = {
                 id:
-                    generateId("listen"),
+                    generateId(
+                        "listen"
+                    ),
 
                 name:
                     `${group.name} — Listen Together`,
@@ -1459,12 +1733,25 @@ app.post(
                 room
             );
         } else {
-            room.songId =
-                req.body.songId ||
-                room.songId;
+            room.members =
+                [...group.members];
+
+            if (
+                req.body.songId
+            ) {
+                room.songId =
+                    String(
+                        req.body.songId
+                    );
+            }
         }
 
         saveDatabase();
+
+        io.emit(
+            "listen:room",
+            room
+        );
 
         res.json({
             success: true,
@@ -1474,7 +1761,7 @@ app.post(
 );
 
 /* =========================================================
-   LISTEN STATE
+   LISTEN TOGETHER - STATE
    ========================================================= */
 
 app.post(
@@ -1504,7 +1791,8 @@ app.post(
 
         if (
             !group ||
-            !group.members.includes(
+            !isGroupMember(
+                group,
                 req.user.id
             )
         ) {
@@ -1514,44 +1802,61 @@ app.post(
             });
         }
 
-        if (req.body.songId) {
+        if (
+            req.body.songId
+        ) {
             room.songId =
-                req.body.songId;
+                String(
+                    req.body.songId
+                );
         }
 
-        room.position =
-            Number(
-                req.body.position || 0
-            );
+        if (
+            req.body.position !==
+            undefined
+        ) {
+            room.position =
+                Number(
+                    req.body.position
+                ) || 0;
+        }
 
-        room.playing =
-            Boolean(
-                req.body.playing
-            );
+        if (
+            req.body.playing !==
+            undefined
+        ) {
+            room.playing =
+                Boolean(
+                    req.body.playing
+                );
+        }
 
         saveDatabase();
 
+        const payload = {
+            roomId:
+                room.id,
+
+            action:
+                req.body.action ||
+                null,
+
+            songId:
+                room.songId,
+
+            position:
+                room.position,
+
+            playing:
+                room.playing,
+
+            userId:
+                req.user.id
+        };
+
         io.emit(
             "listen:state",
-            {
-                roomId:
-                    room.id,
-
-                action:
-                    req.body.action,
-
-                songId:
-                    room.songId,
-
-                position:
-                    room.position,
-
-                playing:
-                    room.playing,
-
-                userId:
-                    req.user.id
-            }
+            payload
         );
 
         res.json({
@@ -1562,7 +1867,7 @@ app.post(
 );
 
 /* =========================================================
-   LEAVE LISTEN ROOM
+   LISTEN TOGETHER - LEAVE
    ========================================================= */
 
 app.post(
@@ -1591,7 +1896,8 @@ app.post(
             );
 
         if (
-            room.members.length === 0
+            room.members.length ===
+            0
         ) {
             database.listenRooms =
                 database.listenRooms.filter(
@@ -1602,6 +1908,16 @@ app.post(
         }
 
         saveDatabase();
+
+        io.emit(
+            "listen:updated",
+            {
+                roomId:
+                    room.id,
+                members:
+                    room.members
+            }
+        );
 
         res.json({
             success: true
@@ -1616,7 +1932,8 @@ app.post(
 function broadcastOnlineCount() {
     const count =
         database.users.filter(
-            user => user.online
+            user =>
+                user.online === true
         ).length;
 
     io.emit(
@@ -1625,8 +1942,41 @@ function broadcastOnlineCount() {
     );
 }
 
+function setUserOffline(
+    userId
+) {
+    const user =
+        findUserById(userId);
+
+    if (!user) {
+        return;
+    }
+
+    user.online = false;
+    user.lastActive = now();
+    user.nowPlaying = null;
+
+    saveDatabase();
+
+    io.emit(
+        "user_status",
+        {
+            userId:
+                user.id,
+
+            status:
+                "offline",
+
+            lastActive:
+                user.lastActive
+        }
+    );
+
+    broadcastOnlineCount();
+}
+
 /* =========================================================
-   SOCKET.IO
+   SOCKET.IO CONNECTION
    ========================================================= */
 
 io.on(
@@ -1645,10 +1995,13 @@ io.on(
                         userId
                     );
 
-                if (!user) return;
+                if (!user) {
+                    return;
+                }
 
                 user.online = true;
-                user.lastActive = now();
+                user.lastActive =
+                    now();
 
                 connectedSockets.set(
                     socket.id,
@@ -1683,28 +2036,17 @@ io.on(
                         userId
                     );
 
-                if (!user) return;
+                if (!user) {
+                    return;
+                }
 
-                user.online = false;
-                user.lastActive = now();
-
-                saveDatabase();
-
-                io.emit(
-                    "user_status",
-                    {
-                        userId:
-                            user.id,
-
-                        status:
-                            "offline",
-
-                        lastActive:
-                            user.lastActive
-                    }
+                setUserOffline(
+                    user.id
                 );
 
-                broadcastOnlineCount();
+                connectedSockets.delete(
+                    socket.id
+                );
             }
         );
 
@@ -1717,40 +2059,13 @@ io.on(
                     );
 
                 if (userId) {
-                    const user =
-                        findUserById(
-                            userId
-                        );
-
-                    if (user) {
-                        user.online =
-                            false;
-
-                        user.lastActive =
-                            now();
-
-                        saveDatabase();
-
-                        io.emit(
-                            "user_status",
-                            {
-                                userId:
-                                    user.id,
-
-                                status:
-                                    "offline",
-
-                                lastActive:
-                                    user.lastActive
-                            }
-                        );
-                    }
+                    setUserOffline(
+                        userId
+                    );
 
                     connectedSockets.delete(
                         socket.id
                     );
-
-                    broadcastOnlineCount();
                 }
 
                 console.log(
@@ -1763,42 +2078,79 @@ io.on(
 );
 
 /* =========================================================
+   404
+   ========================================================= */
+
+app.use(
+    "/api",
+    (req, res) => {
+        res.status(404).json({
+            message:
+                "API endpoint not found."
+        });
+    }
+);
+
+/* =========================================================
+   ERROR HANDLER
+   ========================================================= */
+
+app.use(
+    (error, req, res, next) => {
+        console.error(
+            "SERVER ERROR:",
+            error
+        );
+
+        if (
+            res.headersSent
+        ) {
+            return next(error);
+        }
+
+        res.status(500).json({
+            message:
+                "Internal server error."
+        });
+    }
+);
+
+/* =========================================================
    START SERVER
    ========================================================= */
 
 server.listen(
     PORT,
+    "0.0.0.0",
     () => {
         console.log("");
-
         console.log(
             "========================================"
         );
-
         console.log(
             "        MUSIC WORLD BACKEND"
         );
-
         console.log(
             "========================================"
         );
-
         console.log(
-            `Server: http://localhost:${PORT}`
+            `Environment: ${
+                process.env.NODE_ENV ||
+                "development"
+            }`
         );
-
         console.log(
-            `Health: http://localhost:${PORT}/api/health`
+            `Port: ${PORT}`
         );
-
         console.log(
-            "Database: backend/database/data.json"
+            `Frontend: ${FRONTEND_ORIGIN}`
         );
-
+        console.log(
+            `Health: /api/health`
+        );
         console.log(
             "========================================"
         );
-
         console.log("");
     }
 );
