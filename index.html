@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -12,7 +10,7 @@
 
     <meta
         name="theme-color"
-        content="#05050c"
+        content="#03030a"
     >
 
     <title>Music World</title>
@@ -21,1248 +19,1354 @@
         rel="stylesheet"
         href="style.css"
     >
-
 </head>
-
 
 <body>
 
-<main id="app">
+<!-- =========================================================
+     BACKGROUND
+========================================================= -->
+
+<div class="background">
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+    <div class="background-grid"></div>
+    <div class="background-noise"></div>
+</div>
 
 
-    <!-- =====================================================
-         SCENE 0 — WELCOME
-         ===================================================== -->
+<!-- =========================================================
+     AUTH SCREEN
+========================================================= -->
 
-    <section
-        class="scene active"
-        id="scene0"
-    >
+<section
+    id="authScreen"
+    class="screen auth-screen"
+>
 
-        <div
-            class="scene-bg scene-bg-home"
-        ></div>
+    <div class="auth-container">
 
+        <div class="brand">
 
-        <div class="hero-panel glass">
-
-            <div class="brand-orb">
-                ♫
+            <div class="brand-icon">
+                ♪
             </div>
 
+            <div class="brand-name">
+                MUSIC WORLD
+            </div>
 
-            <p class="eyebrow">
-                MUSIC WORLD 3.0
-            </p>
+        </div>
 
+
+        <div class="auth-heading">
+
+            <span class="eyebrow">
+                MUSIC • PEOPLE • WORLDS
+            </span>
 
             <h1>
                 ENTER THE
-                <br>
                 <span>MUSIC WORLD</span>
             </h1>
 
-
-            <p class="hero-copy">
-                Choose your path, discover songs,
-                and enter a different world for every track.
+            <p>
+                Your music. Your friends. Your world.
             </p>
 
+        </div>
+
+
+        <!-- =================================================
+             REGISTER
+        ================================================== -->
+
+        <form
+            id="registerForm"
+            class="auth-form"
+        >
+
+            <div class="form-title">
+                Create Account
+            </div>
+
+            <label>
+                Username
+
+                <input
+                    id="registerUsername"
+                    type="text"
+                    autocomplete="username"
+                    placeholder="Choose a username"
+                    minlength="3"
+                    maxlength="30"
+                    required
+                >
+            </label>
+
+            <label>
+                Email
+
+                <input
+                    id="registerEmail"
+                    type="email"
+                    autocomplete="email"
+                    placeholder="you@example.com"
+                    required
+                >
+            </label>
+
+            <label>
+                Password
+
+                <input
+                    id="registerPassword"
+                    type="password"
+                    autocomplete="new-password"
+                    placeholder="Create a password"
+                    minlength="8"
+                    required
+                >
+            </label>
 
             <button
-                class="main-btn"
-                onclick="startWorld()"
+                class="primary-button"
+                type="submit"
             >
-                ENTER WORLD
-                <span>→</span>
-            </button>
-
-
-            <div class="mini-note">
-                PC + MOBILE • LOCAL MP3 • VANILLA JS
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 1 — LANGUAGE
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene1"
-    >
-
-        <div
-            class="scene-bg scene-bg-language"
-        ></div>
-
-
-        <div class="center-panel glass">
-
-            <p class="eyebrow">
-                STEP 01
-            </p>
-
-
-            <h2>
-                Choose your music language
-            </h2>
-
-
-            <div class="option-grid two">
-
-                <button
-                    class="choice-card"
-                    onclick="chooseLanguage('persian')"
-                >
-
-                    <span class="choice-icon">
-                        IR
-                    </span>
-
-                    <strong>
-                        Persian
-                    </strong>
-
-                    <small>
-                        Old + New
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="choice-card"
-                    onclick="chooseLanguage('english')"
-                >
-
-                    <span class="choice-icon">
-                        EN
-                    </span>
-
-                    <strong>
-                        English
-                    </strong>
-
-                    <small>
-                        Artists + Songs
-                    </small>
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 2 — READY
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene2"
-    >
-
-        <div
-            class="scene-bg scene-bg-ready"
-        ></div>
-
-
-        <div class="center-panel glass">
-
-            <p class="eyebrow">
-                MUSIC WORLD
-            </p>
-
-
-            <h2>
-                Ready?
-            </h2>
-
-
-            <p class="muted">
-                Pick a branch and enter your first world.
-            </p>
-
-
-            <button
-                class="main-btn"
-                onclick="goToScene(1)"
-            >
-                OPEN PATH
-                <span>→</span>
-            </button>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 3 — PERSIAN AGE
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene3"
-    >
-
-        <div
-            class="scene-bg scene-bg-persian"
-        ></div>
-
-
-        <div class="center-panel glass">
-
-            <p class="eyebrow">
-                PERSIAN
-            </p>
-
-
-            <h2>
-                Choose a generation
-            </h2>
-
-
-            <div class="option-grid two">
-
-                <button
-                    class="choice-card"
-                    onclick="choosePersianAge('old')"
-                >
-
-                    <span class="choice-icon">
-                        ✦
-                    </span>
-
-                    <strong>
-                        Old Persian
-                    </strong>
-
-                    <small>
-                        Classic memories
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="choice-card"
-                    onclick="choosePersianAge('new')"
-                >
-
-                    <span class="choice-icon">
-                        ◈
-                    </span>
-
-                    <strong>
-                        New Persian
-                    </strong>
-
-                    <small>
-                        Modern nights
-                    </small>
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 4 — PERSIAN OLD
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene4"
-    >
-
-        <div
-            class="scene-bg scene-bg-old"
-        ></div>
-
-
-        <div class="library-panel">
-
-            <div class="library-head">
-
-                <div>
-
-                    <p class="eyebrow">
-                        PERSIAN / OLD
-                    </p>
-
-                    <h2>
-                        Classic Collection
-                    </h2>
-
-                </div>
-
-
-                <button
-                    class="back-mini"
-                    onclick="goBack()"
-                >
-                    ← Back
-                </button>
-
-            </div>
-
-
-            <div class="song-grid">
-
-                <button
-                    class="song-card world-card-swamp"
-                    onclick="openWorld('مرداب')"
-                >
-
-                    <span class="card-world">
-                        SWAMP
-                    </span>
-
-                    <strong>
-                        مرداب
-                    </strong>
-
-                    <small>
-                        Googoosh
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="song-card world-card-rain"
-                    onclick="openWorld('باران')"
-                >
-
-                    <span class="card-world">
-                        RAIN
-                    </span>
-
-                    <strong>
-                        باران
-                    </strong>
-
-                    <small>
-                        Vigen
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="song-card world-card-road"
-                    onclick="openWorld('اگه یه روز بری سفر')"
-                >
-
-                    <span class="card-world">
-                        ROAD
-                    </span>
-
-                    <strong>
-                        اگه یه روز بری سفر
-                    </strong>
-
-                    <small>
-                        Faramarz Aslani
-                    </small>
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 5 — PERSIAN NEW
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene5"
-    >
-
-        <div
-            class="scene-bg scene-bg-new"
-        ></div>
-
-
-        <div class="library-panel">
-
-            <div class="library-head">
-
-                <div>
-
-                    <p class="eyebrow">
-                        PERSIAN / NEW
-                    </p>
-
-                    <h2>
-                        Modern Collection
-                    </h2>
-
-                </div>
-
-
-                <button
-                    class="back-mini"
-                    onclick="goBack()"
-                >
-                    ← Back
-                </button>
-
-            </div>
-
-
-            <div class="song-grid">
-
-                <button
-                    class="song-card world-card-neon"
-                    onclick="openWorld('24/7')"
-                >
-
-                    <span class="card-world">
-                        NEON
-                    </span>
-
-                    <strong>
-                        24/7
-                    </strong>
-
-                    <small>
-                        AROWN
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="song-card world-card-dark"
-                    onclick="openWorld('چشمت سیاه')"
-                >
-
-                    <span class="card-world">
-                        DARK
-                    </span>
-
-                    <strong>
-                        چشمت سیاه
-                    </strong>
-
-                    <small>
-                        Hoomaan
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="song-card world-card-room"
-                    onclick="openWorld('خونه‌ی من')"
-                >
-
-                    <span class="card-world">
-                        ROOM
-                    </span>
-
-                    <strong>
-                        خونه‌ی من
-                    </strong>
-
-                    <small>
-                        Arta
-                    </small>
-
-                </button>
-
-
-                <!-- =================================================
-                     NEW — SOGAND
-                     ================================================= -->
-
-                <button
-                    class="song-card world-card-dark"
-                    onclick="openWorld('مریض هم')"
-                >
-
-                    <span class="card-world">
-                        SOGAND
-                    </span>
-
-                    <strong>
-                        مریض هم
-                    </strong>
-
-                    <small>
-                        Sogand
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="song-card world-card-birds"
-                    onclick="openWorld('دشت پروانه‌ها')"
-                >
-
-                    <span class="card-world">
-                        BUTTERFLY
-                    </span>
-
-                    <strong>
-                        دشت پروانه‌ها
-                    </strong>
-
-                    <small>
-                        Sogand
-                    </small>
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 6 — ENGLISH ARTISTS
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene6"
-    >
-
-        <div
-            class="scene-bg scene-bg-english"
-        ></div>
-
-
-        <div class="center-panel glass">
-
-            <p class="eyebrow">
-                STEP 02
-            </p>
-
-
-            <h2>
-                Choose an artist path
-            </h2>
-
-
-            <p class="muted">
-                The library can grow without changing the core player.
-            </p>
-
-
-            <div class="option-grid two">
-
-                <button
-                    class="choice-card"
-                    onclick="chooseEnglishGender('male')"
-                >
-
-                    <span class="choice-icon">
-                        ♂
-                    </span>
-
-                    <strong>
-                        Male Artists
-                    </strong>
-
-                    <small>
-                        The Weeknd
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="choice-card"
-                    onclick="chooseEnglishGender('female')"
-                >
-
-                    <span class="choice-icon">
-                        ♀
-                    </span>
-
-                    <strong>
-                        Female Artists
-                    </strong>
-
-                    <small>
-                        Billie Eilish · Ariana Grande
-                    </small>
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 7 — THE WEEKND
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene7"
-    >
-
-        <div
-            class="scene-bg scene-bg-weeknd"
-        ></div>
-
-
-        <div class="library-panel">
-
-            <div class="library-head">
-
-                <div>
-
-                    <p class="eyebrow">
-                        ENGLISH / MALE
-                    </p>
-
-                    <h2>
-                        The Weeknd
-                    </h2>
-
-                </div>
-
-
-                <button
-                    class="back-mini"
-                    onclick="goBack()"
-                >
-                    ← Back
-                </button>
-
-            </div>
-
-
-            <div class="artist-block">
+                CREATE ACCOUNT
 
                 <span>
-                    THE WEEKND
+                    →
                 </span>
 
-                <p>
-                    Night drive • neon • cinematic worlds
-                </p>
-
-            </div>
-
-
-            <div class="song-grid">
-
-                <button
-                    class="song-card world-card-red"
-                    onclick="openWorld('One Of The Girls')"
-                >
-
-                    <span class="card-world">
-                        RED
-                    </span>
-
-                    <strong>
-                        One Of The Girls
-                    </strong>
-
-                    <small>
-                        The Weeknd
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="song-card world-card-vhs"
-                    onclick="openWorld('Timeless')"
-                >
-
-                    <span class="card-world">
-                        VHS
-                    </span>
-
-                    <strong>
-                        Timeless
-                    </strong>
-
-                    <small>
-                        The Weeknd
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="song-card world-card-luxury"
-                    onclick="openWorld('Popular')"
-                >
-
-                    <span class="card-world">
-                        LUXURY
-                    </span>
-
-                    <strong>
-                        Popular
-                    </strong>
-
-                    <small>
-                        The Weeknd
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="song-card world-card-starboy"
-                    onclick="openWorld('Starboy')"
-                >
-
-                    <span class="card-world">
-                        STARBOY
-                    </span>
-
-                    <strong>
-                        Starboy
-                    </strong>
-
-                    <small>
-                        The Weeknd
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="song-card world-card-callout"
-                    onclick="openWorld('Call Out My Name')"
-                >
-
-                    <span class="card-world">
-                        CALL OUT
-                    </span>
-
-                    <strong>
-                        Call Out My Name
-                    </strong>
-
-                    <small>
-                        The Weeknd
-                    </small>
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         SCENE 8 — BILLIE + ARIANA
-         ===================================================== -->
-
-    <section
-        class="scene"
-        id="scene8"
-    >
-
-        <div
-            class="scene-bg scene-bg-female"
-        ></div>
-
-
-        <div class="library-panel">
-
-            <div class="library-head">
-
-                <div>
-
-                    <p class="eyebrow">
-                        ENGLISH / FEMALE
-                    </p>
-
-                    <h2>
-                        Female Artists
-                    </h2>
-
-                </div>
-
-
-                <button
-                    class="back-mini"
-                    onclick="goBack()"
-                >
-                    ← Back
-                </button>
-
-            </div>
-
-
-            <div class="artist-block">
-
-                <span>
-                    BILLIE EILISH
-                </span>
-
-                <p>
-                    Cold rooms • oceans • moonlight
-                </p>
-
-            </div>
-
-
-            <div class="song-grid">
-
-                <button
-                    class="song-card world-card-lovely"
-                    onclick="openWorld('lovely')"
-                >
-
-                    <span class="card-world">
-                        LOVELY
-                    </span>
-
-                    <strong>
-                        lovely
-                    </strong>
-
-                    <small>
-                        Billie Eilish
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="song-card world-card-birds"
-                    onclick="openWorld('BIRDS OF A FEATHER')"
-                >
-
-                    <span class="card-world">
-                        BIRDS
-                    </span>
-
-                    <strong>
-                        BIRDS OF A FEATHER
-                    </strong>
-
-                    <small>
-                        Billie Eilish
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="song-card world-card-ocean"
-                    onclick="openWorld('ocean eyes')"
-                >
-
-                    <span class="card-world">
-                        OCEAN
-                    </span>
-
-                    <strong>
-                        ocean eyes
-                    </strong>
-
-                    <small>
-                        Billie Eilish
-                    </small>
-
-                </button>
-
-            </div>
-
-
-            <div
-                class="artist-block ariana-block"
-            >
-
-                <span>
-                    ARIANA GRANDE
-                </span>
-
-                <p>
-                    One song • one world
-                </p>
-
-            </div>
-
-
-            <div
-                class="song-grid single-song-grid"
-            >
-
-                <button
-                    class="song-card world-card-ariana"
-                    onclick="openWorld('bye')"
-                >
-
-                    <span class="card-world">
-                        ARIANA
-                    </span>
-
-                    <strong>
-                        bye
-                    </strong>
-
-                    <small>
-                        Ariana Grande
-                    </small>
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================================
-         WORLD
-         ===================================================== -->
-
-    <section
-        class="scene world-scene"
-        id="worldScene"
-        data-world="dark"
-    >
-
-        <div
-            class="world-backdrop"
-        ></div>
-
-
-        <div
-            class="world-vignette"
-        ></div>
-
-
-        <div
-            id="worldParticles"
-        ></div>
-
-
-        <div
-            id="rainLayer"
-        ></div>
-
-
-
-        <div class="world-topbar">
-
-            <button
-                class="icon-btn"
-                onclick="backToSongs()"
-                aria-label="Back"
-                title="Back"
-            >
-                ←
             </button>
 
+        </form>
 
-            <div class="world-brand">
-                MUSIC WORLD
+
+        <!-- =================================================
+             LOGIN
+        ================================================== -->
+
+        <form
+            id="loginForm"
+            class="auth-form hidden"
+        >
+
+            <div class="form-title">
+                Welcome Back
             </div>
 
+            <label>
+                Email
+
+                <input
+                    id="loginEmail"
+                    type="email"
+                    autocomplete="email"
+                    placeholder="you@example.com"
+                    required
+                >
+            </label>
+
+            <label>
+                Password
+
+                <input
+                    id="loginPassword"
+                    type="password"
+                    autocomplete="current-password"
+                    placeholder="Your password"
+                    required
+                >
+            </label>
 
             <button
-                class="icon-btn"
-                onclick="changeVolume()"
-                aria-label="Volume"
-                title="Volume"
+                class="primary-button"
+                type="submit"
             >
-                ◉
+                LOGIN
+
+                <span>
+                    →
+                </span>
+
+            </button>
+
+        </form>
+
+
+        <!-- =================================================
+             AUTH SWITCH
+        ================================================== -->
+
+        <button
+            id="authSwitch"
+            class="auth-switch"
+            type="button"
+        >
+            Already have an account? Log in
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     MAIN APPLICATION
+========================================================= -->
+
+<section
+    id="mainScreen"
+    class="screen main-screen hidden"
+>
+
+
+    <!-- =================================================
+         TOP BAR
+    ================================================== -->
+
+    <header class="topbar">
+
+        <div class="topbar-brand">
+
+            <div class="mini-logo">
+                ♪
+            </div>
+
+            <div>
+
+                <strong>
+                    MUSIC WORLD
+                </strong>
+
+                <span>
+                    SOCIAL MUSIC UNIVERSE
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="main-navigation">
+
+            <button
+                class="nav-button active"
+                data-view="music"
+                type="button"
+            >
+                Music
+            </button>
+
+            <button
+                class="nav-button"
+                data-view="friends"
+                type="button"
+            >
+                Friends
+            </button>
+
+            <button
+                class="nav-button"
+                data-view="chat"
+                type="button"
+            >
+                Chat
+            </button>
+
+            <button
+                class="nav-button"
+                data-view="groups"
+                type="button"
+            >
+                Groups
+            </button>
+
+            <button
+                class="nav-button"
+                data-view="profile"
+                type="button"
+            >
+                Profile
+            </button>
+
+        </nav>
+
+
+        <div class="topbar-user">
+
+            <div
+                id="topbarAvatar"
+                class="user-avatar-small"
+            >
+                ?
+            </div>
+
+            <div class="topbar-user-info">
+
+                <strong id="topbarUsername">
+                    User
+                </strong>
+
+                <span>
+                    ● ONLINE
+                </span>
+
+            </div>
+
+            <button
+                data-action="logout"
+                class="logout-button"
+                type="button"
+            >
+                EXIT
             </button>
 
         </div>
 
+    </header>
 
 
-        <div class="world-content">
+    <!-- =================================================
+         MUSIC VIEW
+    ================================================== -->
 
-            <div
-                class="world-copy glass-dark"
-            >
+    <main
+        id="musicView"
+        class="view"
+    >
 
-                <p class="eyebrow">
-                    NOW ENTERING
-                </p>
+        <div class="view-header">
 
+            <div>
 
-                <h2 id="songName">
-                    ---
+                <span class="section-kicker">
+                    DISCOVER
+                </span>
+
+                <h2>
+                    Music World
                 </h2>
 
-
-                <p
-                    id="artistName"
-                    class="artist-name"
-                >
-                    ---
+                <p>
+                    Enter a song and explore its world.
                 </p>
-
-
-                <p
-                    id="worldDescription"
-                    class="world-description"
-                ></p>
 
             </div>
 
 
-            <div
-                class="visualizer-wrap glass-dark"
-            >
+            <div class="language-selector">
 
-                <div
-                    id="visualizer"
-                ></div>
+                <button
+                    class="language-button active"
+                    data-language="all"
+                    type="button"
+                >
+                    ALL
+                </button>
+
+                <button
+                    class="language-button"
+                    data-language="persian"
+                    type="button"
+                >
+                    فارسی
+                </button>
+
+                <button
+                    class="language-button"
+                    data-language="english"
+                    type="button"
+                >
+                    EN
+                </button>
 
             </div>
 
         </div>
 
 
+        <section class="music-section">
 
-        <div
-            class="player glass-dark"
-        >
+            <div
+                id="songGrid"
+                class="song-grid"
+            ></div>
 
-            <div class="player-meta">
+        </section>
+
+
+        <!-- FAVORITES -->
+
+        <section class="favorites-section">
+
+            <div class="section-heading">
 
                 <div>
 
-                    <span
-                        class="player-label"
-                    >
-                        TRACK
+                    <span class="section-kicker">
+                        YOUR COLLECTION
                     </span>
 
-
-                    <strong
-                        id="playerSongName"
-                    >
-                        ---
-                    </strong>
+                    <h3>
+                        My Favorites
+                    </h3>
 
                 </div>
 
-
                 <span
-                    id="playerStatus"
+                    id="favoritesCount"
+                    class="count-badge"
                 >
-                    READY
+                    0
                 </span>
 
             </div>
 
-
             <div
-                class="player-line"
-                id="playerLine"
-            >
-                <span></span>
-            </div>
+                id="favoritesGrid"
+                class="song-grid favorites-grid"
+            ></div>
+
+        </section>
+
+    </main>
 
 
-            <div
-                class="player-controls"
-            >
+    <!-- =================================================
+         FRIENDS VIEW
+    ================================================== -->
 
-                <button
-                    class="player-btn"
-                    onclick="previousSong()"
-                    aria-label="Previous"
-                    title="Previous"
-                >
-                    ⏮
-                </button>
+    <main
+        id="friendsView"
+        class="view hidden"
+    >
 
+        <div class="view-header">
 
-                <button
-                    class="player-btn player-btn-main"
-                    id="playButton"
-                    onclick="toggleMusic()"
-                    aria-label="Play"
-                    title="Play"
-                >
-                    ▶
-                </button>
+            <div>
 
+                <span class="section-kicker">
+                    SOCIAL
+                </span>
 
-                <button
-                    class="player-btn"
-                    onclick="nextSong()"
-                    aria-label="Next"
-                    title="Next"
-                >
-                    ⏭
-                </button>
+                <h2>
+                    Friends
+                </h2>
 
-
-                <button
-                    class="player-btn repeat-btn"
-                    id="repeatButton"
-                    onclick="cycleRepeat()"
-                    aria-label="Repeat"
-                    title="Repeat OFF"
-                >
-                    🔁
-                </button>
+                <p>
+                    Find people and see what they are listening to.
+                </p>
 
             </div>
 
         </div>
 
-    </section>
 
+        <div class="search-box">
 
-
-    <!-- =====================================================
-         CAT HOLOGRAM
-         ===================================================== -->
-
-    <div
-        id="catGuide"
-        aria-live="polite"
-    >
-
-        <div
-            class="cat-hologram-ring"
-        ></div>
-
-
-        <div
-            class="cat-hologram-core"
-        >
-
-            <div
-                class="cat-orbit orbit-1"
-            ></div>
-
-
-            <div
-                class="cat-orbit orbit-2"
-            ></div>
-
+            <input
+                id="userSearchInput"
+                type="search"
+                placeholder="Search users..."
+                autocomplete="off"
+            >
 
             <button
-                id="cat"
-                onclick="catClicked()"
-                aria-label="Cat guide"
-                title="Cat guide"
+                id="userSearchButton"
+                class="primary-button small"
+                type="button"
             >
-                🐈‍⬛
+                SEARCH
             </button>
 
         </div>
 
 
-        <div class="cat-hud">
+        <section class="social-card">
+
+            <div class="section-heading">
+
+                <h3>
+                    Search Results
+                </h3>
+
+            </div>
 
             <div
-                class="cat-hud-top"
-            >
+                id="userSearchResults"
+                class="users-list"
+            ></div>
+
+        </section>
+
+
+        <section class="social-card">
+
+            <div class="section-heading">
+
+                <h3>
+                    My Friends
+                </h3>
 
                 <span
-                    class="cat-hud-dot"
-                ></span>
-
-
-                <span
-                    class="cat-hud-label"
+                    id="friendsCount"
+                    class="count-badge"
                 >
-                    MUSIC GUIDE
+                    0
                 </span>
 
             </div>
 
+            <div
+                id="friendsList"
+                class="users-list"
+            ></div>
+
+        </section>
+
+
+        <section class="social-card">
+
+            <div class="section-heading">
+
+                <h3>
+                    Friend Requests
+                </h3>
+
+                <span
+                    id="friendRequestsCount"
+                    class="count-badge"
+                >
+                    0
+                </span>
+
+            </div>
 
             <div
-                id="catStatus"
-                class="cat-hud-status"
-            >
-                GUIDE // 0 / 5
+                id="friendRequestsList"
+                class="users-list"
+            ></div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =================================================
+         GLOBAL CHAT
+    ================================================== -->
+
+    <main
+        id="chatView"
+        class="view hidden"
+    >
+
+        <div class="view-header">
+
+            <div>
+
+                <span class="section-kicker">
+                    GLOBAL
+                </span>
+
+                <h2>
+                    World Chat
+                </h2>
+
+                <p>
+                    Everyone online can talk here.
+                </p>
+
             </div>
 
 
-            <div
-                class="cat-hud-line"
-            >
+            <div class="online-counter">
 
-                <span
-                    id="catProgress"
-                ></span>
+                <span class="online-dot"></span>
+
+                <strong id="onlineUsersCount">
+                    0
+                </strong>
+
+                online
 
             </div>
 
         </div>
 
 
-        <div
-            id="catHint"
-        ></div>
+        <section class="chat-window">
+
+            <div
+                id="globalMessages"
+                class="chat-messages"
+            ></div>
+
+
+            <form
+                id="globalChatForm"
+                class="chat-input"
+            >
+
+                <input
+                    id="globalChatInput"
+                    type="text"
+                    maxlength="1000"
+                    placeholder="Write a message..."
+                    autocomplete="off"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="send-button"
+                >
+                    →
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+
+    <!-- =================================================
+         GROUPS VIEW
+    ================================================== -->
+
+    <main
+        id="groupsView"
+        class="view hidden"
+    >
+
+        <div class="view-header">
+
+            <div>
+
+                <span class="section-kicker">
+                    COMMUNITY
+                </span>
+
+                <h2>
+                    Groups
+                </h2>
+
+                <p>
+                    Create your own music community.
+                </p>
+
+            </div>
+
+
+            <button
+                id="createGroupButton"
+                class="primary-button"
+                type="button"
+            >
+                + CREATE GROUP
+            </button>
+
+        </div>
+
+
+        <section class="groups-layout">
+
+            <div
+                id="groupsList"
+                class="groups-list"
+            ></div>
+
+
+            <div
+                id="groupRoom"
+                class="group-room hidden"
+            >
+
+                <div class="group-room-header">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            GROUP ROOM
+                        </span>
+
+                        <h3 id="groupRoomName">
+                            Group
+                        </h3>
+
+                        <p id="groupRoomDescription"></p>
+
+                    </div>
+
+
+                    <button
+                        id="inviteFriendsButton"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        INVITE
+                    </button>
+
+                </div>
+
+
+                <div class="group-members">
+
+                    <div
+                        id="groupMembers"
+                        class="member-avatars"
+                    ></div>
+
+                    <span>
+
+                        <strong id="groupMembersCount">
+                            0
+                        </strong>
+
+                        members
+
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="groupMessages"
+                    class="chat-messages"
+                ></div>
+
+
+                <form
+                    id="groupChatForm"
+                    class="chat-input"
+                >
+
+                    <input
+                        id="groupChatInput"
+                        type="text"
+                        maxlength="1000"
+                        placeholder="Message the group..."
+                        autocomplete="off"
+                        required
+                    >
+
+                    <button
+                        type="submit"
+                        class="send-button"
+                    >
+                        →
+                    </button>
+
+                </form>
+
+
+                <button
+                    id="groupListenTogetherButton"
+                    class="listen-together-button"
+                    type="button"
+                >
+                    ♪ LISTEN TOGETHER
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =================================================
+         PROFILE VIEW
+    ================================================== -->
+
+    <main
+        id="profileView"
+        class="view hidden"
+    >
+
+        <div class="profile-header">
+
+            <div
+                id="profileAvatar"
+                class="profile-avatar"
+            >
+                ?
+            </div>
+
+            <div>
+
+                <span class="section-kicker">
+                    PROFILE
+                </span>
+
+                <h2 id="profileUsername">
+                    User
+                </h2>
+
+                <p id="profileStatus">
+                    Online
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <section class="profile-grid">
+
+            <div class="profile-card">
+
+                <span>
+                    NOW PLAYING
+                </span>
+
+                <strong id="profileNowPlaying">
+                    Nothing
+                </strong>
+
+            </div>
+
+
+            <div class="profile-card">
+
+                <span>
+                    LAST ACTIVE
+                </span>
+
+                <strong id="profileLastActive">
+                    Now
+                </strong>
+
+            </div>
+
+
+            <div class="profile-card">
+
+                <span>
+                    FRIENDS
+                </span>
+
+                <strong id="profileFriendsCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="profile-card">
+
+                <span>
+                    FAVORITES
+                </span>
+
+                <strong id="profileFavorites">
+                    0
+                </strong>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =================================================
+         USER PROFILE MODAL
+    ================================================== -->
+
+    <div
+        id="userProfileModal"
+        class="modal hidden"
+    >
+
+        <div class="modal-panel">
+
+            <button
+                class="modal-close"
+                data-close-modal="userProfileModal"
+                type="button"
+            >
+                ×
+            </button>
+
+            <div
+                id="userProfileAvatar"
+                class="profile-avatar large"
+            >
+                ?
+            </div>
+
+            <h3 id="userProfileName">
+                User
+            </h3>
+
+            <p id="userProfileStatus">
+                Offline
+            </p>
+
+            <div class="profile-detail">
+
+                Now playing:
+
+                <strong id="userProfileNowPlaying">
+                    Nothing
+                </strong>
+
+            </div>
+
+            <div class="profile-detail">
+
+                Last active:
+
+                <strong id="userProfileLastActive">
+                    Unknown
+                </strong>
+
+            </div>
+
+            <div class="profile-detail">
+
+                Favorites:
+
+                <strong id="userProfileFavorites">
+                    0
+                </strong>
+
+            </div>
+
+            <button
+                id="addFriendButton"
+                class="primary-button"
+                type="button"
+            >
+                ADD FRIEND
+            </button>
+
+            <button
+                id="messageUserButton"
+                class="secondary-button"
+                type="button"
+            >
+                MESSAGE
+            </button>
+
+        </div>
 
     </div>
 
 
+    <!-- =================================================
+         CREATE GROUP MODAL
+    ================================================== -->
 
-    <div id="toast"></div>
-
-
-
-    <button
-        class="global-back"
-        onclick="goBack()"
-        aria-label="Go back"
-        title="Go back"
+    <div
+        id="createGroupModal"
+        class="modal hidden"
     >
-        ←
-    </button>
+
+        <div class="modal-panel">
+
+            <button
+                class="modal-close"
+                data-close-modal="createGroupModal"
+                type="button"
+            >
+                ×
+            </button>
+
+            <h3>
+                Create Group
+            </h3>
 
 
-</main>
+            <form
+                id="createGroupForm"
+                class="auth-form"
+            >
 
+                <label>
+
+                    Group Name
+
+                    <input
+                        id="groupNameInput"
+                        type="text"
+                        maxlength="60"
+                        required
+                    >
+
+                </label>
+
+
+                <label>
+
+                    Description
+
+                    <textarea
+                        id="groupDescriptionInput"
+                        maxlength="300"
+                        rows="4"
+                    ></textarea>
+
+                </label>
+
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    CREATE GROUP
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         INVITE FRIENDS MODAL
+    ================================================== -->
+
+    <div
+        id="inviteFriendsModal"
+        class="modal hidden"
+    >
+
+        <div class="modal-panel">
+
+            <button
+                class="modal-close"
+                data-close-modal="inviteFriendsModal"
+                type="button"
+            >
+                ×
+            </button>
+
+            <h3>
+                Invite Friends
+            </h3>
+
+            <div
+                id="inviteFriendsList"
+                class="users-list"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         LISTEN TOGETHER
+    ================================================== -->
+
+    <div
+        id="listenTogetherView"
+        class="listen-overlay hidden"
+    >
+
+        <div class="listen-room">
+
+            <div class="listen-header">
+
+                <div>
+
+                    <span class="section-kicker">
+                        SYNCHRONIZED SESSION
+                    </span>
+
+                    <h2 id="listenRoomName">
+                        Listen Together
+                    </h2>
+
+                </div>
+
+
+                <div class="sync-status">
+
+                    <span
+                        id="syncStatusDot"
+                        class="online-dot"
+                    ></span>
+
+                    <span id="syncStatusText">
+                        Connecting
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="listen-content">
+
+                <img
+                    id="listenTrackCover"
+                    class="listen-cover"
+                    src=""
+                    alt=""
+                >
+
+                <h3 id="listenTrackName">
+                    Nothing
+                </h3>
+
+                <p id="listenTrackArtist">
+                    —
+                </p>
+
+            </div>
+
+
+            <div
+                id="listenMembers"
+                class="member-avatars centered"
+            ></div>
+
+            <p class="listen-member-count">
+
+                <strong id="listenMembersCount">
+                    0
+                </strong>
+
+                listeners
+
+            </p>
+
+
+            <div class="listen-controls">
+
+                <button
+                    id="listenPlayButton"
+                    class="primary-button"
+                    type="button"
+                >
+                    ▶
+                </button>
+
+                <button
+                    id="listenPauseButton"
+                    class="secondary-button"
+                    type="button"
+                >
+                    ❚❚
+                </button>
+
+                <button
+                    id="listenNextButton"
+                    class="secondary-button"
+                    type="button"
+                >
+                    NEXT →
+                </button>
+
+            </div>
+
+
+            <button
+                id="leaveListenButton"
+                class="leave-button"
+                type="button"
+            >
+                LEAVE SESSION
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         MUSIC PLAYER
+    ================================================== -->
+
+    <footer
+        id="musicPlayer"
+        class="music-player"
+    >
+
+        <div class="player-track">
+
+            <img
+                id="playerCover"
+                src=""
+                alt=""
+            >
+
+            <div>
+
+                <strong id="playerSongName">
+                    Nothing
+                </strong>
+
+                <span id="playerArtistName">
+                    —
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="player-center">
+
+            <div class="player-controls">
+
+                <button
+                    id="previousButton"
+                    type="button"
+                >
+                    |←
+                </button>
+
+                <button
+                    id="playButton"
+                    class="play-button"
+                    type="button"
+                >
+                    ▶
+                </button>
+
+                <button
+                    id="nextButton"
+                    type="button"
+                >
+                    →|
+                </button>
+
+                <button
+                    id="repeatButton"
+                    type="button"
+                >
+                    ↻
+                </button>
+
+                <button
+                    id="playerFavoriteButton"
+                    type="button"
+                >
+                    ♡
+                </button>
+
+            </div>
+
+
+            <div class="progress-wrapper">
+
+                <span id="currentTime">
+                    0:00
+                </span>
+
+                <input
+                    id="progressBar"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="0"
+                    step="0.1"
+                >
+
+                <span id="duration">
+                    0:00
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="volume-control">
+
+            <span>
+                VOL
+            </span>
+
+            <input
+                id="volumeBar"
+                type="range"
+                min="0"
+                max="1"
+                value="1"
+                step="0.01"
+            >
+
+        </div>
+
+    </footer>
+
+</section>
+
+
+<!-- =========================================================
+     CAT GUIDE
+========================================================= -->
+
+<div
+    id="catGuide"
+    class="cat-guide"
+>
+
+    <div
+        id="cat"
+        class="cat"
+        title="Music World Guide"
+    >
+        ◉
+    </div>
+
+    <div
+        id="catStatus"
+        class="cat-status"
+    >
+        GUIDE // 0 / 5
+    </div>
+
+    <div
+        id="catProgress"
+        class="cat-progress"
+    ></div>
+
+    <div
+        id="catHint"
+        class="cat-hint"
+    >
+        The guide is watching.
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     TOAST
+========================================================= -->
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+<!-- =========================================================
+     AUDIO
+========================================================= -->
+
+<audio
+    id="audioPlayer"
+    preload="metadata"
+></audio>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
 
 <script src="script.js"></script>
 
 </body>
-
 </html>

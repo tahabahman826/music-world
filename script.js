@@ -1,145 +1,589 @@
 /* =========================================================
-   🌌 MUSIC WORLD 3.0
-   Stable Full Version
-   - PC + Mobile
-   - Local MP3
-   - Sogand / Persian New
-   - Ariana Grande / bye
-   - Repeat
-   - Mobile Performance
-   - Hologram Cat Guide
+   MUSIC WORLD
+   SOCIAL MUSIC UNIVERSE
+   MAIN CLIENT
    ========================================================= */
+
+"use strict";
 
 
 /* =========================================================
-   1. STATE
-   ========================================================= */
+   CONFIG
+========================================================= */
+
+const API_BASE = "http://localhost:3000/api";
+
+let socket = null;
+
+
+/* =========================================================
+   AUDIO FILES
+========================================================= */
+const AUDIO_FILES = {
+    swamp: "music/mordab.mp3",
+    rain: "music/baran.mp3",
+    road: "music/safar.mp3",
+    neon: "music/24_7.mp3",
+    dark: "music/hooman.mp3",
+    room: "music/arta.mp3",
+    sogand: "music/mariz ham.mp3",
+    butterfly: "music/dasht parvaneh.mp3",
+
+    oneOfTheGirls: "music/one of the girl.mp3",
+    timeless: "music/timeless.mp3",
+    luxury: "music/popular.mp3",
+    starboy: "music/starboy.mp3",
+    callOutMyName: "music/call out my name.mp3",
+
+    lovely: "music/lovely.mp3",
+    birdsOfAFeather: "music/Billie Eilish Birds of a Feather.mp3",
+
+    bye: "music/bye.mp3"
+};
+
+
+/* =========================================================
+   SONG DATABASE
+========================================================= */
+
+const songs = [
+
+    {
+        id: "swamp",
+        title: "مرداب",
+        artist: "Googoosh",
+        language: "persian",
+        world: "SWAMP",
+        file: AUDIO_FILES.swamp
+    },
+
+    {
+        id: "rain",
+        title: "باران",
+        artist: "Vigen",
+        language: "persian",
+        world: "RAIN",
+        file: AUDIO_FILES.rain
+    },
+
+    {
+        id: "road",
+        title: "اگه یه روز بری سفر",
+        artist: "Faramarz Aslani",
+        language: "persian",
+        world: "ROAD",
+        file: AUDIO_FILES.road
+    },
+
+    {
+        id: "neon",
+        title: "24/7",
+        artist: "AROWN",
+        language: "persian",
+        world: "NEON",
+        file: AUDIO_FILES.neon
+    },
+
+    {
+        id: "dark",
+        title: "چشمت سیاه",
+        artist: "Hoomaan",
+        language: "persian",
+        world: "DARK",
+        file: AUDIO_FILES.dark
+    },
+
+    {
+        id: "room",
+        title: "خونه‌ی من",
+        artist: "Arta",
+        language: "persian",
+        world: "ROOM",
+        file: AUDIO_FILES.room
+    },
+
+    {
+        id: "sogand",
+        title: "مریض هم",
+        artist: "Sogand",
+        language: "persian",
+        world: "SOGAND",
+        file: AUDIO_FILES.sogand
+    },
+
+    {
+        id: "butterfly",
+        title: "دشت پروانه‌ها",
+        artist: "Sogand",
+        language: "persian",
+        world: "BUTTERFLY",
+        file: AUDIO_FILES.butterfly
+    },
+
+
+    {
+        id: "oneOfTheGirls",
+        title: "One Of The Girls",
+        artist: "The Weeknd",
+        language: "english",
+        world: "THE WEEKND",
+        file: AUDIO_FILES.oneOfTheGirls
+    },
+
+    {
+        id: "red",
+        title: "RED",
+        artist: "The Weeknd",
+        language: "english",
+        world: "VHS",
+        file: AUDIO_FILES.red
+    },
+
+    {
+        id: "timeless",
+        title: "Timeless",
+        artist: "The Weeknd",
+        language: "english",
+        world: "VHS",
+        file: AUDIO_FILES.timeless
+    },
+
+    {
+        id: "luxury",
+        title: "Popular",
+        artist: "The Weeknd",
+        language: "english",
+        world: "LUXURY",
+        file: AUDIO_FILES.luxury
+    },
+
+    {
+        id: "starboy",
+        title: "Starboy",
+        artist: "The Weeknd",
+        language: "english",
+        world: "STARBOY",
+        file: AUDIO_FILES.starboy
+    },
+
+    {
+        id: "callOutMyName",
+        title: "Call Out My Name",
+        artist: "The Weeknd",
+        language: "english",
+        world: "CALL OUT",
+        file: AUDIO_FILES.callOutMyName
+    },
+
+    {
+        id: "lovely",
+        title: "lovely",
+        artist: "Billie Eilish",
+        language: "english",
+        world: "BIRDS",
+        file: AUDIO_FILES.lovely
+    },
+
+    {
+        id: "birdsOfAFeather",
+        title: "BIRDS OF A FEATHER",
+        artist: "Billie Eilish",
+        language: "english",
+        world: "BIRDS",
+        file: AUDIO_FILES.birdsOfAFeather
+    },
+
+    {
+        id: "oceanEyes",
+        title: "ocean eyes",
+        artist: "Billie Eilish",
+        language: "english",
+        world: "OCEAN",
+        file: AUDIO_FILES.oceanEyes
+    },
+
+    {
+        id: "bye",
+        title: "bye",
+        artist: "Ariana Grande",
+        language: "english",
+        world: "ARIANA",
+        file: AUDIO_FILES.bye
+    }
+
+];
+
+
+/* =========================================================
+   STATE
+========================================================= */
 
 const state = {
 
-    currentScene: 0,
+    user: null,
 
-    language: null,
-
-    persianAge: null,
-
-    englishGender: null,
-
-    currentSong: null,
+    language: "all",
 
     currentSongIndex: -1,
 
-    musicPlaying: false,
+    currentSong: null,
 
-    volume: 0.7,
+    isPlaying: false,
 
-    noClicks: 0,
+    volume: 1,
+
+    favorites: [],
+
+    friends: [],
+
+    friendRequests: [],
+
+    groups: [],
+
+    currentGroup: null,
+
+    globalMessages: [],
+
+    groupMessages: [],
+
+    onlineUsers: 0,
+
+    currentView: "music",
+
+    repeatMode: 0,
 
     catClicks: 0,
 
-    inWorld: false
+    listenTogether: null,
+
+    lastNowPlayingUpdate: 0
 
 };
 
 
 /* =========================================================
-   2. REPEAT
-   ========================================================= */
+   DOM
+========================================================= */
 
-let repeatMode = 0;
-
-
-/* =========================================================
-   3. DOM
-   ========================================================= */
-
-const scenes =
-    document.querySelectorAll(".scene");
+const $ = (id) => document.getElementById(id);
 
 
-const worldScene =
-    document.getElementById(
-        "worldScene"
-    );
+/* Auth */
 
+const authScreen = $("authScreen");
+const mainScreen = $("mainScreen");
+
+const registerForm = $("registerForm");
+const loginForm = $("loginForm");
+
+const registerUsername = $("registerUsername");
+const registerEmail = $("registerEmail");
+const registerPassword = $("registerPassword");
+
+const loginEmail = $("loginEmail");
+const loginPassword = $("loginPassword");
+
+const authSwitch = $("authSwitch");
+
+
+/* Navigation */
+
+const navButtons =
+    document.querySelectorAll(".nav-button");
+
+
+const views = {
+    music: $("musicView"),
+    friends: $("friendsView"),
+    chat: $("chatView"),
+    groups: $("groupsView"),
+    profile: $("profileView")
+};
+
+
+/* Music */
+
+const songGrid = $("songGrid");
+const favoritesGrid = $("favoritesGrid");
+const favoritesCount = $("favoritesCount");
+
+const languageButtons =
+    document.querySelectorAll(".language-button");
+
+
+/* Player */
+
+const audioPlayer = $("audioPlayer");
+
+const playerCover = $("playerCover");
+const playerSongName = $("playerSongName");
+const playerArtistName = $("playerArtistName");
+
+const playerFavoriteButton =
+    $("playerFavoriteButton");
+
+const previousButton = $("previousButton");
+const playButton = $("playButton");
+const nextButton = $("nextButton");
+const repeatButton = $("repeatButton");
+
+const currentTimeElement = $("currentTime");
+const progressBar = $("progressBar");
+const durationElement = $("duration");
+
+const volumeBar = $("volumeBar");
+
+
+/* User */
+
+const topbarAvatar = $("topbarAvatar");
+const topbarUsername = $("topbarUsername");
+
+
+/* Friends */
+
+const userSearchInput = $("userSearchInput");
+const userSearchButton = $("userSearchButton");
+
+const userSearchResults = $("userSearchResults");
+
+const friendsList = $("friendsList");
+const friendsCount = $("friendsCount");
+
+const friendRequestsList =
+    $("friendRequestsList");
+
+const friendRequestsCount =
+    $("friendRequestsCount");
+
+
+/* Chat */
+
+const globalMessages = $("globalMessages");
+
+const globalChatForm = $("globalChatForm");
+const globalChatInput = $("globalChatInput");
+
+const onlineUsersCount =
+    $("onlineUsersCount");
+
+
+/* Groups */
+
+const groupsList = $("groupsList");
+const createGroupButton = $("createGroupButton");
+
+const groupRoom = $("groupRoom");
+
+const groupRoomName = $("groupRoomName");
+const groupRoomDescription =
+    $("groupRoomDescription");
+
+const inviteFriendsButton =
+    $("inviteFriendsButton");
+
+const groupMembers = $("groupMembers");
+const groupMembersCount =
+    $("groupMembersCount");
+
+const groupMessages = $("groupMessages");
+
+const groupChatForm = $("groupChatForm");
+const groupChatInput = $("groupChatInput");
+
+const groupListenTogetherButton =
+    $("groupListenTogetherButton");
+
+
+/* Profile */
+
+const profileAvatar = $("profileAvatar");
+const profileUsername = $("profileUsername");
+const profileStatus = $("profileStatus");
+const profileNowPlaying = $("profileNowPlaying");
+const profileLastActive = $("profileLastActive");
+const profileFriendsCount =
+    $("profileFriendsCount");
+const profileFavorites =
+    $("profileFavorites");
+
+
+/* User modal */
+
+const userProfileModal =
+    $("userProfileModal");
+
+const userProfileName =
+    $("userProfileName");
+
+const userProfileAvatar =
+    $("userProfileAvatar");
+
+const userProfileStatus =
+    $("userProfileStatus");
+
+const userProfileNowPlaying =
+    $("userProfileNowPlaying");
+
+const userProfileLastActive =
+    $("userProfileLastActive");
+
+const userProfileFavorites =
+    $("userProfileFavorites");
+
+const addFriendButton =
+    $("addFriendButton");
+
+const messageUserButton =
+    $("messageUserButton");
+
+
+/* Group modal */
+
+const createGroupModal =
+    $("createGroupModal");
+
+const createGroupForm =
+    $("createGroupForm");
+
+const groupNameInput =
+    $("groupNameInput");
+
+const groupDescriptionInput =
+    $("groupDescriptionInput");
+
+
+/* Invite modal */
+
+const inviteFriendsModal =
+    $("inviteFriendsModal");
+
+const inviteFriendsList =
+    $("inviteFriendsList");
+
+
+/* Listen Together */
+
+const listenTogetherView =
+    $("listenTogetherView");
+
+const listenRoomName =
+    $("listenRoomName");
+
+const listenTrackCover =
+    $("listenTrackCover");
+
+const listenTrackName =
+    $("listenTrackName");
+
+const listenTrackArtist =
+    $("listenTrackArtist");
+
+const syncStatusDot =
+    $("syncStatusDot");
+
+const syncStatusText =
+    $("syncStatusText");
+
+const listenMembers =
+    $("listenMembers");
+
+const listenMembersCount =
+    $("listenMembersCount");
+
+const listenPlayButton =
+    $("listenPlayButton");
+
+const listenPauseButton =
+    $("listenPauseButton");
+
+const listenNextButton =
+    $("listenNextButton");
+
+const leaveListenButton =
+    $("leaveListenButton");
+
+
+/* Cat */
 
 const cat =
-    document.getElementById(
-        "cat"
-    );
-
-
-const catHint =
-    document.getElementById(
-        "catHint"
-    );
-
+    $("cat");
 
 const catStatus =
-    document.getElementById(
-        "catStatus"
-    );
-
+    $("catStatus");
 
 const catProgress =
-    document.getElementById(
-        "catProgress"
-    );
+    $("catProgress");
 
+const catHint =
+    $("catHint");
+
+
+/* Toast */
 
 const toast =
-    document.getElementById(
-        "toast"
-    );
-
-
-const visualizer =
-    document.getElementById(
-        "visualizer"
-    );
-
-
-const rainLayer =
-    document.getElementById(
-        "rainLayer"
-    );
-
-
-const worldParticles =
-    document.getElementById(
-        "worldParticles"
-    );
-
-
-const playerSongName =
-    document.getElementById(
-        "playerSongName"
-    );
-
-
-const playerStatus =
-    document.getElementById(
-        "playerStatus"
-    );
-
-
-const playerLine =
-    document.getElementById(
-        "playerLine"
-    );
-
-
-const repeatButton =
-    document.getElementById(
-        "repeatButton"
-    );
+    $("toast");
 
 
 /* =========================================================
-   4. TOAST
-   ========================================================= */
+   UTILITY
+========================================================= */
 
-let toastTimer = null;
+function escapeHTML(value) {
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+function getInitials(name) {
+
+    if (!name) {
+        return "?";
+    }
+
+    const parts =
+        String(name)
+            .trim()
+            .split(/\s+/);
+
+    if (parts.length === 1) {
+        return parts[0]
+            .slice(0, 2)
+            .toUpperCase();
+    }
+
+    return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+    ).toUpperCase();
+}
+
+
+function formatTime(seconds) {
+
+    if (!Number.isFinite(seconds)) {
+        return "0:00";
+    }
+
+    const minutes =
+        Math.floor(seconds / 60);
+
+    const remaining =
+        Math.floor(seconds % 60)
+            .toString()
+            .padStart(2, "0");
+
+    return `${minutes}:${remaining}`;
+}
 
 
 function showToast(message) {
@@ -148,2899 +592,3640 @@ function showToast(message) {
         return;
     }
 
+    toast.textContent = message;
 
-    toast.textContent =
-        message;
+    toast.classList.add("show");
+
+    clearTimeout(showToast.timer);
+
+    showToast.timer =
+        setTimeout(() => {
+
+            toast.classList.remove("show");
+
+        }, 2600);
+}
 
 
-    toast.classList.add(
-        "show"
-    );
+function showAuth() {
+
+    authScreen.classList.remove("hidden");
+    mainScreen.classList.add("hidden");
+}
 
 
-    clearTimeout(
-        toastTimer
-    );
+function showMain() {
+
+    authScreen.classList.add("hidden");
+    mainScreen.classList.remove("hidden");
+}
 
 
-    toastTimer =
-        setTimeout(
-            () => {
+async function api(
+    endpoint,
+    options = {}
+) {
 
-                toast.classList.remove(
-                    "show"
-                );
+    const config = {
+        credentials: "include",
+        ...options
+    };
 
-            },
-            2000
+    config.headers = {
+        ...(options.body
+            ? {
+                "Content-Type":
+                    "application/json"
+            }
+            : {}),
+        ...(options.headers || {})
+    };
+
+    const response =
+        await fetch(
+            `${API_BASE}${endpoint}`,
+            config
         );
 
+    let data = null;
+
+    try {
+        data = await response.json();
+    } catch {
+        data = {};
+    }
+
+    if (!response.ok) {
+
+        throw new Error(
+            data.message ||
+            data.error ||
+            "Request failed"
+        );
+    }
+
+    return data;
 }
 
 
 /* =========================================================
-   5. AUDIO
-   ========================================================= */
+   AUTH
+========================================================= */
 
-const audio =
-    new Audio();
+function updateAuthSwitch() {
 
+    const registerVisible =
+        !registerForm.classList.contains("hidden");
 
-audio.preload =
-    "metadata";
+    if (registerVisible) {
 
+        authSwitch.textContent =
+            "Already have an account? Log in";
 
-audio.volume =
-    state.volume;
+    } else {
 
+        authSwitch.textContent =
+            "Don't have an account? Create one";
 
-/* =========================================================
-   6. AUDIO FILES
-   ========================================================= */
-
-const audioFiles = {
-
-    "مرداب":
-        "music/mordab.mp3",
-
-    "باران":
-        "music/baran.mp3",
-
-    "اگه یه روز بری سفر":
-        "music/safar.mp3",
-
-    "24/7":
-        "music/24_7.mp3",
-
-    "چشمت سیاه":
-        "music/hooman.mp3",
-
-    "خونه‌ی من":
-        "music/arta.mp3",
-
-    /* =====================================================
-       SOGAND
-       ===================================================== */
-
-    "مریض هم":
-        "music/mariz ham.mp3",
-
-    "دشت پروانه‌ها":
-        "music/dasht parvaneh.mp3",
-
-    "One Of The Girls":
-        "music/one of the girl.mp3",
-
-    "Timeless":
-        "music/timeless.mp3",
-
-    "Popular":
-        "music/popular.mp3",
-
-    "Starboy":
-        "music/starboy.mp3",
-
-    "Call Out My Name":
-        "music/call out my name.mp3",
-
-    "lovely":
-        "music/lovely.mp3",
-
-    "BIRDS OF A FEATHER":
-        "music/Billie Eilish Birds of a Feather.mp3",
-
-    "ocean eyes":
-        "music/bili.mp3",
-
-    "bye":
-        "music/bye.mp3"
-
-};
-
-
-/* =========================================================
-   7. SONG DATABASE
-   ========================================================= */
-
-const songs = [
-
-    {
-        title: "مرداب",
-        artist: "Googoosh",
-        world: "swamp",
-        description:
-            "شب آرام، ماه و مه کم‌رنگ؛ یک دنیای نوستالژیک و مرموز."
-    },
-
-    {
-        title: "باران",
-        artist: "Vigen",
-        world: "rain",
-        description:
-            "خیابان خیس، چراغ‌های دور و بارانی که آرام شروع می‌شود."
-    },
-
-    {
-        title: "اگه یه روز بری سفر",
-        artist: "Faramarz Aslani",
-        world: "road",
-        description:
-            "جاده‌ای در غروب؛ نورهای دور و حس یک سفر طولانی."
-    },
-
-    {
-        title: "24/7",
-        artist: "AROWN",
-        world: "neon",
-        description:
-            "چراغ‌های نئون، شهر شبانه و موج‌های دیجیتالی."
-    },
-
-    {
-        title: "چشمت سیاه",
-        artist: "Hoomaan",
-        world: "dark",
-        description:
-            "همه‌چیز آرام و تاریک شده؛ فقط ذرات نور در مه حرکت می‌کنند."
-    },
-
-    {
-        title: "خونه‌ی من",
-        artist: "Arta",
-        world: "room",
-        description:
-            "اتاقی آرام با نور گرم پنجره و صدای باران در دوردست."
-    },
-
-    /* =====================================================
-       SOGAND
-       ===================================================== */
-
-    {
-        title: "مریض هم",
-        artist: "Sogand",
-        world: "dark",
-        description:
-            "دنیایی تاریک و سینمایی با ذرات نور و حس شبانه."
-    },
-
-    {
-        title: "دشت پروانه‌ها",
-        artist: "Sogand",
-        world: "birds",
-        description:
-            "دشتی رویایی از نورهای نرم و پروانه‌های درخشان در شب."
-    },
-
-    {
-        title: "One Of The Girls",
-        artist: "The Weeknd",
-        world: "red",
-        description:
-            "نور قرمز و بنفش، مه شبانه و یک شهر تاریک."
-    },
-
-    {
-        title: "Timeless",
-        artist: "The Weeknd",
-        world: "vhs",
-        description:
-            "خیابان شبانه، ماشین‌ها و حس یک صحنه قدیمی VHS."
-    },
-
-    {
-        title: "Popular",
-        artist: "The Weeknd",
-        world: "luxury",
-        description:
-            "شب لوکس شهر، ساختمان‌های بلند و نور فلاش دوربین‌ها."
-    },
-
-    {
-        title: "Starboy",
-        artist: "The Weeknd",
-        world: "starboy",
-        description:
-            "شهر شبانه، نورهای نئونی و فضایی مدرن و سینمایی."
-    },
-
-    {
-        title: "Call Out My Name",
-        artist: "The Weeknd",
-        world: "callout",
-        description:
-            "فضایی تاریک و احساسی با نور قرمز و حرکت‌های نرم."
-    },
-
-    {
-        title: "lovely",
-        artist: "Billie Eilish",
-        world: "lovely",
-        description:
-            "اتاق تاریک، نور ماه و فضایی سرد و آرام."
-    },
-
-    {
-        title: "BIRDS OF A FEATHER",
-        artist: "Billie Eilish",
-        world: "birds",
-        description:
-            "آسمان شب، ماه بزرگ و سایه‌هایی که در دوردست حرکت می‌کنند."
-    },
-
-    {
-        title: "ocean eyes",
-        artist: "Billie Eilish",
-        world: "ocean",
-        description:
-            "دنیایی زیر آب؛ نور ماه از میان آب عبور می‌کند."
-    },
-
-    {
-        title: "bye",
-        artist: "Ariana Grande",
-        world: "ariana",
-        description:
-            "فضایی نرم و سینمایی با نور صورتی، بنفش و ذرات درخشان."
     }
-
-];
-
-
-/* =========================================================
-   8. SCENE NAVIGATION
-   ========================================================= */
-
-function goToScene(number) {
-
-    if (!scenes[number]) {
-
-        console.warn(
-            "Scene not found:",
-            number
-        );
-
-        return;
-    }
+}
 
 
-    scenes.forEach(
-        scene => {
+authSwitch.addEventListener(
+    "click",
+    () => {
 
-            scene.classList.remove(
-                "active"
-            );
+        const registerVisible =
+            !registerForm.classList.contains("hidden");
+
+        if (registerVisible) {
+
+            registerForm.classList.add("hidden");
+            loginForm.classList.remove("hidden");
+
+        } else {
+
+            loginForm.classList.add("hidden");
+            registerForm.classList.remove("hidden");
 
         }
+
+        updateAuthSwitch();
+    }
+);
+
+
+registerForm.addEventListener(
+    "submit",
+    async (event) => {
+
+        event.preventDefault();
+
+        const username =
+            registerUsername.value.trim();
+
+        const email =
+            registerEmail.value.trim();
+
+        const password =
+            registerPassword.value;
+
+        if (
+            username.length < 3 ||
+            username.length > 30
+        ) {
+
+            showToast(
+                "Username must be 3–30 characters."
+            );
+
+            return;
+        }
+
+        if (password.length < 8) {
+
+            showToast(
+                "Password must contain at least 8 characters."
+            );
+
+            return;
+        }
+
+        const button =
+            registerForm.querySelector(
+                "button[type='submit']"
+            );
+
+        const original =
+            button.innerHTML;
+
+        button.disabled = true;
+        button.textContent =
+            "CREATING...";
+
+        try {
+
+            const result =
+                await api(
+                    "/auth/register",
+                    {
+                        method: "POST",
+
+                        body: JSON.stringify({
+                            username,
+                            email,
+                            password
+                        })
+                    }
+                );
+
+            state.user =
+                result.user;
+
+            registerForm.reset();
+
+            await initializeAfterLogin();
+
+            showToast(
+                "Account created successfully."
+            );
+
+        } catch (error) {
+
+            showToast(
+                error.message
+            );
+
+        } finally {
+
+            button.disabled = false;
+            button.innerHTML = original;
+
+        }
+    }
+);
+
+
+loginForm.addEventListener(
+    "submit",
+    async (event) => {
+
+        event.preventDefault();
+
+        const email =
+            loginEmail.value.trim();
+
+        const password =
+            loginPassword.value;
+
+        const button =
+            loginForm.querySelector(
+                "button[type='submit']"
+            );
+
+        const original =
+            button.innerHTML;
+
+        button.disabled = true;
+        button.textContent =
+            "LOGGING IN...";
+
+        try {
+
+            const result =
+                await api(
+                    "/auth/login",
+                    {
+                        method: "POST",
+
+                        body: JSON.stringify({
+                            email,
+                            password
+                        })
+                    }
+                );
+
+            state.user =
+                result.user;
+
+            loginForm.reset();
+
+            await initializeAfterLogin();
+
+            showToast(
+                "Welcome back."
+            );
+
+        } catch (error) {
+
+            showToast(
+                error.message
+            );
+
+        } finally {
+
+            button.disabled = false;
+            button.innerHTML = original;
+
+        }
+    }
+);
+
+
+async function checkSession() {
+
+    try {
+
+        const result =
+            await api("/auth/me");
+
+        if (result.user) {
+
+            state.user =
+                result.user;
+
+            await initializeAfterLogin();
+
+            return true;
+        }
+
+    } catch {
+        // No active session.
+    }
+
+    showAuth();
+
+    return false;
+}
+
+
+async function logout() {
+
+    try {
+
+        await api(
+            "/auth/logout",
+            {
+                method: "POST"
+            }
+        );
+
+    } catch {
+        // Continue clearing local state.
+    }
+
+    state.user = null;
+    state.favorites = [];
+    state.friends = [];
+    state.friendRequests = [];
+    state.groups = [];
+    state.currentGroup = null;
+
+    if (socket) {
+
+        socket.disconnect();
+        socket = null;
+
+    }
+
+    audioPlayer.pause();
+
+    audioPlayer.removeAttribute("src");
+    audioPlayer.load();
+
+    state.currentSong = null;
+    state.currentSongIndex = -1;
+    state.isPlaying = false;
+
+    showAuth();
+
+    showToast(
+        "You have been logged out."
     );
-
-
-    scenes[number].classList.add(
-        "active"
-    );
-
-
-    state.currentScene =
-        number;
-
-
-    state.inWorld =
-        false;
-
-
-    clearWorldFX();
-
-    moveCat();
-
 }
 
 
 /* =========================================================
-   9. START
-   ========================================================= */
+   USER UI
+========================================================= */
 
-function startWorld() {
+function updateUserUI() {
 
-    goToScene(1);
-
-}
-
-
-/* =========================================================
-   10. BACK
-   ========================================================= */
-
-function goBack() {
-
-    if (state.inWorld) {
-
-        backToSongs();
-
+    if (!state.user) {
         return;
-
     }
 
+    const username =
+        state.user.username ||
+        "User";
 
-    const parents = {
+    const initials =
+        getInitials(username);
 
-        1: 0,
-        2: 1,
-        3: 1,
-        4: 3,
-        5: 3,
-        6: 1,
-        7: 6,
-        8: 6
+    topbarUsername.textContent =
+        username;
 
-    };
+    topbarAvatar.textContent =
+        initials;
+
+    profileUsername.textContent =
+        username;
+
+    profileAvatar.textContent =
+        initials;
+
+    profileStatus.textContent =
+        state.user.online === false
+            ? "Offline"
+            : "Online";
+
+    profileFriendsCount.textContent =
+        state.friends.length;
+
+    profileFavorites.textContent =
+        state.favorites.length;
+
+    profileLastActive.textContent =
+        state.user.lastActive
+            ? formatLastActive(
+                state.user.lastActive
+            )
+            : "Now";
+}
 
 
-    const parent =
-        parents[
-            state.currentScene
-        ];
+function formatLastActive(value) {
 
-
-    if (
-        parent !== undefined
-    ) {
-
-        goToScene(parent);
-
+    if (!value) {
+        return "Unknown";
     }
 
+    const date =
+        new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return "Unknown";
+    }
+
+    const diff =
+        Date.now() - date.getTime();
+
+    const seconds =
+        Math.floor(diff / 1000);
+
+    if (seconds < 30) {
+        return "Just now";
+    }
+
+    const minutes =
+        Math.floor(seconds / 60);
+
+    if (minutes < 60) {
+        return `${minutes} min ago`;
+    }
+
+    const hours =
+        Math.floor(minutes / 60);
+
+    if (hours < 24) {
+        return `${hours} hr ago`;
+    }
+
+    const days =
+        Math.floor(hours / 24);
+
+    return `${days} day${days === 1 ? "" : "s"} ago`;
 }
 
 
 /* =========================================================
-   11. LANGUAGE
-   ========================================================= */
+   NAVIGATION
+========================================================= */
 
-function chooseLanguage(
-    language
-) {
+function switchView(viewName) {
 
-    state.language =
-        language;
-
-
-    if (
-        language === "persian"
-    ) {
-
-        goToScene(3);
-
-    } else {
-
-        goToScene(6);
-
-    }
-
-}
-
-
-/* =========================================================
-   12. PERSIAN AGE
-   ========================================================= */
-
-function choosePersianAge(
-    age
-) {
-
-    state.persianAge =
-        age;
-
-
-    if (
-        age === "old"
-    ) {
-
-        goToScene(4);
-
-    } else {
-
-        goToScene(5);
-
-    }
-
-}
-
-
-/* =========================================================
-   13. ENGLISH PATH
-   ========================================================= */
-
-function chooseEnglishGender(
-    gender
-) {
-
-    state.englishGender =
-        gender;
-
-
-    if (
-        gender === "male"
-    ) {
-
-        goToScene(7);
-
-    } else {
-
-        goToScene(8);
-
-    }
-
-}
-
-
-/* =========================================================
-   14. FIND SONG
-   ========================================================= */
-
-function findSong(title) {
-
-    return songs.find(
-        song =>
-            song.title === title
-    );
-
-}
-
-
-/* =========================================================
-   15. OPEN WORLD
-   ========================================================= */
-
-function openWorld(
-    title,
-    artistOverride = null,
-    worldOverride = null
-) {
-
-    const song =
-        findSong(title);
-
-
-    if (!song) {
-
-        console.error(
-            "Song not found:",
-            title
-        );
-
-        showToast(
-            "این آهنگ پیدا نشد ⚠️"
-        );
-
+    if (!views[viewName]) {
         return;
     }
 
+    state.currentView =
+        viewName;
 
-    state.currentSong = {
+    Object.entries(views)
+        .forEach(
+            ([name, element]) => {
 
-        ...song,
-
-        artist:
-            artistOverride ||
-            song.artist,
-
-        world:
-            worldOverride ||
-            song.world
-
-    };
-
-
-    state.currentSongIndex =
-        songs.findIndex(
-            item =>
-                item.title ===
-                song.title
-        );
-
-
-    state.inWorld =
-        true;
-
-
-    if (worldScene) {
-
-        scenes.forEach(
-            scene => {
-
-                scene.classList.remove(
-                    "active"
+                element.classList.toggle(
+                    "hidden",
+                    name !== viewName
                 );
 
             }
         );
 
+    navButtons.forEach(button => {
 
-        worldScene.classList.add(
-            "active"
+        button.classList.toggle(
+            "active",
+            button.dataset.view === viewName
         );
 
+    });
 
-        worldScene.dataset.world =
-            state.currentSong.world;
-
+    if (viewName === "friends") {
+        loadFriendsData();
     }
 
-
-    const songName =
-        document.getElementById(
-            "songName"
-        );
-
-
-    const artistName =
-        document.getElementById(
-            "artistName"
-        );
-
-
-    const description =
-        document.getElementById(
-            "worldDescription"
-        );
-
-
-    if (songName) {
-
-        songName.textContent =
-            state.currentSong.title;
-
+    if (viewName === "chat") {
+        loadGlobalMessages();
     }
 
-
-    if (artistName) {
-
-        artistName.textContent =
-            state.currentSong.artist;
-
+    if (viewName === "groups") {
+        loadGroups();
     }
 
-
-    if (description) {
-
-        description.textContent =
-            state.currentSong.description;
-
+    if (viewName === "profile") {
+        loadProfile();
     }
-
-
-    if (playerSongName) {
-
-        playerSongName.textContent =
-            state.currentSong.title;
-
-    }
-
-
-    if (playerStatus) {
-
-        playerStatus.textContent =
-            "LOADING";
-
-    }
-
-
-    loadSong(
-        state.currentSong
-    );
-
-
-    updateWorldFX();
-
-    moveCat();
-
 }
 
 
+navButtons.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            switchView(
+                button.dataset.view
+            );
+
+        }
+    );
+
+});
+
+
 /* =========================================================
-   16. LOAD SONG
-   ========================================================= */
+   MUSIC RENDERING
+========================================================= */
 
-function loadSong(song) {
+function getFilteredSongs() {
 
-    const file =
-        audioFiles[song.title];
+    if (state.language === "all") {
+        return songs;
+    }
+
+    return songs.filter(
+        song =>
+            song.language ===
+            state.language
+    );
+}
 
 
-    if (!file) {
+function isFavorite(songId) {
 
-        console.error(
-            "Audio path not found:",
-            song.title
+    return state.favorites.some(
+        favorite => {
+
+            if (typeof favorite === "string") {
+                return favorite === songId;
+            }
+
+            return (
+                favorite.songId === songId ||
+                favorite.id === songId
+            );
+        }
+    );
+}
+
+
+function renderSongs() {
+
+    const filtered =
+        getFilteredSongs();
+
+    songGrid.innerHTML =
+        filtered.map(song => {
+
+            const favorite =
+                isFavorite(song.id);
+
+            return `
+                <article
+                    class="song-card"
+                    data-song-id="${escapeHTML(song.id)}"
+                >
+
+                    <span class="song-world">
+                        ${escapeHTML(song.world)}
+                    </span>
+
+                    <button
+                        class="favorite-button ${favorite ? "active" : ""}"
+                        data-favorite-song="${escapeHTML(song.id)}"
+                        type="button"
+                        title="Favorite"
+                    >
+                        ${favorite ? "♥" : "♡"}
+                    </button>
+
+                    <h3>
+                        ${escapeHTML(song.title)}
+                    </h3>
+
+                    <p>
+                        ${escapeHTML(song.artist)}
+                    </p>
+
+                </article>
+            `;
+
+        }).join("");
+}
+
+
+function renderFavorites() {
+
+    const favoriteSongs =
+        songs.filter(
+            song =>
+                isFavorite(song.id)
         );
 
-        showToast(
-            "فایل این آهنگ پیدا نشد ⚠️"
-        );
+    favoritesCount.textContent =
+        favoriteSongs.length;
+
+    if (!favoriteSongs.length) {
+
+        favoritesGrid.innerHTML = `
+            <div class="empty-state">
+                No favorite songs yet.
+            </div>
+        `;
 
         return;
     }
 
+    favoritesGrid.innerHTML =
+        favoriteSongs.map(song => {
 
-    audio.pause();
+            return `
+                <article
+                    class="song-card"
+                    data-song-id="${escapeHTML(song.id)}"
+                >
 
-    audio.currentTime =
-        0;
+                    <span class="song-world">
+                        ${escapeHTML(song.world)}
+                    </span>
 
+                    <button
+                        class="favorite-button active"
+                        data-favorite-song="${escapeHTML(song.id)}"
+                        type="button"
+                    >
+                        ♥
+                    </button>
 
-    const audioURL =
-        new URL(
-            file,
-            document.baseURI
-        ).href;
+                    <h3>
+                        ${escapeHTML(song.title)}
+                    </h3>
 
+                    <p>
+                        ${escapeHTML(song.artist)}
+                    </p>
 
-    audio.src =
-        audioURL;
+                </article>
+            `;
 
-
-    audio.load();
-
-
-    state.musicPlaying =
-        false;
-
-
-    resetPlayerProgress();
-
-    updatePlayButton();
-
-    updateCatDance();
-
-
-    if (playerStatus) {
-
-        playerStatus.textContent =
-            "READY";
-
-    }
+        }).join("");
+}
 
 
-    showToast(
-        `🎵 ${song.title}`
-    );
+function renderAllMusic() {
 
-
-    console.log(
-        "🎵 Loading MP3:",
-        audioURL
-    );
+    renderSongs();
+    renderFavorites();
 
 }
 
 
 /* =========================================================
-   17. PLAY / PAUSE
-   ========================================================= */
+   LANGUAGE
+========================================================= */
+
+languageButtons.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            state.language =
+                button.dataset.language;
+
+            languageButtons.forEach(
+                item =>
+                    item.classList.toggle(
+                        "active",
+                        item === button
+                    )
+            );
+
+            renderSongs();
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   SONG SELECTION
+========================================================= */
+
+function findSongIndex(songId) {
+
+    return songs.findIndex(
+        song =>
+            song.id === songId
+    );
+}
+
+
+function selectSong(songId) {
+
+    const index =
+        findSongIndex(songId);
+
+    if (index === -1) {
+        return;
+    }
+
+    loadSong(
+        index,
+        true
+    );
+}
+
+
+function loadSong(
+    index,
+    autoplay = false
+) {
+
+    if (
+        index < 0 ||
+        index >= songs.length
+    ) {
+        return;
+    }
+
+    const song =
+        songs[index];
+
+    state.currentSongIndex =
+        index;
+
+    state.currentSong =
+        song;
+
+    const file =
+        new URL(
+            song.file,
+            document.baseURI
+        ).href;
+
+    audioPlayer.src = file;
+
+    audioPlayer.volume =
+        state.volume;
+
+    playerSongName.textContent =
+        song.title;
+
+    playerArtistName.textContent =
+        song.artist;
+
+    playerCover.src =
+        getSongCover(song);
+
+    updateFavoritePlayerButton();
+
+    updateNowPlayingText();
+
+    if (autoplay) {
+
+        playCurrentSong();
+
+    } else {
+
+        updatePlayButton();
+
+    }
+
+}
+
+
+function getSongCover(song) {
+
+    /*
+     * If you later add real cover images,
+     * simply return their path here.
+     */
+
+    return createGradientCover(
+        song.title,
+        song.artist
+    );
+}
+
+
+function createGradientCover(
+    title,
+    artist
+) {
+
+    const safeTitle =
+        encodeURIComponent(
+            String(title)
+                .slice(0, 18)
+        );
+
+    const safeArtist =
+        encodeURIComponent(
+            String(artist)
+                .slice(0, 18)
+        );
+
+    return `
+        data:image/svg+xml;charset=UTF-8,
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="500"
+            height="500"
+            viewBox="0 0 500 500"
+        >
+            <defs>
+                <linearGradient
+                    id="g"
+                    x1="0"
+                    y1="0"
+                    x2="1"
+                    y2="1"
+                >
+                    <stop
+                        offset="0%"
+                        stop-color="#9b5cff"
+                    />
+                    <stop
+                        offset="100%"
+                        stop-color="#ff4fd8"
+                    />
+                </linearGradient>
+            </defs>
+
+            <rect
+                width="500"
+                height="500"
+                fill="#05050c"
+            />
+
+            <circle
+                cx="410"
+                cy="90"
+                r="180"
+                fill="url(#g)"
+                opacity="0.75"
+            />
+
+            <circle
+                cx="80"
+                cy="440"
+                r="160"
+                fill="#3e8cff"
+                opacity="0.4"
+            />
+
+            <text
+                x="35"
+                y="390"
+                fill="white"
+                font-family="Arial"
+                font-size="34"
+                font-weight="700"
+            >
+                ${safeTitle}
+            </text>
+
+            <text
+                x="35"
+                y="430"
+                fill="#d4ccef"
+                font-family="Arial"
+                font-size="19"
+            >
+                ${safeArtist}
+            </text>
+        </svg>
+    `.replace(/\s+/g, " ");
+}
+
+
+/* =========================================================
+   PLAYER
+========================================================= */
+
+async function playCurrentSong() {
+
+    if (!state.currentSong) {
+
+        if (songs.length) {
+            loadSong(0, false);
+        }
+
+        return;
+    }
+
+    try {
+
+        await audioPlayer.play();
+
+        state.isPlaying = true;
+
+        updatePlayButton();
+
+        await updateNowPlaying();
+
+    } catch (error) {
+
+        console.error(
+            "Playback error:",
+            error
+        );
+
+        showToast(
+            "The audio file could not be played."
+        );
+
+    }
+}
+
+
+function pauseCurrentSong() {
+
+    audioPlayer.pause();
+
+    state.isPlaying = false;
+
+    updatePlayButton();
+
+    updateNowPlaying();
+
+}
+
 
 function toggleMusic() {
 
     if (!state.currentSong) {
 
-        showToast(
-            "اول یک آهنگ انتخاب کن 🎧"
-        );
+        loadSong(0, true);
 
         return;
-
     }
 
+    if (audioPlayer.paused) {
 
-    if (!audio.src) {
-
-        showToast(
-            "فایل MP3 آماده نیست ⚠️"
-        );
-
-        return;
-
-    }
-
-
-    if (audio.paused) {
-
-        audio.play()
-
-            .then(() => {
-
-                state.musicPlaying =
-                    true;
-
-
-                updatePlayButton();
-
-                updateCatDance();
-
-
-                if (playerStatus) {
-
-                    playerStatus.textContent =
-                        "PLAYING";
-
-                }
-
-
-                showToast(
-                    "🎵 Music Playing"
-                );
-
-            })
-
-            .catch(
-                error => {
-
-                    console.error(
-                        "❌ PLAY ERROR:",
-                        error
-                    );
-
-
-                    if (playerStatus) {
-
-                        playerStatus.textContent =
-                            "PLAY ERROR";
-
-                    }
-
-
-                    showToast(
-                        "آهنگ پخش نشد ⚠️"
-                    );
-
-                }
-            );
+        playCurrentSong();
 
     } else {
 
-        audio.pause();
-
-        state.musicPlaying =
-            false;
-
-
-        updatePlayButton();
-
-        updateCatDance();
-
-
-        if (playerStatus) {
-
-            playerStatus.textContent =
-                "PAUSED";
-
-        }
+        pauseCurrentSong();
 
     }
-
 }
 
-
-/* =========================================================
-   18. PLAY BUTTON
-   ========================================================= */
 
 function updatePlayButton() {
 
-    const button =
-        document.getElementById(
-            "playButton"
-        );
-
-
-    if (!button) {
-        return;
-    }
-
-
-    button.textContent =
-        audio.paused
+    playButton.textContent =
+        audioPlayer.paused
             ? "▶"
-            : "⏸";
-
+            : "❚❚";
 }
 
 
-/* =========================================================
-   19. VOLUME
-   ========================================================= */
+function updateFavoritePlayerButton() {
 
-function changeVolume() {
+    if (!state.currentSong) {
 
-    state.volume +=
-        0.1;
+        playerFavoriteButton.textContent =
+            "♡";
 
-
-    if (
-        state.volume > 1
-    ) {
-
-        state.volume =
-            0;
-
+        return;
     }
 
+    playerFavoriteButton.textContent =
+        isFavorite(
+            state.currentSong.id
+        )
+            ? "♥"
+            : "♡";
 
-    state.volume =
-        Math.round(
-            state.volume * 10
-        ) / 10;
-
-
-    audio.volume =
-        state.volume;
-
-
-    showToast(
-        `Volume: ${
-            Math.round(
-                state.volume * 100
-            )
-        }% 🔊`
-    );
-
+    playerFavoriteButton.style.color =
+        isFavorite(
+            state.currentSong.id
+        )
+            ? "#ff5ca8"
+            : "";
 }
 
 
-/* =========================================================
-   20. REPEAT
-   ========================================================= */
+function updateNowPlayingText() {
 
-function cycleRepeat() {
+    if (!state.currentSong) {
 
-    repeatMode++;
+        profileNowPlaying.textContent =
+            "Nothing";
 
-
-    if (
-        repeatMode > 2
-    ) {
-
-        repeatMode =
-            0;
-
+        return;
     }
 
-
-    updateRepeatButton();
-
-
-    if (
-        repeatMode === 0
-    ) {
-
-        showToast(
-            "Repeat: OFF"
-        );
-
-    }
-
-
-    if (
-        repeatMode === 1
-    ) {
-
-        showToast(
-            "Repeat: SONG 🔂"
-        );
-
-    }
-
-
-    if (
-        repeatMode === 2
-    ) {
-
-        showToast(
-            "Repeat: ALL 🔁"
-        );
-
-    }
-
+    profileNowPlaying.textContent =
+        `${state.currentSong.title} — ${state.currentSong.artist}`;
 }
 
 
-function updateRepeatButton() {
+async function updateNowPlaying() {
 
-    if (!repeatButton) {
+    if (!state.user) {
         return;
     }
 
-
-    repeatButton.classList.remove(
-        "active",
-        "repeat-all"
-    );
-
+    const now =
+        Date.now();
 
     if (
-        repeatMode === 0
+        now -
+        state.lastNowPlayingUpdate <
+        1500
     ) {
-
-        repeatButton.textContent =
-            "🔁";
-
-
-        repeatButton.title =
-            "Repeat OFF";
-
-    }
-
-
-    if (
-        repeatMode === 1
-    ) {
-
-        repeatButton.textContent =
-            "🔂";
-
-
-        repeatButton.title =
-            "Repeat Song";
-
-
-        repeatButton.classList.add(
-            "active"
-        );
-
-    }
-
-
-    if (
-        repeatMode === 2
-    ) {
-
-        repeatButton.textContent =
-            "🔁";
-
-
-        repeatButton.title =
-            "Repeat All";
-
-
-        repeatButton.classList.add(
-            "active",
-            "repeat-all"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   21. PROGRESS
-   ========================================================= */
-
-function resetPlayerProgress() {
-
-    const progress =
-        document.querySelector(
-            ".player-line span"
-        );
-
-
-    if (!progress) {
         return;
     }
 
+    state.lastNowPlayingUpdate =
+        now;
 
-    progress.style.width =
-        "0%";
+    try {
 
-}
-
-
-function updatePlayerProgress() {
-
-    const progress =
-        document.querySelector(
-            ".player-line span"
-        );
-
-
-    if (!progress) {
-        return;
-    }
-
-
-    if (
-        !audio.duration ||
-        Number.isNaN(audio.duration)
-    ) {
-
-        return;
-
-    }
-
-
-    const percent =
-        (
-            audio.currentTime /
-            audio.duration
-        ) * 100;
-
-
-    progress.style.width =
-        `${percent}%`;
-
-}
-
-
-/* =========================================================
-   22. SEEK
-   ========================================================= */
-
-function seekFromPointer(
-    event
-) {
-
-    if (
-        !audio.duration ||
-        Number.isNaN(audio.duration) ||
-        !playerLine
-    ) {
-
-        return;
-
-    }
-
-
-    const rect =
-        playerLine.getBoundingClientRect();
-
-
-    const ratio =
-        Math.min(
-            1,
-            Math.max(
-                0,
-                (
-                    event.clientX -
-                    rect.left
-                ) / rect.width
-            )
-        );
-
-
-    audio.currentTime =
-        ratio *
-        audio.duration;
-
-}
-
-
-/* =========================================================
-   23. AUDIO EVENTS
-   ========================================================= */
-
-audio.addEventListener(
-    "loadeddata",
-    () => {
-
-        console.log(
-            "✅ MP3 loaded successfully:",
-            audio.src
-        );
-
-    }
-);
-
-
-audio.addEventListener(
-    "canplay",
-    () => {
-
-        console.log(
-            "🎧 MP3 ready to play"
-        );
-
-
-        if (playerStatus) {
-
-            playerStatus.textContent =
-                audio.paused
-                    ? "READY"
-                    : "PLAYING";
-
-        }
-
-    }
-);
-
-
-audio.addEventListener(
-    "timeupdate",
-    () => {
-
-        updatePlayerProgress();
-
-    }
-);
-
-
-audio.addEventListener(
-    "play",
-    () => {
-
-        state.musicPlaying =
-            true;
-
-
-        updatePlayButton();
-
-        updateCatDance();
-
-
-        if (playerStatus) {
-
-            playerStatus.textContent =
-                "PLAYING";
-
-        }
-
-    }
-);
-
-
-audio.addEventListener(
-    "pause",
-    () => {
-
-        state.musicPlaying =
-            false;
-
-
-        updatePlayButton();
-
-        updateCatDance();
-
-
-        if (
-            state.inWorld &&
-            playerStatus
-        ) {
-
-            playerStatus.textContent =
-                "PAUSED";
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   24. SONG ENDED
-   ========================================================= */
-
-audio.addEventListener(
-    "ended",
-    () => {
-
-        state.musicPlaying =
-            false;
-
-
-        updatePlayButton();
-
-        updateCatDance();
-
-        updatePlayerProgress();
-
-
-        if (
-            repeatMode === 1
-        ) {
-
-            audio.currentTime =
-                0;
-
-
-            audio.play()
-
-                .then(() => {
-
-                    state.musicPlaying =
-                        true;
-
-
-                    updatePlayButton();
-
-                    updateCatDance();
-
-
-                    if (playerStatus) {
-
-                        playerStatus.textContent =
-                            "PLAYING";
-
-                    }
-
-                })
-
-                .catch(
-                    error => {
-
-                        console.error(
-                            "❌ REPEAT ERROR:",
-                            error
-                        );
-
-                    }
-                );
-
-
-            return;
-
-        }
-
-
-        if (
-            repeatMode === 2
-        ) {
-
-            nextSong(true);
-
-            return;
-
-        }
-
-
-        if (playerStatus) {
-
-            playerStatus.textContent =
-                "ENDED";
-
-        }
-
-
-        showToast(
-            "آهنگ تموم شد 🎵"
-        );
-
-    }
-);
-
-
-/* =========================================================
-   25. AUDIO ERROR
-   ========================================================= */
-
-audio.addEventListener(
-    "error",
-    () => {
-
-        console.error(
-            "❌ AUDIO ERROR"
-        );
-
-
-        console.error(
-            "File:",
-            audio.src
-        );
-
-
-        console.error(
-            "Error:",
-            audio.error
-        );
-
-
-        if (playerStatus) {
-
-            playerStatus.textContent =
-                "FILE ERROR";
-
-        }
-
-
-        showToast(
-            "فایل MP3 پیدا نشد یا قابل پخش نیست ⚠️"
-        );
-
-    }
-);
-
-
-/* =========================================================
-   26. CAT DANCE
-   ========================================================= */
-
-function updateCatDance() {
-
-    if (!cat) {
-        return;
-    }
-
-
-    if (
-        !audio.paused &&
-        !audio.ended
-    ) {
-
-        cat.classList.add(
-            "dancing"
-        );
-
-    } else {
-
-        cat.classList.remove(
-            "dancing"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   27. CAT POSITION
-   ========================================================= */
-
-function moveCat() {
-
-    const guide =
-        document.getElementById(
-            "catGuide"
-        );
-
-
-    if (!guide) {
-        return;
-    }
-
-
-    if (
-        state.inWorld
-    ) {
-
-        guide.style.left =
-            "auto";
-
-        guide.style.right =
-            "4%";
-
-        guide.style.top =
-            "62%";
-
-        return;
-
-    }
-
-
-    guide.style.right =
-        "auto";
-
-
-    const positions = [
-
-        ["8%","15%"],
-        ["82%","70%"],
-        ["10%","70%"],
-        ["80%","15%"],
-        ["12%","75%"],
-        ["84%","75%"],
-        ["8%","25%"],
-        ["82%","20%"],
-        ["10%","50%"]
-
-    ];
-
-
-    const position =
-        positions[
-            state.currentScene
-        ] ||
-        positions[0];
-
-
-    guide.style.left =
-        position[0];
-
-
-    guide.style.top =
-        position[1];
-
-}
-
-
-/* =========================================================
-   28. CAT PROGRESS
-   ========================================================= */
-
-function updateCatProgress() {
-
-    const count =
-        Math.min(
-            state.catClicks,
-            5
-        );
-
-
-    if (catStatus) {
-
-        catStatus.textContent =
-            `GUIDE // ${count} / 5`;
-
-    }
-
-
-    if (catProgress) {
-
-        catProgress.style.width =
-            `${count * 20}%`;
-
-    }
-
-}
-
-
-/* =========================================================
-   29. CAT CLICK
-   ========================================================= */
-
-function catClicked() {
-
-    state.catClicks++;
-
-
-    updateCatProgress();
-
-
-    const messages = [
-
-        "دنبال دردسری؟ 😼",
-
-        "هی! چرا منو زدی؟ 👀",
-
-        "فکر کردی نمی‌بینمت؟ 😾",
-
-        "بازم منو زدی؟ 😼",
-
-        "باشه... خودت خواستی! 🐈‍⬛"
-
-    ];
-
-
-    if (catHint) {
-
-        catHint.textContent =
-            messages[
-                Math.min(
-                    state.catClicks - 1,
-                    messages.length - 1
-                )
-            ];
-
-
-        catHint.classList.add(
-            "show"
-        );
-
-
-        setTimeout(
-            () => {
-
-                catHint.classList.remove(
-                    "show"
-                );
-
-            },
-            2200
-        );
-
-    }
-
-
-    if (
-        state.catClicks >= 5
-    ) {
-
-        secretEnding();
-
-    }
-
-}
-
-
-/* =========================================================
-   30. BACK TO SONGS
-   ========================================================= */
-
-function backToSongs() {
-
-    audio.pause();
-
-    audio.currentTime =
-        0;
-
-
-    state.musicPlaying =
-        false;
-
-
-    state.inWorld =
-        false;
-
-
-    updatePlayButton();
-
-    updateCatDance();
-
-    resetPlayerProgress();
-
-    clearWorldFX();
-
-
-    if (
-        state.language ===
-        "persian"
-    ) {
-
-        if (
-            state.persianAge ===
-            "old"
-        ) {
-
-            goToScene(4);
-
-        } else {
-
-            goToScene(5);
-
-        }
-
-
-        return;
-
-    }
-
-
-    if (
-        state.language ===
-        "english"
-    ) {
-
-        if (
-            state.englishGender ===
-            "male"
-        ) {
-
-            goToScene(7);
-
-        } else {
-
-            goToScene(8);
-
-        }
-
-
-        return;
-
-    }
-
-
-    goToScene(2);
-
-}
-
-
-/* =========================================================
-   31. NEXT SONG
-   ========================================================= */
-
-function nextSong(
-    autoPlay = false
-) {
-
-    if (
-        state.currentSongIndex <
-        0
-    ) {
-
-        return;
-
-    }
-
-
-    let index =
-        state.currentSongIndex + 1;
-
-
-    if (
-        index >= songs.length
-    ) {
-
-        index = 0;
-
-    }
-
-
-    openWorld(
-        songs[index].title
-    );
-
-
-    if (!autoPlay) {
-        return;
-    }
-
-
-    const playWhenReady =
-        () => {
-
-            audio.play()
-
-                .then(() => {
-
-                    state.musicPlaying =
-                        true;
-
-
-                    updatePlayButton();
-
-                    updateCatDance();
-
-
-                    if (playerStatus) {
-
-                        playerStatus.textContent =
-                            "PLAYING";
-
-                    }
-
-                })
-
-                .catch(
-                    error => {
-
-                        console.error(
-                            "❌ AUTO PLAY ERROR:",
-                            error
-                        );
-
-                    }
-                );
-
-        };
-
-
-    if (
-        audio.readyState >= 2
-    ) {
-
-        playWhenReady();
-
-    } else {
-
-        audio.addEventListener(
-            "canplay",
-            playWhenReady,
+        await api(
+            "/users/me/now-playing",
             {
-                once: true
+                method: "POST",
+
+                body: JSON.stringify({
+                    songId:
+                        state.isPlaying &&
+                        state.currentSong
+                            ? state.currentSong.id
+                            : null,
+
+                    isPlaying:
+                        state.isPlaying
+                })
             }
         );
 
-    }
+    } catch (error) {
 
+        console.warn(
+            "Now playing update failed:",
+            error.message
+        );
+
+    }
 }
 
 
-/* =========================================================
-   32. PREVIOUS SONG
-   ========================================================= */
+function nextSong(autoPlay = true) {
+
+    if (!songs.length) {
+        return;
+    }
+
+    if (
+        state.currentSongIndex ===
+        songs.length - 1
+    ) {
+
+        if (state.repeatMode === 2) {
+
+            loadSong(0, autoPlay);
+
+            return;
+        }
+
+        state.currentSongIndex = -1;
+
+        state.currentSong = null;
+
+        audioPlayer.pause();
+
+        audioPlayer.removeAttribute("src");
+        audioPlayer.load();
+
+        state.isPlaying = false;
+
+        updatePlayButton();
+
+        playerSongName.textContent =
+            "Nothing";
+
+        playerArtistName.textContent =
+            "—";
+
+        updateNowPlaying();
+
+        showToast(
+            "Playlist finished."
+        );
+
+        return;
+    }
+
+    loadSong(
+        state.currentSongIndex + 1,
+        autoPlay
+    );
+}
+
 
 function previousSong() {
 
-    if (
-        state.currentSongIndex <
-        0
-    ) {
-
+    if (!songs.length) {
         return;
-
     }
 
+    if (
+        audioPlayer.currentTime >
+        3
+    ) {
+
+        audioPlayer.currentTime = 0;
+
+        return;
+    }
 
     let index =
         state.currentSongIndex - 1;
 
-
-    if (
-        index < 0
-    ) {
+    if (index < 0) {
 
         index =
             songs.length - 1;
 
     }
 
-
-    openWorld(
-        songs[index].title
+    loadSong(
+        index,
+        true
     );
-
 }
 
 
-/* =========================================================
-   33. SECRET
-   ========================================================= */
+function cycleRepeat() {
 
-function secretClick() {
+    state.repeatMode =
+        (state.repeatMode + 1) % 3;
 
-    state.catClicks++;
+    updateRepeatButton();
 
+    const messages = [
+        "Repeat: OFF",
+        "Repeat: SONG",
+        "Repeat: ALL"
+    ];
 
-    updateCatProgress();
-
-
-    if (
-        state.catClicks >= 5
-    ) {
-
-        secretEnding();
-
-    }
-
-}
-
-
-function secretEnding() {
-
-    if (
-        document.getElementById(
-            "secretWorld"
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    audio.pause();
-
-
-    const secret =
-        document.createElement(
-            "div"
-        );
-
-
-    secret.id =
-        "secretWorld";
-
-
-    secret.innerHTML = `
-
-        <div style="
-            position:fixed;
-            inset:0;
-            z-index:9999;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            text-align:center;
-            padding:24px;
-            background:
-                radial-gradient(
-                    circle at 50% 35%,
-                    rgba(145,90,255,.2),
-                    transparent 28%
-                ),
-                #020207;
-        ">
-
-            <div style="
-                width:min(520px,100%);
-                padding:36px 24px;
-                border:1px solid rgba(255,255,255,.08);
-                border-radius:28px;
-                background:rgba(10,10,18,.72);
-                backdrop-filter:blur(18px);
-                -webkit-backdrop-filter:blur(18px);
-                box-shadow:
-                    0 30px 90px
-                    rgba(0,0,0,.5);
-            ">
-
-                <div style="
-                    font-size:64px;
-                    margin-bottom:12px;
-                ">
-                    🐈‍⬛
-                </div>
-
-
-                <div style="
-                    font-size:12px;
-                    letter-spacing:.2em;
-                    font-weight:900;
-                    color:rgba(255,255,255,.5);
-                    margin-bottom:10px;
-                ">
-                    SECRET WORLD
-                </div>
-
-
-                <h2 style="
-                    margin:0 0 12px;
-                ">
-                    پس بالاخره پیدام کردی... 👀
-                </h2>
-
-
-                <p style="
-                    color:rgba(255,255,255,.55);
-                    line-height:1.7;
-                ">
-                    گربه هنوز اینجاست.
-                </p>
-
-
-                <button
-                    class="main-btn"
-                    id="closeSecret"
-                    type="button"
-                >
-                    برگشت 🌌
-                </button>
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    document.body.appendChild(
-        secret
+    showToast(
+        messages[state.repeatMode]
     );
-
-
-    const close =
-        document.getElementById(
-            "closeSecret"
-        );
-
-
-    if (close) {
-
-        close.onclick =
-            () => {
-
-                secret.remove();
-
-            };
-
-    }
-
 }
 
 
-/* =========================================================
-   34. FX STATE
-   ========================================================= */
+function updateRepeatButton() {
 
-let fxAnimationId =
-    null;
+    if (state.repeatMode === 0) {
 
+        repeatButton.textContent =
+            "↻";
 
-let visualizerBars =
-    [];
+        repeatButton.title =
+            "Repeat Off";
 
-
-let visualizerPhases =
-    [];
-
-
-let lastVisualizerTime =
-    0;
-
-
-/* =========================================================
-   35. MOBILE HELPERS
-   ========================================================= */
-
-function isMobileLayout() {
-
-    return window.matchMedia(
-        "(max-width:760px)"
-    ).matches;
-
-}
-
-
-function fxAmount(
-    desktop,
-    mobile
-) {
-
-    return isMobileLayout()
-        ? mobile
-        : desktop;
-
-}
-
-
-/* =========================================================
-   36. CLEAR FX
-   ========================================================= */
-
-function clearDynamicFX() {
-
-    if (rainLayer) {
-
-        rainLayer.innerHTML =
-            "";
-
-    }
-
-
-    if (worldParticles) {
-
-        worldParticles.innerHTML =
-            "";
-
-    }
-
-
-    clearDynamicVisualizer();
-
-}
-
-
-function clearDynamicVisualizer() {
-
-    stopVisualizer();
-
-
-    visualizerBars =
-        [];
-
-
-    visualizerPhases =
-        [];
-
-
-    if (visualizer) {
-
-        visualizer.innerHTML =
-            "";
-
-    }
-
-}
-
-
-function clearWorldFX() {
-
-    clearDynamicFX();
-
-}
-
-
-/* =========================================================
-   37. VISUALIZER
-   ========================================================= */
-
-function createVisualizer() {
-
-    if (!visualizer) {
-        return;
-    }
-
-
-    clearDynamicVisualizer();
-
-
-    const amount =
-        isMobileLayout()
-            ? 12
-            : 30;
-
-
-    for (
-        let i = 0;
-        i < amount;
-        i++
+    } else if (
+        state.repeatMode === 1
     ) {
 
-        const bar =
-            document.createElement(
-                "div"
-            );
+        repeatButton.textContent =
+            "↻¹";
 
+        repeatButton.title =
+            "Repeat Song";
 
-        bar.className =
-            "bar";
+    } else {
 
+        repeatButton.textContent =
+            "↻∞";
 
-        bar.style.height =
-            `${
-                8 +
-                Math.random() * 14
-            }px`;
-
-
-        visualizer.appendChild(
-            bar
-        );
-
-
-        visualizerBars.push(
-            bar
-        );
-
-
-        visualizerPhases.push(
-            Math.random() *
-            Math.PI *
-            2
-        );
-
+        repeatButton.title =
+            "Repeat All";
     }
-
-
-    startVisualizer();
-
 }
 
 
 /* =========================================================
-   38. START VISUALIZER
-   ========================================================= */
+   AUDIO EVENTS
+========================================================= */
 
-function startVisualizer() {
+audioPlayer.addEventListener(
+    "play",
+    () => {
 
-    if (fxAnimationId) {
-        return;
-    }
+        state.isPlaying = true;
 
+        updatePlayButton();
 
-    lastVisualizerTime =
-        0;
-
-
-    fxAnimationId =
-        requestAnimationFrame(
-            animateVisualizer
-        );
-
-}
-
-
-/* =========================================================
-   39. STOP VISUALIZER
-   ========================================================= */
-
-function stopVisualizer() {
-
-    if (!fxAnimationId) {
-        return;
-    }
-
-
-    cancelAnimationFrame(
-        fxAnimationId
-    );
-
-
-    fxAnimationId =
-        null;
-
-}
-
-
-/* =========================================================
-   40. VISUALIZER ANIMATION
-   ========================================================= */
-
-function animateVisualizer(
-    timestamp
-) {
-
-    if (
-        !state.inWorld ||
-        visualizerBars.length === 0
-    ) {
-
-        fxAnimationId =
-            null;
-
-        return;
+        updateNowPlaying();
 
     }
+);
 
 
-    const interval =
-        isMobileLayout()
-            ? 75
-            : 35;
+audioPlayer.addEventListener(
+    "pause",
+    () => {
+
+        state.isPlaying = false;
+
+        updatePlayButton();
+
+        updateNowPlaying();
+
+    }
+);
 
 
-    if (
-        timestamp -
-        lastVisualizerTime <
-        interval
-    ) {
+audioPlayer.addEventListener(
+    "loadedmetadata",
+    () => {
 
-        fxAnimationId =
-            requestAnimationFrame(
-                animateVisualizer
+        durationElement.textContent =
+            formatTime(
+                audioPlayer.duration
             );
 
-        return;
+    }
+);
+
+
+audioPlayer.addEventListener(
+    "timeupdate",
+    () => {
+
+        if (
+            !Number.isFinite(
+                audioPlayer.duration
+            )
+        ) {
+            return;
+        }
+
+        const percentage =
+            (
+                audioPlayer.currentTime /
+                audioPlayer.duration
+            ) * 100;
+
+        progressBar.value =
+            percentage;
+
+        currentTimeElement.textContent =
+            formatTime(
+                audioPlayer.currentTime
+            );
 
     }
+);
 
 
-    lastVisualizerTime =
-        timestamp;
+audioPlayer.addEventListener(
+    "ended",
+    () => {
+
+        if (state.repeatMode === 1) {
+
+            audioPlayer.currentTime = 0;
+
+            playCurrentSong();
+
+            return;
+        }
+
+        nextSong(true);
+
+    }
+);
 
 
-    const playing =
-        !audio.paused &&
-        !audio.ended;
+progressBar.addEventListener(
+    "input",
+    () => {
+
+        if (
+            !Number.isFinite(
+                audioPlayer.duration
+            )
+        ) {
+            return;
+        }
+
+        audioPlayer.currentTime =
+            (
+                Number(progressBar.value) /
+                100
+            ) *
+            audioPlayer.duration;
+
+    }
+);
 
 
-    for (
-        let i = 0;
-        i < visualizerBars.length;
-        i++
-    ) {
+volumeBar.addEventListener(
+    "input",
+    () => {
 
-        const phase =
-            visualizerPhases[i];
+        state.volume =
+            Number(volumeBar.value);
+
+        audioPlayer.volume =
+            state.volume;
+
+    }
+);
 
 
-        const wave =
-            Math.abs(
-                Math.sin(
-                    timestamp /
-                    230 +
-                    phase
-                )
+playButton.addEventListener(
+    "click",
+    toggleMusic
+);
+
+previousButton.addEventListener(
+    "click",
+    previousSong
+);
+
+nextButton.addEventListener(
+    "click",
+    () => nextSong(true)
+);
+
+repeatButton.addEventListener(
+    "click",
+    cycleRepeat
+);
+
+playerFavoriteButton.addEventListener(
+    "click",
+    () => {
+
+        if (state.currentSong) {
+
+            toggleFavorite(
+                state.currentSong.id
             );
-
-
-        const secondWave =
-            Math.abs(
-                Math.sin(
-                    timestamp /
-                    410 +
-                    phase * 1.7
-                )
-            );
-
-
-        let height =
-            8 +
-            wave * 30 +
-            secondWave * 12;
-
-
-        if (!playing) {
-
-            height =
-                7 +
-                wave * 8;
 
         }
 
-
-        visualizerBars[i]
-            .style.height =
-            `${height}px`;
-
     }
-
-
-    fxAnimationId =
-        requestAnimationFrame(
-            animateVisualizer
-        );
-
-}
+);
 
 
 /* =========================================================
-   41. PARTICLES
-   ========================================================= */
+   FAVORITES
+========================================================= */
 
-function createParticles(
-    amount
-) {
+async function loadFavorites() {
 
-    if (!worldParticles) {
-        return;
-    }
+    try {
 
-
-    for (
-        let i = 0;
-        i < amount;
-        i++
-    ) {
-
-        const particle =
-            document.createElement(
-                "div"
+        const result =
+            await api(
+                "/favorites"
             );
 
+        state.favorites =
+            result.favorites ||
+            [];
 
-        const size =
-            2 +
-            Math.random() * 4;
+        renderAllMusic();
 
+        updateFavoritePlayerButton();
 
-        particle.className =
-            "world-particle";
+        updateUserUI();
 
+    } catch (error) {
 
-        particle.style.width =
-            `${size}px`;
-
-
-        particle.style.height =
-            `${size}px`;
-
-
-        particle.style.left =
-            `${Math.random() * 100}%`;
-
-
-        particle.style.top =
-            `${Math.random() * 100}%`;
-
-
-        particle.style.setProperty(
-            "--time",
-            `${
-                4 +
-                Math.random() * 7
-            }s`
-        );
-
-
-        particle.style.animationDelay =
-            `${
-                Math.random() * 5
-            }s`;
-
-
-        worldParticles.appendChild(
-            particle
+        console.warn(
+            "Favorites could not be loaded:",
+            error.message
         );
 
     }
-
 }
 
 
-/* =========================================================
-   42. STARS
-   ========================================================= */
+async function toggleFavorite(songId) {
 
-function createStars(
-    amount
-) {
+    if (!state.user) {
 
-    if (!worldParticles) {
+        showToast(
+            "Please log in first."
+        );
+
         return;
     }
 
+    const favorite =
+        isFavorite(songId);
 
-    for (
-        let i = 0;
-        i < amount;
-        i++
-    ) {
+    try {
 
-        const star =
-            document.createElement(
-                "div"
+        if (favorite) {
+
+            await api(
+                `/favorites/${encodeURIComponent(songId)}`,
+                {
+                    method: "DELETE"
+                }
             );
 
+        } else {
 
-        const size =
-            1 +
-            Math.random() * 3;
+            await api(
+                "/favorites",
+                {
+                    method: "POST",
 
-
-        star.className =
-            "star";
-
-
-        star.style.width =
-            `${size}px`;
-
-
-        star.style.height =
-            `${size}px`;
-
-
-        star.style.left =
-            `${Math.random() * 100}%`;
-
-
-        star.style.top =
-            `${Math.random() * 70}%`;
-
-
-        star.style.setProperty(
-            "--time",
-            `${
-                1.5 +
-                Math.random() * 3
-            }s`
-        );
-
-
-        star.style.animationDelay =
-            `${
-                Math.random() * 3
-            }s`;
-
-
-        worldParticles.appendChild(
-            star
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   43. RAIN
-   ========================================================= */
-
-function createRain(
-    amount
-) {
-
-    if (!rainLayer) {
-        return;
-    }
-
-
-    rainLayer.innerHTML =
-        "";
-
-
-    for (
-        let i = 0;
-        i < amount;
-        i++
-    ) {
-
-        const drop =
-            document.createElement(
-                "div"
+                    body: JSON.stringify({
+                        songId
+                    })
+                }
             );
 
+        }
 
-        drop.className =
-            "rain-drop";
+        await loadFavorites();
 
-
-        drop.style.left =
-            `${Math.random() * 100}%`;
-
-
-        drop.style.top =
-            `${
-                -30 -
-                Math.random() * 100
-            }%`;
-
-
-        drop.style.height =
-            `${
-                15 +
-                Math.random() * 20
-            }px`;
-
-
-        drop.style.setProperty(
-            "--time",
-            `${
-                .5 +
-                Math.random() * .6
-            }s`
+        showToast(
+            favorite
+                ? "Removed from favorites."
+                : "Added to favorites."
         );
 
+    } catch (error) {
 
-        drop.style.animationDelay =
-            `${
-                Math.random() * 2
-            }s`;
-
-
-        rainLayer.appendChild(
-            drop
+        showToast(
+            error.message
         );
 
     }
-
 }
 
 
 /* =========================================================
-   44. BUBBLES
-   ========================================================= */
+   FRIENDS
+========================================================= */
 
-function createBubbles(
-    amount
-) {
+async function loadFriendsData() {
 
-    if (!worldParticles) {
-        return;
-    }
+    try {
 
-
-    for (
-        let i = 0;
-        i < amount;
-        i++
-    ) {
-
-        const bubble =
-            document.createElement(
-                "div"
+        const result =
+            await api(
+                "/friends"
             );
 
+        state.friends =
+            result.friends ||
+            [];
 
-        const size =
-            4 +
-            Math.random() * 14;
+        renderFriends();
 
+    } catch (error) {
 
-        bubble.className =
-            "bubble";
-
-
-        bubble.style.width =
-            `${size}px`;
-
-
-        bubble.style.height =
-            `${size}px`;
-
-
-        bubble.style.left =
-            `${Math.random() * 100}%`;
-
-
-        bubble.style.top =
-            `${
-                50 +
-                Math.random() * 50
-            }%`;
-
-
-        bubble.style.setProperty(
-            "--time",
-            `${
-                5 +
-                Math.random() * 6
-            }s`
-        );
-
-
-        bubble.style.animationDelay =
-            `${
-                Math.random() * 5
-            }s`;
-
-
-        worldParticles.appendChild(
-            bubble
+        console.warn(
+            "Friends load failed:",
+            error.message
         );
 
     }
 
-}
+    try {
 
-
-/* =========================================================
-   45. BIRDS
-   ========================================================= */
-
-function createBirds(
-    amount
-) {
-
-    if (!worldParticles) {
-        return;
-    }
-
-
-    for (
-        let i = 0;
-        i < amount;
-        i++
-    ) {
-
-        const bird =
-            document.createElement(
-                "div"
+        const result =
+            await api(
+                "/friends/requests"
             );
 
+        state.friendRequests =
+            result.requests ||
+            [];
 
-        bird.className =
-            "bird";
+        renderFriendRequests();
 
+    } catch (error) {
 
-        bird.textContent =
-            "⌁";
-
-
-        bird.style.left =
-            `${Math.random() * 100}%`;
-
-
-        bird.style.top =
-            `${
-                10 +
-                Math.random() * 40
-            }%`;
-
-
-        bird.style.fontSize =
-            `${
-                14 +
-                Math.random() * 10
-            }px`;
-
-
-        bird.style.setProperty(
-            "--time",
-            `${
-                7 +
-                Math.random() * 6
-            }s`
-        );
-
-
-        bird.style.animationDelay =
-            `${
-                Math.random() * 5
-            }s`;
-
-
-        worldParticles.appendChild(
-            bird
+        console.warn(
+            "Friend requests load failed:",
+            error.message
         );
 
     }
 
+    updateUserUI();
+}
+
+
+function renderFriends() {
+
+    friendsCount.textContent =
+        state.friends.length;
+
+    if (!state.friends.length) {
+
+        friendsList.innerHTML = `
+            <div class="empty-state">
+                You don't have any friends yet.
+            </div>
+        `;
+
+        return;
+    }
+
+    friendsList.innerHTML =
+        state.friends.map(friend => {
+
+            const username =
+                friend.username ||
+                "User";
+
+            const online =
+                friend.online === true;
+
+            return `
+                <div
+                    class="user-row"
+                    data-user-id="${escapeHTML(friend.id || friend._id || "")}"
+                >
+
+                    <div class="user-avatar-small">
+                        ${escapeHTML(
+                            getInitials(username)
+                        )}
+                    </div>
+
+                    <div class="user-row-info">
+
+                        <strong>
+                            ${escapeHTML(username)}
+                        </strong>
+
+                        <span>
+                            <span
+                                class="online-dot"
+                                style="
+                                    background:
+                                    ${online
+                                        ? "var(--success)"
+                                        : "#666"}
+                                "
+                            ></span>
+
+                            ${
+                                online
+                                    ? "Online"
+                                    : formatLastActive(
+                                        friend.lastActive
+                                    )
+                            }
+
+                            ${
+                                friend.nowPlaying
+                                    ? ` • ${escapeHTML(
+                                        friend.nowPlaying
+                                    )}`
+                                    : ""
+                            }
+
+                        </span>
+
+                    </div>
+
+                </div>
+            `;
+
+        }).join("");
+}
+
+
+function renderFriendRequests() {
+
+    friendRequestsCount.textContent =
+        state.friendRequests.length;
+
+    if (!state.friendRequests.length) {
+
+        friendRequestsList.innerHTML = `
+            <div class="empty-state">
+                No pending friend requests.
+            </div>
+        `;
+
+        return;
+    }
+
+    friendRequestsList.innerHTML =
+        state.friendRequests.map(request => {
+
+            const username =
+                request.username ||
+                request.fromUsername ||
+                "User";
+
+            const id =
+                request.id ||
+                request.userId ||
+                request.fromUserId;
+
+            return `
+                <div class="user-row">
+
+                    <div class="user-avatar-small">
+                        ${escapeHTML(
+                            getInitials(username)
+                        )}
+                    </div>
+
+                    <div class="user-row-info">
+
+                        <strong>
+                            ${escapeHTML(username)}
+                        </strong>
+
+                        <span>
+                            Wants to be your friend.
+                        </span>
+
+                    </div>
+
+                    <button
+                        class="primary-button small"
+                        data-accept-friend="${escapeHTML(id)}"
+                        type="button"
+                    >
+                        ACCEPT
+                    </button>
+
+                </div>
+            `;
+
+        }).join("");
+}
+
+
+async function searchUsers() {
+
+    const query =
+        userSearchInput.value.trim();
+
+    if (query.length < 2) {
+
+        showToast(
+            "Enter at least 2 characters."
+        );
+
+        return;
+    }
+
+    try {
+
+        const result =
+            await api(
+                `/users/search?q=${encodeURIComponent(query)}`
+            );
+
+        renderUserSearchResults(
+            result.users || []
+        );
+
+    } catch (error) {
+
+        showToast(
+            error.message
+        );
+
+    }
+}
+
+
+function renderUserSearchResults(users) {
+
+    if (!users.length) {
+
+        userSearchResults.innerHTML = `
+            <div class="empty-state">
+                No users found.
+            </div>
+        `;
+
+        return;
+    }
+
+    userSearchResults.innerHTML =
+        users.map(user => {
+
+            const id =
+                user.id ||
+                user._id;
+
+            const username =
+                user.username ||
+                "User";
+
+            return `
+                <div
+                    class="user-row"
+                    data-user-id="${escapeHTML(id)}"
+                >
+
+                    <div class="user-avatar-small">
+                        ${escapeHTML(
+                            getInitials(username)
+                        )}
+                    </div>
+
+                    <div class="user-row-info">
+
+                        <strong>
+                            ${escapeHTML(username)}
+                        </strong>
+
+                        <span>
+                            ${
+                                user.online
+                                    ? "Online"
+                                    : "Offline"
+                            }
+
+                            ${
+                                user.nowPlaying
+                                    ? ` • ${escapeHTML(
+                                        user.nowPlaying
+                                    )}`
+                                    : ""
+                            }
+                        </span>
+
+                    </div>
+
+                    <button
+                        class="secondary-button"
+                        data-view-user="${escapeHTML(id)}"
+                        type="button"
+                    >
+                        VIEW
+                    </button>
+
+                </div>
+            `;
+
+        }).join("");
+}
+
+
+async function sendFriendRequest(userId) {
+
+    try {
+
+        await api(
+            `/friends/requests/${encodeURIComponent(userId)}`,
+            {
+                method: "POST"
+            }
+        );
+
+        showToast(
+            "Friend request sent."
+        );
+
+    } catch (error) {
+
+        showToast(
+            error.message
+        );
+
+    }
+}
+
+
+async function acceptFriendRequest(requestId) {
+
+    try {
+
+        await api(
+            `/friends/requests/${encodeURIComponent(requestId)}/accept`,
+            {
+                method: "POST"
+            }
+        );
+
+        await loadFriendsData();
+
+        showToast(
+            "Friend request accepted."
+        );
+
+    } catch (error) {
+
+        showToast(
+            error.message
+        );
+
+    }
 }
 
 
 /* =========================================================
-   46. WORLD FX
-   ========================================================= */
+   USER PROFILE
+========================================================= */
 
-function updateWorldFX() {
+let selectedUserId = null;
 
-    if (
-        !state.currentSong ||
-        !worldScene
-    ) {
 
+async function openUserProfile(userId) {
+
+    if (!userId) {
         return;
-
     }
 
+    selectedUserId =
+        userId;
 
-    clearDynamicFX();
+    try {
+
+        const result =
+            await api(
+                `/users/${encodeURIComponent(userId)}`
+            );
+
+        const user =
+            result.user;
+
+        if (!user) {
+            throw new Error(
+                "User not found."
+            );
+        }
+
+        const username =
+            user.username ||
+            "User";
+
+        userProfileName.textContent =
+            username;
+
+        userProfileAvatar.textContent =
+            getInitials(username);
+
+        userProfileStatus.textContent =
+            user.online
+                ? "Online"
+                : "Offline";
+
+        userProfileNowPlaying.textContent =
+            user.nowPlaying ||
+            "Nothing";
+
+        userProfileLastActive.textContent =
+            formatLastActive(
+                user.lastActive
+            );
+
+        userProfileFavorites.textContent =
+            user.favoritesCount ??
+            0;
+
+        userProfileModal.classList.remove(
+            "hidden"
+        );
+
+    } catch (error) {
+
+        showToast(
+            error.message
+        );
+
+    }
+}
 
 
-    const world =
-        state.currentSong.world;
+/* =========================================================
+   GLOBAL CHAT
+========================================================= */
+
+async function loadGlobalMessages() {
+
+    try {
+
+        const result =
+            await api(
+                "/chat/global/messages"
+            );
+
+        state.globalMessages =
+            result.messages ||
+            [];
+
+        renderGlobalMessages();
+
+    } catch (error) {
+
+        console.warn(
+            "Global chat load failed:",
+            error.message
+        );
+
+    }
+}
 
 
-    worldScene.dataset.world =
-        world;
+function renderGlobalMessages() {
+
+    if (!state.globalMessages.length) {
+
+        globalMessages.innerHTML = `
+            <div class="empty-state">
+                No messages yet. Start the conversation.
+            </div>
+        `;
+
+        return;
+    }
+
+    globalMessages.innerHTML =
+        state.globalMessages.map(
+            message => {
+
+                const author =
+                    message.username ||
+                    message.author ||
+                    "User";
+
+                const text =
+                    message.text ||
+                    message.content ||
+                    "";
+
+                const own =
+                    state.user &&
+                    (
+                        message.userId ===
+                        state.user.id ||
+                        message.userId ===
+                        state.user._id
+                    );
+
+                return `
+                    <div
+                        class="chat-message ${own ? "own" : ""}"
+                    >
+
+                        <div class="chat-message-author">
+                            ${escapeHTML(author)}
+                        </div>
+
+                        <div class="chat-message-text">
+                            ${escapeHTML(text)}
+                        </div>
+
+                        <div class="chat-message-time">
+                            ${formatMessageTime(
+                                message.createdAt
+                            )}
+                        </div>
+
+                    </div>
+                `;
+
+            }
+        ).join("");
+
+    globalMessages.scrollTop =
+        globalMessages.scrollHeight;
+}
 
 
-    /* DEFAULT */
+function formatMessageTime(value) {
 
-    createParticles(
-        fxAmount(35,8)
+    if (!value) {
+        return "";
+    }
+
+    const date =
+        new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return "";
+    }
+
+    return date.toLocaleTimeString(
+        [],
+        {
+            hour: "2-digit",
+            minute: "2-digit"
+        }
     );
+}
 
 
-    /* SWAMP */
+async function sendGlobalMessage() {
 
-    if (
-        world === "swamp"
-    ) {
+    const text =
+        globalChatInput.value.trim();
 
-        createStars(
-            fxAmount(60,16)
+    if (!text) {
+        return;
+    }
+
+    try {
+
+        const result =
+            await api(
+                "/chat/global/messages",
+                {
+                    method: "POST",
+
+                    body: JSON.stringify({
+                        text
+                    })
+                }
+            );
+
+        globalChatInput.value = "";
+
+        if (result.message) {
+
+            state.globalMessages.push(
+                result.message
+            );
+
+            renderGlobalMessages();
+
+        } else {
+
+            await loadGlobalMessages();
+
+        }
+
+    } catch (error) {
+
+        showToast(
+            error.message
         );
 
     }
+}
 
 
-    /* RAIN */
+globalChatForm.addEventListener(
+    "submit",
+    event => {
 
-    if (
-        world === "rain"
-    ) {
+        event.preventDefault();
 
-        createRain(
-            fxAmount(120,28)
+        sendGlobalMessage();
+
+    }
+);
+
+
+/* =========================================================
+   ONLINE USERS
+========================================================= */
+
+async function loadOnlineCount() {
+
+    try {
+
+        const result =
+            await api(
+                "/users/online/count"
+            );
+
+        state.onlineUsers =
+            Number(
+                result.count || 0
+            );
+
+        onlineUsersCount.textContent =
+            state.onlineUsers;
+
+    } catch (error) {
+
+        console.warn(
+            "Online count failed:",
+            error.message
         );
 
     }
+}
 
 
-    /* ROAD */
+/* =========================================================
+   GROUPS
+========================================================= */
 
-    if (
-        world === "road"
-    ) {
+async function loadGroups() {
 
-        createStars(
-            fxAmount(35,12)
-        );
+    try {
 
+        const result =
+            await api(
+                "/groups"
+            );
 
-        createParticles(
-            fxAmount(25,8)
-        );
+        state.groups =
+            result.groups ||
+            [];
 
-    }
+        renderGroups();
 
+    } catch (error) {
 
-    /* NEON */
-
-    if (
-        world === "neon"
-    ) {
-
-        createParticles(
-            fxAmount(70,16)
-        );
-
-    }
-
-
-    /* DARK */
-
-    if (
-        world === "dark"
-    ) {
-
-        createParticles(
-            fxAmount(25,7)
+        console.warn(
+            "Groups load failed:",
+            error.message
         );
 
     }
+}
 
 
-    /* ROOM */
+function renderGroups() {
 
-    if (
-        world === "room"
-    ) {
+    if (!state.groups.length) {
 
-        createRain(
-            fxAmount(65,20)
+        groupsList.innerHTML = `
+            <div class="empty-state">
+                No groups yet.
+                Create the first one.
+            </div>
+        `;
+
+        return;
+    }
+
+    groupsList.innerHTML =
+        state.groups.map(group => {
+
+            const id =
+                group.id ||
+                group._id;
+
+            return `
+                <div
+                    class="group-card ${
+                        state.currentGroup &&
+                        (
+                            state.currentGroup.id === id ||
+                            state.currentGroup._id === id
+                        )
+                            ? "active"
+                            : ""
+                    }"
+                    data-group-id="${escapeHTML(id)}"
+                >
+
+                    <h4>
+                        ${escapeHTML(
+                            group.name
+                        )}
+                    </h4>
+
+                    <p>
+                        ${escapeHTML(
+                            group.description ||
+                            "Music World group"
+                        )}
+                    </p>
+
+                </div>
+            `;
+
+        }).join("");
+}
+
+
+async function createGroup() {
+
+    const name =
+        groupNameInput.value.trim();
+
+    const description =
+        groupDescriptionInput.value.trim();
+
+    if (!name) {
+        return;
+    }
+
+    try {
+
+        const result =
+            await api(
+                "/groups",
+                {
+                    method: "POST",
+
+                    body: JSON.stringify({
+                        name,
+                        description
+                    })
+                }
+            );
+
+        createGroupForm.reset();
+
+        createGroupModal.classList.add(
+            "hidden"
         );
 
+        await loadGroups();
 
-        createParticles(
-            fxAmount(25,7)
+        if (result.group) {
+
+            await openGroup(
+                result.group.id ||
+                result.group._id
+            );
+
+        }
+
+        showToast(
+            "Group created."
+        );
+
+    } catch (error) {
+
+        showToast(
+            error.message
         );
 
     }
+}
 
 
-    /* RED */
+async function openGroup(groupId) {
 
-    if (
-        world === "red"
-    ) {
+    try {
 
-        createParticles(
-            fxAmount(65,16)
+        const result =
+            await api(
+                `/groups/${encodeURIComponent(groupId)}`
+            );
+
+        state.currentGroup =
+            result.group;
+
+        groupRoom.classList.remove(
+            "hidden"
+        );
+
+        groupRoomName.textContent =
+            state.currentGroup.name;
+
+        groupRoomDescription.textContent =
+            state.currentGroup.description ||
+            "";
+
+        await loadGroupMembers(
+            groupId
+        );
+
+        await loadGroupMessages(
+            groupId
+        );
+
+        renderGroups();
+
+    } catch (error) {
+
+        showToast(
+            error.message
         );
 
     }
+}
 
 
-    /* VHS */
+async function loadGroupMembers(groupId) {
 
-    if (
-        world === "vhs"
-    ) {
+    try {
 
-        createParticles(
-            fxAmount(30,8)
+        const result =
+            await api(
+                `/groups/${encodeURIComponent(groupId)}/members`
+            );
+
+        const members =
+            result.members ||
+            [];
+
+        groupMembersCount.textContent =
+            members.length;
+
+        groupMembers.innerHTML =
+            members.slice(0, 8)
+                .map(member => {
+
+                    return `
+                        <div
+                            class="member-avatar"
+                            title="${escapeHTML(
+                                member.username
+                            )}"
+                        >
+                            ${escapeHTML(
+                                getInitials(
+                                    member.username
+                                )
+                            )}
+                        </div>
+                    `;
+
+                }).join("");
+
+    } catch (error) {
+
+        console.warn(
+            "Group members failed:",
+            error.message
         );
 
     }
+}
 
 
-    /* LUXURY */
+async function loadGroupMessages(groupId) {
 
-    if (
-        world === "luxury"
-    ) {
+    try {
 
-        createStars(
-            fxAmount(35,12)
+        const result =
+            await api(
+                `/groups/${encodeURIComponent(groupId)}/messages`
+            );
+
+        state.groupMessages =
+            result.messages ||
+            [];
+
+        renderGroupMessages();
+
+    } catch (error) {
+
+        console.warn(
+            "Group messages failed:",
+            error.message
         );
 
     }
+}
 
 
-    /* LOVELY */
+function renderGroupMessages() {
 
-    if (
-        world === "lovely"
-    ) {
+    if (!state.groupMessages.length) {
 
-        createStars(
-            fxAmount(65,16)
+        groupMessages.innerHTML = `
+            <div class="empty-state">
+                No messages in this group yet.
+            </div>
+        `;
+
+        return;
+    }
+
+    groupMessages.innerHTML =
+        state.groupMessages.map(
+            message => {
+
+                const author =
+                    message.username ||
+                    "User";
+
+                const text =
+                    message.text ||
+                    message.content ||
+                    "";
+
+                const own =
+                    state.user &&
+                    (
+                        message.userId ===
+                        state.user.id ||
+                        message.userId ===
+                        state.user._id
+                    );
+
+                return `
+                    <div
+                        class="chat-message ${
+                            own ? "own" : ""
+                        }"
+                    >
+
+                        <div class="chat-message-author">
+                            ${escapeHTML(author)}
+                        </div>
+
+                        <div class="chat-message-text">
+                            ${escapeHTML(text)}
+                        </div>
+
+                        <div class="chat-message-time">
+                            ${formatMessageTime(
+                                message.createdAt
+                            )}
+                        </div>
+
+                    </div>
+                `;
+
+            }
+        ).join("");
+
+    groupMessages.scrollTop =
+        groupMessages.scrollHeight;
+}
+
+
+async function sendGroupMessage() {
+
+    if (!state.currentGroup) {
+        return;
+    }
+
+    const text =
+        groupChatInput.value.trim();
+
+    if (!text) {
+        return;
+    }
+
+    const groupId =
+        state.currentGroup.id ||
+        state.currentGroup._id;
+
+    try {
+
+        const result =
+            await api(
+                `/groups/${encodeURIComponent(groupId)}/messages`,
+                {
+                    method: "POST",
+
+                    body: JSON.stringify({
+                        text
+                    })
+                }
+            );
+
+        groupChatInput.value = "";
+
+        if (result.message) {
+
+            state.groupMessages.push(
+                result.message
+            );
+
+            renderGroupMessages();
+
+        } else {
+
+            await loadGroupMessages(
+                groupId
+            );
+
+        }
+
+    } catch (error) {
+
+        showToast(
+            error.message
         );
 
     }
+}
 
 
-    /* BIRDS */
+async function loadInviteFriends() {
 
-    if (
-        world === "birds"
-    ) {
+    if (!state.currentGroup) {
+        return;
+    }
 
-        createStars(
-            fxAmount(90,20)
+    const available =
+        state.friends.filter(
+            friend =>
+                !(
+                    state.currentGroup.members ||
+                    []
+                ).some(
+                    member =>
+                        (
+                            member.id ||
+                            member._id
+                        ) ===
+                        (
+                            friend.id ||
+                            friend._id
+                        )
+                )
         );
 
+    if (!available.length) {
 
-        createBirds(
-            fxAmount(8,3)
+        inviteFriendsList.innerHTML = `
+            <div class="empty-state">
+                No friends available to invite.
+            </div>
+        `;
+
+        return;
+    }
+
+    inviteFriendsList.innerHTML =
+        available.map(friend => {
+
+            const id =
+                friend.id ||
+                friend._id;
+
+            return `
+                <div class="user-row">
+
+                    <div class="user-avatar-small">
+                        ${escapeHTML(
+                            getInitials(
+                                friend.username
+                            )
+                        )}
+                    </div>
+
+                    <div class="user-row-info">
+
+                        <strong>
+                            ${escapeHTML(
+                                friend.username
+                            )}
+                        </strong>
+
+                    </div>
+
+                    <button
+                        class="secondary-button"
+                        data-invite-user="${escapeHTML(id)}"
+                        type="button"
+                    >
+                        INVITE
+                    </button>
+
+                </div>
+            `;
+
+        }).join("");
+}
+
+
+async function inviteFriend(userId) {
+
+    if (!state.currentGroup) {
+        return;
+    }
+
+    const groupId =
+        state.currentGroup.id ||
+        state.currentGroup._id;
+
+    try {
+
+        await api(
+            `/groups/${encodeURIComponent(groupId)}/invite`,
+            {
+                method: "POST",
+
+                body: JSON.stringify({
+                    userId
+                })
+            }
+        );
+
+        showToast(
+            "Friend invited."
+        );
+
+        await openGroup(
+            groupId
+        );
+
+    } catch (error) {
+
+        showToast(
+            error.message
         );
 
     }
+}
 
 
-    /* OCEAN */
+/* =========================================================
+   PROFILE
+========================================================= */
 
-    if (
-        world === "ocean"
-    ) {
+async function loadProfile() {
 
-        createBubbles(
-            fxAmount(40,10)
+    updateUserUI();
+
+    try {
+
+        const result =
+            await api(
+                "/auth/me"
+            );
+
+        if (result.user) {
+
+            state.user =
+                result.user;
+
+            updateUserUI();
+
+        }
+
+    } catch {
+        // Keep current profile.
+    }
+}
+
+
+/* =========================================================
+   LISTEN TOGETHER
+========================================================= */
+
+async function startListenTogether() {
+
+    if (!state.currentGroup) {
+
+        showToast(
+            "Open a group first."
         );
 
+        return;
+    }
 
-        createParticles(
-            fxAmount(30,8)
+    const groupId =
+        state.currentGroup.id ||
+        state.currentGroup._id;
+
+    try {
+
+        const result =
+            await api(
+                "/listen-together/rooms",
+                {
+                    method: "POST",
+
+                    body: JSON.stringify({
+                        groupId,
+                        songId:
+                            state.currentSong
+                                ? state.currentSong.id
+                                : songs[0].id
+                    })
+                }
+            );
+
+        state.listenTogether =
+            result.room;
+
+        renderListenTogether();
+
+        listenTogetherView.classList.remove(
+            "hidden"
+        );
+
+        connectRealtime();
+
+    } catch (error) {
+
+        showToast(
+            error.message
         );
 
     }
+}
 
 
-    /* STARBOY */
+function renderListenTogether() {
 
-    if (
-        world === "starboy"
-    ) {
+    const room =
+        state.listenTogether;
 
-        createParticles(
-            fxAmount(55,14)
+    if (!room) {
+        return;
+    }
+
+    listenRoomName.textContent =
+        room.name ||
+        "Listen Together";
+
+    const songId =
+        room.songId ||
+        (
+            state.currentSong &&
+            state.currentSong.id
         );
 
-
-        createStars(
-            fxAmount(25,8)
+    const song =
+        songs.find(
+            item =>
+                item.id === songId
         );
+
+    if (song) {
+
+        listenTrackName.textContent =
+            song.title;
+
+        listenTrackArtist.textContent =
+            song.artist;
+
+        listenTrackCover.src =
+            getSongCover(song);
 
     }
 
+    const members =
+        room.members ||
+        [];
 
-    /* CALL OUT */
+    listenMembersCount.textContent =
+        members.length;
 
-    if (
-        world === "callout"
-    ) {
+    listenMembers.innerHTML =
+        members.map(member => {
 
-        createParticles(
-            fxAmount(28,7)
-        );
+            return `
+                <div
+                    class="member-avatar"
+                    title="${escapeHTML(
+                        member.username
+                    )}"
+                >
+                    ${escapeHTML(
+                        getInitials(
+                            member.username
+                        )
+                    )}
+                </div>
+            `;
+
+        }).join("");
+
+    syncStatusText.textContent =
+        room.connected
+            ? "Synced"
+            : "Waiting";
+
+}
 
 
-        createStars(
-            fxAmount(18,6)
+async function updateListenState(
+    changes
+) {
+
+    if (!state.listenTogether) {
+        return;
+    }
+
+    const roomId =
+        state.listenTogether.id ||
+        state.listenTogether._id;
+
+    try {
+
+        const result =
+            await api(
+                `/listen-together/rooms/${encodeURIComponent(roomId)}/state`,
+                {
+                    method: "POST",
+
+                    body: JSON.stringify(
+                        changes
+                    )
+                }
+            );
+
+        if (result.room) {
+
+            state.listenTogether =
+                result.room;
+
+            renderListenTogether();
+
+        }
+
+    } catch (error) {
+
+        showToast(
+            error.message
         );
 
     }
+}
 
 
-    /* ARIANA */
+async function leaveListenTogether() {
 
-    if (
-        world === "ariana"
-    ) {
+    if (!state.listenTogether) {
+        return;
+    }
 
-        createParticles(
-            fxAmount(44,12)
+    const roomId =
+        state.listenTogether.id ||
+        state.listenTogether._id;
+
+    try {
+
+        await api(
+            `/listen-together/rooms/${encodeURIComponent(roomId)}/leave`,
+            {
+                method: "POST"
+            }
         );
 
+    } catch {
+        // Continue closing locally.
+    }
 
-        createStars(
-            fxAmount(32,8)
+    state.listenTogether =
+        null;
+
+    listenTogetherView.classList.add(
+        "hidden"
+    );
+}
+
+
+/* =========================================================
+   CAT
+========================================================= */
+
+function updateCat() {
+
+    const count =
+        state.catClicks;
+
+    catStatus.textContent =
+        `GUIDE // ${count} / 5`;
+
+    catProgress.style.transform =
+        `scaleX(${Math.min(
+            count / 5,
+            1
+        )})`;
+
+    if (count === 0) {
+
+        catHint.textContent =
+            "The guide is watching.";
+
+    } else if (count < 3) {
+
+        catHint.textContent =
+            "Something is waking up...";
+
+    } else if (count < 5) {
+
+        catHint.textContent =
+            "You are getting close.";
+
+    } else {
+
+        catHint.textContent =
+            "SECRET MUSIC WORLD UNLOCKED.";
+
+    }
+}
+
+
+cat.addEventListener(
+    "click",
+    () => {
+
+        state.catClicks++;
+
+        updateCat();
+
+        if (
+            state.catClicks === 5
+        ) {
+
+            showToast(
+                "The Music World guide recognizes you."
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+function closeModal(id) {
+
+    const modal =
+        $(id);
+
+    if (modal) {
+        modal.classList.add(
+            "hidden"
+        );
+    }
+}
+
+
+document.addEventListener(
+    "click",
+    event => {
+
+        const closeButton =
+            event.target.closest(
+                "[data-close-modal]"
+            );
+
+        if (closeButton) {
+
+            closeModal(
+                closeButton.dataset.closeModal
+            );
+
+            return;
+        }
+
+        if (
+            event.target.classList.contains(
+                "modal"
+            )
+        ) {
+
+            event.target.classList.add(
+                "hidden"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   EVENT DELEGATION
+========================================================= */
+
+songGrid.addEventListener(
+    "click",
+    event => {
+
+        const favoriteButton =
+            event.target.closest(
+                "[data-favorite-song]"
+            );
+
+        if (favoriteButton) {
+
+            event.stopPropagation();
+
+            toggleFavorite(
+                favoriteButton.dataset.favoriteSong
+            );
+
+            return;
+        }
+
+        const card =
+            event.target.closest(
+                "[data-song-id]"
+            );
+
+        if (card) {
+
+            selectSong(
+                card.dataset.songId
+            );
+
+        }
+
+    }
+);
+
+
+favoritesGrid.addEventListener(
+    "click",
+    event => {
+
+        const favoriteButton =
+            event.target.closest(
+                "[data-favorite-song]"
+            );
+
+        if (favoriteButton) {
+
+            event.stopPropagation();
+
+            toggleFavorite(
+                favoriteButton.dataset.favoriteSong
+            );
+
+            return;
+        }
+
+        const card =
+            event.target.closest(
+                "[data-song-id]"
+            );
+
+        if (card) {
+
+            selectSong(
+                card.dataset.songId
+            );
+
+        }
+
+    }
+);
+
+
+userSearchButton.addEventListener(
+    "click",
+    searchUsers
+);
+
+
+userSearchInput.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            searchUsers();
+
+        }
+
+    }
+);
+
+
+userSearchResults.addEventListener(
+    "click",
+    event => {
+
+        const viewButton =
+            event.target.closest(
+                "[data-view-user]"
+            );
+
+        if (viewButton) {
+
+            openUserProfile(
+                viewButton.dataset.viewUser
+            );
+
+        }
+
+    }
+);
+
+
+friendsList.addEventListener(
+    "click",
+    event => {
+
+        const row =
+            event.target.closest(
+                "[data-user-id]"
+            );
+
+        if (row) {
+
+            openUserProfile(
+                row.dataset.userId
+            );
+
+        }
+
+    }
+);
+
+
+friendRequestsList.addEventListener(
+    "click",
+    event => {
+
+        const button =
+            event.target.closest(
+                "[data-accept-friend]"
+            );
+
+        if (button) {
+
+            acceptFriendRequest(
+                button.dataset.acceptFriend
+            );
+
+        }
+
+    }
+);
+
+
+groupsList.addEventListener(
+    "click",
+    event => {
+
+        const card =
+            event.target.closest(
+                "[data-group-id]"
+            );
+
+        if (card) {
+
+            openGroup(
+                card.dataset.groupId
+            );
+
+        }
+
+    }
+);
+
+
+inviteFriendsList.addEventListener(
+    "click",
+    event => {
+
+        const button =
+            event.target.closest(
+                "[data-invite-user]"
+            );
+
+        if (button) {
+
+            inviteFriend(
+                button.dataset.inviteUser
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   USER PROFILE ACTIONS
+========================================================= */
+
+addFriendButton.addEventListener(
+    "click",
+    async () => {
+
+        if (!selectedUserId) {
+            return;
+        }
+
+        await sendFriendRequest(
+            selectedUserId
         );
 
     }
+);
 
 
-    createVisualizer();
+messageUserButton.addEventListener(
+    "click",
+    () => {
+
+        closeModal(
+            "userProfileModal"
+        );
+
+        switchView(
+            "chat"
+        );
+
+        showToast(
+            "Private messaging will be connected to the social backend."
+        );
+
+    }
+);
+
+
+/* =========================================================
+   GROUP ACTIONS
+========================================================= */
+
+createGroupButton.addEventListener(
+    "click",
+    () => {
+
+        createGroupModal.classList.remove(
+            "hidden"
+        );
+
+    }
+);
+
+
+createGroupForm.addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+        createGroup();
+
+    }
+);
+
+
+inviteFriendsButton.addEventListener(
+    "click",
+    async () => {
+
+        await loadInviteFriends();
+
+        inviteFriendsModal.classList.remove(
+            "hidden"
+        );
+
+    }
+);
+
+
+groupChatForm.addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+        sendGroupMessage();
+
+    }
+);
+
+
+groupListenTogetherButton.addEventListener(
+    "click",
+    startListenTogether
+);
+
+
+/* =========================================================
+   LISTEN ACTIONS
+========================================================= */
+
+listenPlayButton.addEventListener(
+    "click",
+    async () => {
+
+        if (!state.currentSong) {
+            return;
+        }
+
+        await playCurrentSong();
+
+        await updateListenState({
+            songId:
+                state.currentSong.id,
+
+            isPlaying: true,
+
+            position:
+                audioPlayer.currentTime
+        });
+
+    }
+);
+
+
+listenPauseButton.addEventListener(
+    "click",
+    async () => {
+
+        pauseCurrentSong();
+
+        await updateListenState({
+            isPlaying: false,
+
+            position:
+                audioPlayer.currentTime
+        });
+
+    }
+);
+
+
+listenNextButton.addEventListener(
+    "click",
+    async () => {
+
+        nextSong(true);
+
+        if (state.currentSong) {
+
+            await updateListenState({
+                songId:
+                    state.currentSong.id,
+
+                isPlaying:
+                    state.isPlaying,
+
+                position:
+                    audioPlayer.currentTime
+            });
+
+        }
+
+    }
+);
+
+
+leaveListenButton.addEventListener(
+    "click",
+    leaveListenTogether
+);
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+document.addEventListener(
+    "click",
+    event => {
+
+        const button =
+            event.target.closest(
+                "[data-action='logout']"
+            );
+
+        if (button) {
+            logout();
+        }
+
+    }
+);
+
+
+/* =========================================================
+   REALTIME / SOCKET.IO
+========================================================= */
+
+function connectRealtime() {
+
+    if (
+        typeof window.io !==
+        "function"
+    ) {
+        return;
+    }
+
+    if (socket) {
+        return;
+    }
+
+    try {
+
+        socket =
+            window.io(
+                "http://localhost:3000",
+                {
+                    withCredentials: true
+                }
+            );
+
+        socket.on(
+            "connect",
+            () => {
+
+                console.log(
+                    "Music World realtime connected."
+                );
+
+                if (
+                    state.listenTogether
+                ) {
+
+                    syncStatusText.textContent =
+                        "Synced";
+
+                    syncStatusDot.style.background =
+                        "var(--success)";
+
+                }
+
+            }
+        );
+
+
+        socket.on(
+            "disconnect",
+            () => {
+
+                if (
+                    state.listenTogether
+                ) {
+
+                    syncStatusText.textContent =
+                        "Disconnected";
+
+                    syncStatusDot.style.background =
+                        "var(--danger)";
+
+                }
+
+            }
+        );
+
+
+        socket.on(
+            "global:message",
+            message => {
+
+                if (
+                    !state.globalMessages.some(
+                        item =>
+                            (
+                                item.id ||
+                                item._id
+                            ) ===
+                            (
+                                message.id ||
+                                message._id
+                            )
+                    )
+                ) {
+
+                    state.globalMessages.push(
+                        message
+                    );
+
+                    renderGlobalMessages();
+
+                }
+
+            }
+        );
+
+
+        socket.on(
+            "online:count",
+            count => {
+
+                state.onlineUsers =
+                    Number(count || 0);
+
+                onlineUsersCount.textContent =
+                    state.onlineUsers;
+
+            }
+        );
+
+
+        socket.on(
+            "friends:updated",
+            async () => {
+
+                await loadFriendsData();
+
+            }
+        );
+
+
+        socket.on(
+            "listen:state",
+            room => {
+
+                if (
+                    !state.listenTogether
+                ) {
+                    return;
+                }
+
+                state.listenTogether =
+                    room;
+
+                renderListenTogether();
+
+                applyRemoteListenState(
+                    room
+                );
+
+            }
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Realtime connection failed:",
+            error
+        );
+
+    }
+}
+
+
+function applyRemoteListenState(room) {
+
+    if (!room) {
+        return;
+    }
+
+    if (room.songId) {
+
+        const index =
+            findSongIndex(
+                room.songId
+            );
+
+        if (
+            index !== -1 &&
+            state.currentSongIndex !== index
+        ) {
+
+            loadSong(
+                index,
+                false
+            );
+
+        }
+
+    }
+
+    if (
+        Number.isFinite(
+            Number(room.position)
+        ) &&
+        Math.abs(
+            audioPlayer.currentTime -
+            Number(room.position)
+        ) > 2
+    ) {
+
+        audioPlayer.currentTime =
+            Number(room.position);
+
+    }
+
+    if (room.isPlaying) {
+
+        if (audioPlayer.paused) {
+
+            playCurrentSong();
+
+        }
+
+    } else {
+
+        if (!audioPlayer.paused) {
+
+            audioPlayer.pause();
+
+        }
+
+    }
 
 }
 
 
 /* =========================================================
-   47. KEYBOARD
-   ========================================================= */
+   INITIALIZATION
+========================================================= */
+
+async function initializeAfterLogin() {
+
+    showMain();
+
+    updateUserUI();
+
+    switchView("music");
+
+    renderAllMusic();
+
+    updateRepeatButton();
+
+    updateCat();
+
+    connectRealtime();
+
+    await Promise.allSettled([
+        loadFavorites(),
+        loadFriendsData(),
+        loadGroups(),
+        loadGlobalMessages(),
+        loadOnlineCount(),
+        loadProfile()
+    ]);
+
+    updateUserUI();
+}
+
+
+/* =========================================================
+   KEYBOARD SHORTCUTS
+========================================================= */
 
 document.addEventListener(
     "keydown",
     event => {
 
-        const targetTag =
-            event.target?.tagName;
-
-
-        const isTyping =
-            targetTag === "INPUT" ||
-            targetTag === "TEXTAREA" ||
-            targetTag === "SELECT";
-
-
-        if (isTyping) {
+        if (
+            event.target.matches(
+                "input, textarea"
+            )
+        ) {
             return;
         }
 
-
-        if (
-            event.code ===
-            "Space"
-        ) {
+        if (event.code === "Space") {
 
             event.preventDefault();
 
@@ -3048,37 +4233,27 @@ document.addEventListener(
 
         }
 
-
         if (
-            event.code ===
-            "ArrowRight"
+            event.code === "ArrowRight"
         ) {
 
-            nextSong();
+            nextSong(true);
 
         }
 
-
         if (
-            event.code ===
-            "ArrowLeft"
+            event.code === "ArrowLeft"
         ) {
 
             previousSong();
 
         }
 
-
         if (
-            event.code ===
-            "Escape"
+            event.key.toLowerCase() === "r"
         ) {
 
-            if (state.inWorld) {
-
-                backToSongs();
-
-            }
+            cycleRepeat();
 
         }
 
@@ -3087,153 +4262,20 @@ document.addEventListener(
 
 
 /* =========================================================
-   48. SEEK EVENT
-   ========================================================= */
+   START
+========================================================= */
 
-if (playerLine) {
+async function initializeMusicWorld() {
 
-    playerLine.addEventListener(
-        "pointerup",
-        seekFromPointer
-    );
+    renderAllMusic();
+
+    updateRepeatButton();
+
+    updateCat();
+
+    await checkSession();
 
 }
 
 
-/* =========================================================
-   49. RESIZE
-   ========================================================= */
-
-let resizeTimer =
-    null;
-
-
-window.addEventListener(
-    "resize",
-    () => {
-
-        clearTimeout(
-            resizeTimer
-        );
-
-
-        resizeTimer =
-            setTimeout(
-                () => {
-
-                    if (
-                        state.inWorld
-                    ) {
-
-                        updateWorldFX();
-
-                    }
-
-
-                    moveCat();
-
-                },
-                220
-            );
-
-    }
-);
-
-
-/* =========================================================
-   50. GLOBAL FUNCTIONS
-   ========================================================= */
-
-window.startWorld =
-    startWorld;
-
-window.goToScene =
-    goToScene;
-
-window.goBack =
-    goBack;
-
-window.chooseLanguage =
-    chooseLanguage;
-
-window.choosePersianAge =
-    choosePersianAge;
-
-window.chooseEnglishGender =
-    chooseEnglishGender;
-
-window.openWorld =
-    openWorld;
-
-window.toggleMusic =
-    toggleMusic;
-
-window.changeVolume =
-    changeVolume;
-
-window.cycleRepeat =
-    cycleRepeat;
-
-window.backToSongs =
-    backToSongs;
-
-window.nextSong =
-    nextSong;
-
-window.previousSong =
-    previousSong;
-
-window.catClicked =
-    catClicked;
-
-window.secretClick =
-    secretClick;
-
-
-/* =========================================================
-   51. STARTUP
-   ========================================================= */
-
-moveCat();
-
-updatePlayButton();
-
-updateRepeatButton();
-
-updateCatProgress();
-
-updateCatDance();
-
-
-console.log(
-    "🌌 MUSIC WORLD 3.0 STARTED"
-);
-
-console.log(
-    "🎵 Total songs:",
-    songs.length
-);
-
-console.log(
-    "🎧 Audio system ready"
-);
-
-console.log(
-    "📱 Mobile compact mode ready"
-);
-
-console.log(
-    "🐈‍⬛ Hologram cat guide ready"
-);
-
-console.log(
-    "🍑 Ariana Grande / bye added"
-);
-
-console.log(
-    "🔁 Repeat system ready"
-);
-
-console.log(
-    "🎤 Sogand / Persian New added"
-);
+initializeMusicWorld();

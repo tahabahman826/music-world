@@ -1,0 +1,31 @@
+{
+  "users": [
+    {
+      "id": "user_mu7g4ahr_9c419lzk",
+      "username": "testuser",
+      "email": "test@example.com",
+      "passwordHash": "$2b$12$.dQfhCklrGkSbJIJxi91eOqtcUBgBjAfiwZOYGKRiIi9.6BMOufnS",
+      "online": false,
+      "lastActive": "2026-09-18T21:06:01.060Z",
+      "nowPlaying": null,
+      "createdAt": "2026-09-18T21:03:37.503Z"
+    },
+    {
+      "id": "user_mu7gn932_81zctko0",
+      "username": "admin",
+      "email": "tahabahman826@gmail.com",
+      "passwordHash": "$2b$12$zxuozDCJPleAKgOoBs0HneEw2GPNEz0re1rUfmlAm7kZtCiAPyNdy",
+      "online": true,
+      "lastActive": "2026-09-18T22:03:40.841Z",
+      "nowPlaying": null,
+      "createdAt": "2026-09-18T21:18:22.142Z"
+    }
+  ],
+  "favorites": [],
+  "friendRequests": [],
+  "friendships": [],
+  "messages": [],
+  "groups": [],
+  "groupMessages": [],
+  "listenRooms": []
+}
