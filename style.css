@@ -109,6 +109,24 @@ img {
     display: none !important;
 }
 
+.noscript-message {
+    position: fixed;
+    inset: 16px 16px auto;
+    z-index: 99999;
+    padding: 16px 20px;
+    border: 1px solid rgba(255, 85, 119, 0.45);
+    border-radius: 14px;
+    color: #fff;
+    text-align: center;
+    background: rgba(28, 7, 15, 0.96);
+    box-shadow: var(--shadow);
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.58;
+}
+
 
 /* =========================================================
    BACKGROUND

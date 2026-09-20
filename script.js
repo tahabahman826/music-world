@@ -11,7 +11,13 @@
    CONFIG
 ========================================================= */
 
-const API_BASE = "http://localhost:3000/api";
+const BACKEND_BASE = String(
+    window.MUSIC_WORLD_CONFIG?.backendOrigin ||
+    "https://music-world-nqo1.onrender.com"
+).replace(/\/$/, "");
+
+const API_BASE = `${BACKEND_BASE}/api`;
+const API_TIMEOUT_MS = 15000;
 
 let socket = null;
 
@@ -30,6 +36,7 @@ const AUDIO_FILES = {
     butterfly: "music/dasht parvaneh.mp3",
 
     oneOfTheGirls: "music/one of the girl.mp3",
+    red: "music/red.mp3",
     timeless: "music/timeless.mp3",
     luxury: "music/popular.mp3",
     starboy: "music/starboy.mp3",
@@ -37,6 +44,7 @@ const AUDIO_FILES = {
 
     lovely: "music/lovely.mp3",
     birdsOfAFeather: "music/Billie Eilish Birds of a Feather.mp3",
+    oceanEyes: "music/ocean eyes.mp3",
 
     bye: "music/bye.mp3"
 };
@@ -266,6 +274,15 @@ const state = {
 ========================================================= */
 
 const $ = (id) => document.getElementById(id);
+
+function safeOn(element, eventName, handler, options) {
+    if (!element || typeof element.addEventListener !== "function") {
+        console.warn(`Music World: missing element for "${eventName}" listener.`);
+        return;
+    }
+
+    element.addEventListener(eventName, handler, options);
+}
 
 
 /* Auth */
@@ -626,8 +643,12 @@ async function api(
     options = {}
 ) {
 
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+
     const config = {
         credentials: "include",
+        signal: controller.signal,
         ...options
     };
 
@@ -641,11 +662,18 @@ async function api(
         ...(options.headers || {})
     };
 
-    const response =
-        await fetch(
-            `${API_BASE}${endpoint}`,
-            config
-        );
+    let response;
+
+    try {
+        response = await fetch(`${API_BASE}${endpoint}`, config);
+    } catch (error) {
+        if (error.name === "AbortError") {
+            throw new Error("The server took too long to respond. Please try again.");
+        }
+        throw new Error("Could not connect to Music World. Check your connection and try again.");
+    } finally {
+        window.clearTimeout(timeout);
+    }
 
     let data = null;
 
@@ -691,7 +719,7 @@ function updateAuthSwitch() {
 }
 
 
-authSwitch.addEventListener(
+safeOn(authSwitch, 
     "click",
     () => {
 
@@ -715,7 +743,7 @@ authSwitch.addEventListener(
 );
 
 
-registerForm.addEventListener(
+safeOn(registerForm, 
     "submit",
     async (event) => {
 
@@ -806,7 +834,7 @@ registerForm.addEventListener(
 );
 
 
-loginForm.addEventListener(
+safeOn(loginForm, 
     "submit",
     async (event) => {
 
@@ -1388,21 +1416,17 @@ function createGradientCover(
     artist
 ) {
 
-    const safeTitle =
-        encodeURIComponent(
-            String(title)
-                .slice(0, 18)
-        );
+    const safeText = value => String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&apos;");
 
-    const safeArtist =
-        encodeURIComponent(
-            String(artist)
-                .slice(0, 18)
-        );
+    const safeTitle = safeText(String(title).slice(0, 18));
+    const safeArtist = safeText(String(artist).slice(0, 18));
 
-    return `
-        data:image/svg+xml;charset=UTF-8,
-        <svg
+    const svg = `<svg
             xmlns="http://www.w3.org/2000/svg"
             width="500"
             height="500"
@@ -1469,8 +1493,9 @@ function createGradientCover(
             >
                 ${safeArtist}
             </text>
-        </svg>
-    `.replace(/\s+/g, " ");
+        </svg>`;
+
+    return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
 
@@ -1632,7 +1657,7 @@ async function updateNowPlaying() {
                             ? state.currentSong.id
                             : null,
 
-                    isPlaying:
+                    playing:
                         state.isPlaying
                 })
             }
@@ -1789,7 +1814,7 @@ function updateRepeatButton() {
    AUDIO EVENTS
 ========================================================= */
 
-audioPlayer.addEventListener(
+safeOn(audioPlayer, 
     "play",
     () => {
 
@@ -1803,7 +1828,7 @@ audioPlayer.addEventListener(
 );
 
 
-audioPlayer.addEventListener(
+safeOn(audioPlayer, 
     "pause",
     () => {
 
@@ -1817,7 +1842,7 @@ audioPlayer.addEventListener(
 );
 
 
-audioPlayer.addEventListener(
+safeOn(audioPlayer, 
     "loadedmetadata",
     () => {
 
@@ -1830,7 +1855,7 @@ audioPlayer.addEventListener(
 );
 
 
-audioPlayer.addEventListener(
+safeOn(audioPlayer, 
     "timeupdate",
     () => {
 
@@ -1860,7 +1885,7 @@ audioPlayer.addEventListener(
 );
 
 
-audioPlayer.addEventListener(
+safeOn(audioPlayer, 
     "ended",
     () => {
 
@@ -1879,7 +1904,7 @@ audioPlayer.addEventListener(
 );
 
 
-progressBar.addEventListener(
+safeOn(progressBar, 
     "input",
     () => {
 
@@ -1902,7 +1927,7 @@ progressBar.addEventListener(
 );
 
 
-volumeBar.addEventListener(
+safeOn(volumeBar, 
     "input",
     () => {
 
@@ -1916,27 +1941,27 @@ volumeBar.addEventListener(
 );
 
 
-playButton.addEventListener(
+safeOn(playButton, 
     "click",
     toggleMusic
 );
 
-previousButton.addEventListener(
+safeOn(previousButton, 
     "click",
     previousSong
 );
 
-nextButton.addEventListener(
+safeOn(nextButton, 
     "click",
     () => nextSong(true)
 );
 
-repeatButton.addEventListener(
+safeOn(repeatButton, 
     "click",
     cycleRepeat
 );
 
-playerFavoriteButton.addEventListener(
+safeOn(playerFavoriteButton, 
     "click",
     () => {
 
@@ -2627,9 +2652,9 @@ async function sendGlobalMessage() {
 
         if (result.message) {
 
-            state.globalMessages.push(
-                result.message
-            );
+            if (!state.globalMessages.some(item => item.id === result.message.id)) {
+                state.globalMessages.push(result.message);
+            }
 
             renderGlobalMessages();
 
@@ -2649,7 +2674,7 @@ async function sendGlobalMessage() {
 }
 
 
-globalChatForm.addEventListener(
+safeOn(globalChatForm, 
     "submit",
     event => {
 
@@ -3055,9 +3080,9 @@ async function sendGroupMessage() {
 
         if (result.message) {
 
-            state.groupMessages.push(
-                result.message
-            );
+            if (!state.groupMessages.some(item => item.id === result.message.id)) {
+                state.groupMessages.push(result.message);
+            }
 
             renderGroupMessages();
 
@@ -3480,7 +3505,7 @@ function updateCat() {
 }
 
 
-cat.addEventListener(
+safeOn(cat, 
     "click",
     () => {
 
@@ -3519,7 +3544,7 @@ function closeModal(id) {
 }
 
 
-document.addEventListener(
+safeOn(document, 
     "click",
     event => {
 
@@ -3557,7 +3582,7 @@ document.addEventListener(
    EVENT DELEGATION
 ========================================================= */
 
-songGrid.addEventListener(
+safeOn(songGrid, 
     "click",
     event => {
 
@@ -3594,7 +3619,7 @@ songGrid.addEventListener(
 );
 
 
-favoritesGrid.addEventListener(
+safeOn(favoritesGrid, 
     "click",
     event => {
 
@@ -3631,13 +3656,13 @@ favoritesGrid.addEventListener(
 );
 
 
-userSearchButton.addEventListener(
+safeOn(userSearchButton, 
     "click",
     searchUsers
 );
 
 
-userSearchInput.addEventListener(
+safeOn(userSearchInput, 
     "keydown",
     event => {
 
@@ -3653,7 +3678,7 @@ userSearchInput.addEventListener(
 );
 
 
-userSearchResults.addEventListener(
+safeOn(userSearchResults, 
     "click",
     event => {
 
@@ -3674,7 +3699,7 @@ userSearchResults.addEventListener(
 );
 
 
-friendsList.addEventListener(
+safeOn(friendsList, 
     "click",
     event => {
 
@@ -3695,7 +3720,7 @@ friendsList.addEventListener(
 );
 
 
-friendRequestsList.addEventListener(
+safeOn(friendRequestsList, 
     "click",
     event => {
 
@@ -3716,7 +3741,7 @@ friendRequestsList.addEventListener(
 );
 
 
-groupsList.addEventListener(
+safeOn(groupsList, 
     "click",
     event => {
 
@@ -3737,7 +3762,7 @@ groupsList.addEventListener(
 );
 
 
-inviteFriendsList.addEventListener(
+safeOn(inviteFriendsList, 
     "click",
     event => {
 
@@ -3762,7 +3787,7 @@ inviteFriendsList.addEventListener(
    USER PROFILE ACTIONS
 ========================================================= */
 
-addFriendButton.addEventListener(
+safeOn(addFriendButton, 
     "click",
     async () => {
 
@@ -3778,7 +3803,7 @@ addFriendButton.addEventListener(
 );
 
 
-messageUserButton.addEventListener(
+safeOn(messageUserButton, 
     "click",
     () => {
 
@@ -3802,7 +3827,7 @@ messageUserButton.addEventListener(
    GROUP ACTIONS
 ========================================================= */
 
-createGroupButton.addEventListener(
+safeOn(createGroupButton, 
     "click",
     () => {
 
@@ -3814,7 +3839,7 @@ createGroupButton.addEventListener(
 );
 
 
-createGroupForm.addEventListener(
+safeOn(createGroupForm, 
     "submit",
     event => {
 
@@ -3826,7 +3851,7 @@ createGroupForm.addEventListener(
 );
 
 
-inviteFriendsButton.addEventListener(
+safeOn(inviteFriendsButton, 
     "click",
     async () => {
 
@@ -3840,7 +3865,7 @@ inviteFriendsButton.addEventListener(
 );
 
 
-groupChatForm.addEventListener(
+safeOn(groupChatForm, 
     "submit",
     event => {
 
@@ -3852,7 +3877,7 @@ groupChatForm.addEventListener(
 );
 
 
-groupListenTogetherButton.addEventListener(
+safeOn(groupListenTogetherButton, 
     "click",
     startListenTogether
 );
@@ -3862,7 +3887,7 @@ groupListenTogetherButton.addEventListener(
    LISTEN ACTIONS
 ========================================================= */
 
-listenPlayButton.addEventListener(
+safeOn(listenPlayButton, 
     "click",
     async () => {
 
@@ -3876,7 +3901,7 @@ listenPlayButton.addEventListener(
             songId:
                 state.currentSong.id,
 
-            isPlaying: true,
+            playing: true,
 
             position:
                 audioPlayer.currentTime
@@ -3886,14 +3911,14 @@ listenPlayButton.addEventListener(
 );
 
 
-listenPauseButton.addEventListener(
+safeOn(listenPauseButton, 
     "click",
     async () => {
 
         pauseCurrentSong();
 
         await updateListenState({
-            isPlaying: false,
+            playing: false,
 
             position:
                 audioPlayer.currentTime
@@ -3903,7 +3928,7 @@ listenPauseButton.addEventListener(
 );
 
 
-listenNextButton.addEventListener(
+safeOn(listenNextButton, 
     "click",
     async () => {
 
@@ -3915,7 +3940,7 @@ listenNextButton.addEventListener(
                 songId:
                     state.currentSong.id,
 
-                isPlaying:
+                playing:
                     state.isPlaying,
 
                 position:
@@ -3928,7 +3953,7 @@ listenNextButton.addEventListener(
 );
 
 
-leaveListenButton.addEventListener(
+safeOn(leaveListenButton, 
     "click",
     leaveListenTogether
 );
@@ -3938,7 +3963,7 @@ leaveListenButton.addEventListener(
    LOGOUT
 ========================================================= */
 
-document.addEventListener(
+safeOn(document, 
     "click",
     event => {
 
@@ -3959,14 +3984,25 @@ document.addEventListener(
    REALTIME / SOCKET.IO
 ========================================================= */
 
-function connectRealtime() {
+function loadSocketClient() {
+    if (typeof window.io === "function") return Promise.resolve();
+    if (loadSocketClient.promise) return loadSocketClient.promise;
 
-    if (
-        typeof window.io !==
-        "function"
-    ) {
-        return;
-    }
+    loadSocketClient.promise = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = `${BACKEND_BASE}/socket.io/socket.io.js`;
+        script.async = true;
+        script.crossOrigin = "anonymous";
+        script.onload = resolve;
+        script.onerror = () => reject(new Error("Realtime client could not be loaded."));
+        document.head.append(script);
+    });
+
+    return loadSocketClient.promise;
+}
+
+
+async function connectRealtime() {
 
     if (socket) {
         return;
@@ -3974,11 +4010,14 @@ function connectRealtime() {
 
     try {
 
+        await loadSocketClient();
+
         socket =
             window.io(
-                "http://localhost:3000",
+                BACKEND_BASE,
                 {
-                    withCredentials: true
+                    withCredentials: true,
+                    transports: ["websocket", "polling"]
                 }
             );
 
@@ -4079,6 +4118,26 @@ function connectRealtime() {
             }
         );
 
+        socket.on("friend_request", loadFriendsData);
+        socket.on("user_status", loadFriendsData);
+        socket.on("now_playing_update", loadFriendsData);
+        socket.on("groups:updated", loadGroups);
+
+        socket.on("group:updated", async payload => {
+            await loadGroups();
+            if (state.currentGroup && payload?.groupId === state.currentGroup.id) {
+                await openGroup(payload.groupId);
+            }
+        });
+
+        socket.on("group:message", message => {
+            if (!state.currentGroup || message.groupId !== state.currentGroup.id) return;
+            if (!state.groupMessages.some(item => item.id === message.id)) {
+                state.groupMessages.push(message);
+                renderGroupMessages();
+            }
+        });
+
 
         socket.on(
             "listen:state",
@@ -4101,6 +4160,29 @@ function connectRealtime() {
 
             }
         );
+
+        socket.on("listen:room", room => {
+            if (state.currentGroup && room.groupId === state.currentGroup.id) {
+                state.listenTogether = room;
+                renderListenTogether();
+            }
+        });
+
+        socket.on("listen:updated", room => {
+            const updatedRoomId = room.roomId || room.id;
+            if (!state.listenTogether || updatedRoomId !== state.listenTogether.id) return;
+            if (room.closed) {
+                state.listenTogether = null;
+                listenTogetherView.classList.add("hidden");
+                return;
+            }
+            state.listenTogether = room;
+            renderListenTogether();
+        });
+
+        socket.on("connect_error", error => {
+            console.warn("Realtime connection error:", error.message);
+        });
 
     } catch (error) {
 
@@ -4155,7 +4237,7 @@ function applyRemoteListenState(room) {
 
     }
 
-    if (room.isPlaying) {
+    if (room.playing) {
 
         if (audioPlayer.paused) {
 
@@ -4213,7 +4295,7 @@ async function initializeAfterLogin() {
    KEYBOARD SHORTCUTS
 ========================================================= */
 
-document.addEventListener(
+safeOn(document, 
     "keydown",
     event => {
 
@@ -4261,6 +4343,14 @@ document.addEventListener(
 );
 
 
+window.addEventListener("error", event => {
+    console.error("Music World JavaScript error:", event.error || event.message);
+});
+
+window.addEventListener("unhandledrejection", event => {
+    console.error("Music World promise error:", event.reason);
+});
+
 /* =========================================================
    START
 ========================================================= */
@@ -4278,4 +4368,8 @@ async function initializeMusicWorld() {
 }
 
 
-initializeMusicWorld();
+if (document.readyState === "loading") {
+    safeOn(document, "DOMContentLoaded", initializeMusicWorld);
+} else {
+    initializeMusicWorld();
+}

@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: music-world
+    runtime: node
+    # Persistent disks require a paid Render web-service plan.
+    plan: starter
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATA_DIR
+        value: /var/data
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: FRONTEND_ORIGINS
+        sync: false
+    disk:
+      name: music-world-data
+      mountPath: /var/data
+      sizeGB: 1
